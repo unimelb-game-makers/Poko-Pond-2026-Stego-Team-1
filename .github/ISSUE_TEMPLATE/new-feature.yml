@@ -1,0 +1,36 @@
+name: "Feature"
+description: "Use for feature requests"
+title: "[Feature] "
+labels:
+  - "feature"
+  - "enhancement"
+
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Provide why this feature is needed.
+      placeholder: |
+        Briefly describe the context and background for this feature request.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Describe the feature you are requesting in detail.
+      placeholder: |
+        Clearly and concisely describe the feature you want to request.
+    validations:
+      required: true
+
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional Information
+      description: Related resources to help understand or implement the feature.
+    validations:
+      required: false

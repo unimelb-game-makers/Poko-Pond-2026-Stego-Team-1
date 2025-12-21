@@ -28,6 +28,29 @@
 # Visual Studio cache directory
 .vs/
 .vscode/
+.vscode-test/
+
+# JetBrains IDE settings
+.idea/
+*.iml
+
+# VS Code local history
+.history/
+
+# Vim/Neovim swap and backup files
+*.swp
+*.swo
+*~
+tags
+
+# Emacs backup files
+# The leading backslash keeps the pattern literal rather than an escaped comment
+\#*\#
+.\#*
+
+# Sublime Text project files
+*.sublime-project
+*.sublime-workspace
 
 # Gradle cache directory
 .gradle/

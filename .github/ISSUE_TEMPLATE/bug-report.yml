@@ -1,0 +1,34 @@
+name: "Bug"
+description: "Used for bug report"
+title: "[Bug] "
+labels:
+  - "bug"
+
+body:
+  - type: textarea
+    id: Description
+    attributes:
+      label: Description
+      placeholder: Briefly describe the issue
+    validations:
+      required: true
+
+  - type: dropdown
+    id: Environment
+    attributes:
+      label: Environment
+      options:
+      - Editor
+      - Windows
+      - MacOS
+      - Linux
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional Information
+      description: Any other context about the problem. (e.g., logs, screenshots, screen recordings, etc.)
+    validations:
+      required: false
