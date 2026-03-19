@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 7851246574901686924}
   - component: {fileID: 7314414458843979279}
   m_Layer: 0
-  m_Name: VC SideScroll
+  m_Name: VC_SideScroll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
