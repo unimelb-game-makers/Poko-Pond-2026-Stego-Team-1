@@ -131,7 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 337559891}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Platforms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 433655591}
   - component: {fileID: 433655590}
   - component: {fileID: 433655589}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 441212705}
   - component: {fileID: 441212704}
   - component: {fileID: 441212703}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -434,7 +434,7 @@ GameObject:
   - component: {fileID: 1053363815}
   - component: {fileID: 1053363814}
   - component: {fileID: 1053363813}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -564,7 +564,7 @@ GameObject:
   - component: {fileID: 1339634903}
   - component: {fileID: 1339634902}
   - component: {fileID: 1339634901}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -821,7 +821,7 @@ GameObject:
   - component: {fileID: 1842596433}
   - component: {fileID: 1842596432}
   - component: {fileID: 1842596431}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1007,7 +1007,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3686892970539055018, guid: 611d48482e239422abe31ab7973f2357, type: 3}
       propertyPath: m_Name
-      value: VC SideScroll
+      value: VC_SideScroll
       objectReference: {fileID: 0}
     - target: {fileID: 7314414458843979279, guid: 611d48482e239422abe31ab7973f2357, type: 3}
       propertyPath: m_Follow
