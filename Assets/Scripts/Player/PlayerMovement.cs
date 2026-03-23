@@ -21,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
         // Handles jumping, only allows jumping if the player is grounded
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
     }
 
@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Handles horizontal movement
         float moveInput = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
 
     // Checks if the player is grounded
