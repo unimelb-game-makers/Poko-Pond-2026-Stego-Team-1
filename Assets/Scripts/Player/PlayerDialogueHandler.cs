@@ -33,7 +33,7 @@ public class PlayerDialogueHandler : MonoBehaviour
     private void OnDialogueStart(DialogueData _)
     {
         _movement.enabled = false;
-        _rb.velocity      = Vector2.zero;
+        _rb.linearVelocity      = Vector2.zero;
     }
 
     // Unfreezes the player when dialogue ends
