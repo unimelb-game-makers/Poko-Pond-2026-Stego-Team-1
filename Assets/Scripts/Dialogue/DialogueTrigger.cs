@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
 public class DialogueTrigger : MonoBehaviour
 {
     [Tooltip("The dialogue asset this NPC will speak. Create via right-click → Create → Dialogue → Dialogue Data.")]
@@ -12,24 +11,33 @@ public class DialogueTrigger : MonoBehaviour
     [Tooltip("Optional GameObject shown when player is in range (e.g. a '!' or 'Press E' sprite). Can be null.")]
     [SerializeField] private GameObject interactPrompt;
 
+    [Tooltip("How close the player must be to interact.")]
+    [SerializeField] private float interactRadius = 1.5f;
+
+    private Transform _player;
     private bool _playerInRange;
 
-    // Ensures the collider is set to trigger and hides the prompt on start
     private void Start()
     {
-        var col = GetComponent<Collider2D>();
-        if (!col.isTrigger)
-        {
-            Debug.LogWarning($"[DialogueTrigger] Collider2D on '{name}' is not a trigger — setting it now.", this);
-            col.isTrigger = true;
-        }
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            _player = playerObj.transform;
 
         if (interactPrompt != null) interactPrompt.SetActive(false);
     }
 
-    // Starts dialogue when the player presses the interact key while in range
     private void Update()
     {
+        if (_player == null) return;
+
+        bool inRange = Vector2.Distance(transform.position, _player.position) <= interactRadius;
+
+        if (inRange != _playerInRange)
+        {
+            _playerInRange = inRange;
+            if (interactPrompt != null) interactPrompt.SetActive(inRange);
+        }
+
         if (!_playerInRange) return;
         if (DialogueManager.Instance == null || DialogueManager.Instance.IsDialogueActive()) return;
 
@@ -37,19 +45,9 @@ public class DialogueTrigger : MonoBehaviour
             DialogueManager.Instance.StartDialogue(dialogueData);
     }
 
-    // Shows the interact prompt when the player enters the trigger
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnDrawGizmosSelected()
     {
-        if (!other.CompareTag("Player")) return;
-        _playerInRange = true;
-        if (interactPrompt != null) interactPrompt.SetActive(true);
-    }
-
-    // Hides the interact prompt when the player leaves the trigger
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (!other.CompareTag("Player")) return;
-        _playerInRange = false;
-        if (interactPrompt != null) interactPrompt.SetActive(false);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, interactRadius);
     }
 }
