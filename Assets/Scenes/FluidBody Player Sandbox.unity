@@ -504,14 +504,14 @@ PrefabInstance:
     - target: {fileID: 8861116592199444794, guid: 2e41ddcbcdcecc8b49a007eeb293ad1e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 8152814651204944159, guid: 036c503be2c1066ddb4bc66f11128f5b, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 8861116592199444794, guid: 2e41ddcbcdcecc8b49a007eeb293ad1e, type: 3}
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8861116592199444794, guid: 2e41ddcbcdcecc8b49a007eeb293ad1e, type: 3}
       propertyPath: m_WasSpriteAssigned
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
