@@ -11,6 +11,9 @@ public class DialogueLine
              "and inline pauses: {pause=0.5}")]
     public string text;
 
+    [Tooltip("Portrait shown on the left of the dialogue box. Leave null to hide.")]
+    public Sprite portrait;
+
     [Tooltip("Per-line beep clip. Leave null to use the DialogueManager default.")]
     public AudioClip voiceOverride;
 
