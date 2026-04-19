@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*
  * SCENE SETUP — build this UI hierarchy, then wire the fields below in the Inspector.
@@ -31,6 +32,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dialogueText;
     [Tooltip("The '▼ continue' indicator shown after a line finishes typing.")]
     [SerializeField] private GameObject continueIndicator;
+    [Tooltip("Image on the left of the panel that shows the speaker's portrait. Hidden when the line has no portrait.")]
+    [SerializeField] private Image portraitImage;
 
     [Header("Typewriter")]
     [Tooltip("Seconds between each revealed character. Lower = faster.")]
@@ -121,6 +124,12 @@ public class DialogueManager : MonoBehaviour
             speakerNameText.gameObject.SetActive(hasSpeaker);
         }
 
+        if (portraitImage != null)
+        {
+            portraitImage.sprite = line.portrait;
+            portraitImage.gameObject.SetActive(line.portrait != null);
+        }
+
         _currentBeepClip = line.voiceOverride != null ? line.voiceOverride : defaultBeepClip;
         float charDelay  = line.charDelayOverride > 0f ? line.charDelayOverride : defaultCharDelay;
 
@@ -135,6 +144,7 @@ public class DialogueManager : MonoBehaviour
         if (_typingCoroutine != null) StopCoroutine(_typingCoroutine);
         dialoguePanel.SetActive(false);
         if (continueIndicator != null) continueIndicator.SetActive(false);
+        if (portraitImage != null) portraitImage.gameObject.SetActive(false);
         EventManager.DialogueEnd();
     }
 
