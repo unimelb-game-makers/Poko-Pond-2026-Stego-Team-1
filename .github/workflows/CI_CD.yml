@@ -71,6 +71,7 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           unityVersion: ${{ vars.UNITY_VERSION }}
+          allowDirtyBuild: true
 
       # Output
       - name: Upload the file to Github Action
