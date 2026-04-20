@@ -1088,8 +1088,8 @@ Transform:
   m_GameObject: {fileID: 1842596430}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -19.471176, y: -10.034456, z: 20.065268}
-  m_LocalScale: {x: 13.069293, y: 0.3, z: 1}
+  m_LocalPosition: {x: -20.7404, y: -10.034456, z: 20.065268}
+  m_LocalScale: {x: 10.531237, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 337559891}
@@ -1105,6 +1105,7 @@ GameObject:
   - component: {fileID: 1981888980}
   - component: {fileID: 1981888979}
   - component: {fileID: 1981888977}
+  - component: {fileID: 1981888978}
   m_Layer: 0
   m_Name: SampleNPC
   m_TagString: Untagged
@@ -1248,11 +1249,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 102754579561625528, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -46.059
+      value: -45.695
       objectReference: {fileID: 0}
     - target: {fileID: 102754579561625528, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.882
+      value: -7.825
       objectReference: {fileID: 0}
     - target: {fileID: 102754579561625528, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_LocalPosition.z
