@@ -1105,6 +1105,7 @@ GameObject:
   - component: {fileID: 1981888980}
   - component: {fileID: 1981888979}
   - component: {fileID: 1981888977}
+  - component: {fileID: 1981888978}
   m_Layer: 0
   m_Name: SampleNPC
   m_TagString: Untagged
