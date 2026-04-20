@@ -25,18 +25,24 @@ using UnityEngine.Events;
 //   Deactivated will never fire, and subsequent steps are ignored.
 //
 // ANIMATIONS
-//   Attach an Animator component and assign a controller with two Trigger parameters:
-//       "Press"   — set when the player steps on the plate.
-//       "Release" — set when the player steps off (not fired in One Shot mode).
-//   Recommended state machine: Idle → Pressed (Press trigger) → Released (Release trigger) → Idle.
+//   Attach an Animator component and assign a controller with one Bool parameter:
+//       "IsPressed" — true while the plate is in its pressed state (including locked one-shot).
+//   Recommended state machine:
+//       Idle → Press anim (IsPressed = true,  Has Exit Time = false) → Pressed Hold (loop)
+//       Pressed Hold → Release anim (IsPressed = false, Has Exit Time = false) → Idle
+//   Disable Loop Time on the Press and Release clips — the Pressed Hold state provides the hold.
 //   The Animator is optional — the plate works without one.
+//
+// PRESSED SPRITE
+//   Assign Pressed Sprite in the inspector for a guaranteed visual even without a full animator setup.
+//   The SpriteRenderer sprite is swapped directly, so the plate always looks correct regardless of
+//   the current animator state — useful as a fallback and when quickly toggling on/off.
 //
 // DETECTION TUNING
 //   Detection Height controls how tall the overlap zone is above the plate.
 //   Increase it if activation flickers (player collider only briefly intersects the thin plate).
 //   Decrease it if nearby objects above the plate trigger it unintentionally.
 
-[RequireComponent(typeof(BoxCollider2D))]
 public class PressurePlate : MonoBehaviour
 {
     [Tooltip("Auto-generated on placement. Override only if you need a human-readable id for a specific listener.")]
@@ -48,6 +54,9 @@ public class PressurePlate : MonoBehaviour
     [Tooltip("Height of the detection zone above the plate. Increase if activation flickers.")]
     [SerializeField] private float detectionHeight = 2f;
 
+    [Tooltip("Sprite shown while the plate is pressed. Leave empty to rely solely on animations.")]
+    [SerializeField] private Sprite pressedSprite;
+
     [Header("Inspector Callbacks")]
     [Tooltip("Called the moment the player steps on the plate.")]
     [SerializeField] private UnityEvent onActivated;
@@ -55,21 +64,26 @@ public class PressurePlate : MonoBehaviour
     [Tooltip("Called when the player steps off (ignored if One Shot is true).")]
     [SerializeField] private UnityEvent onDeactivated;
 
-    private BoxCollider2D _col;
+    private Collider2D _col;
     private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
+    private Sprite _normalSprite;
     private bool _activated;
     private bool _playerOver;
+    private bool _lockedPressed; // set on first exit when oneShot=true — plate stays pressed permanently
 
-    private static readonly int PressHash   = Animator.StringToHash("Press");
-    private static readonly int ReleaseHash = Animator.StringToHash("Release");
+    private static readonly int IsPressedHash = Animator.StringToHash("IsPressed");
 
     // Assigns a unique id the moment this component is added in the editor
     private void Reset() => plateId = System.Guid.NewGuid().ToString();
 
     private void Awake()
     {
-        _col      = GetComponent<BoxCollider2D>();
-        _animator = GetComponent<Animator>();
+        _col            = GetComponent<Collider2D>();
+        _animator       = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        if (_spriteRenderer != null)
+            _normalSprite = _spriteRenderer.sprite;
     }
 
     // Polls for player overlap each frame using a box cast above the plate's collider bounds
@@ -96,10 +110,10 @@ public class PressurePlate : MonoBehaviour
     private void OnPlayerEnter()
     {
         _playerOver = true;
-        if (_activated && oneShot) return;
+        if (_lockedPressed) return; // one-shot already fired, nothing left to do
 
         _activated = true;
-        if (_animator != null) _animator.SetTrigger(PressHash);
+        SetPressedVisual(true);
         EventManager.PressurePlateActivated(plateId);
         onActivated?.Invoke();
         Debug.Log($"[PressurePlate] '{name}' ({plateId}) activated.");
@@ -109,12 +123,28 @@ public class PressurePlate : MonoBehaviour
     private void OnPlayerExit()
     {
         _playerOver = false;
-        if (oneShot) return;
+
+        if (oneShot)
+        {
+            // Lock pressed state permanently — visual stays pressed, no deactivation event
+            _lockedPressed = true;
+            return;
+        }
 
         _activated = false;
-        if (_animator != null) _animator.SetTrigger(ReleaseHash);
+        SetPressedVisual(false);
         EventManager.PressurePlateDeactivated(plateId);
         onDeactivated?.Invoke();
         Debug.Log($"[PressurePlate] '{name}' ({plateId}) deactivated.");
+    }
+
+    // Drives both the Animator bool and the SpriteRenderer sprite so visuals are always correct
+    private void SetPressedVisual(bool pressed)
+    {
+        if (_animator != null)
+            _animator.SetBool(IsPressedHash, pressed);
+
+        if (_spriteRenderer != null && pressedSprite != null)
+            _spriteRenderer.sprite = pressed ? pressedSprite : _normalSprite;
     }
 }
