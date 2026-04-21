@@ -98,6 +98,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7851246574901686924}
   - component: {fileID: 7314414458843979279}
+  - component: {fileID: 4276929810410977990}
   m_Layer: 0
   m_Name: VC_SideScroll
   m_TagString: Untagged
@@ -160,3 +161,19 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 8169992919438335299}
+--- !u!114 &4276929810410977990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3686892970539055018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Cinemachine::Cinemachine.CinemachineConfiner2D
+  m_BoundingShape2D: {fileID: 0}
+  m_Damping: 0
+  m_MaxWindowSize: -1
+  m_Padding: 0
