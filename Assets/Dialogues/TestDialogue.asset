@@ -15,9 +15,11 @@ MonoBehaviour:
   lines:
   - speakerName: NPC
     text: Hey there!{pause=0.4} Didn't see you there.
+    portrait: {fileID: -2987510084298818118, guid: d5acee93a47ff3543bb6d16f68242169, type: 3}
     voiceOverride: {fileID: 0}
     charDelayOverride: 0
   - speakerName: NPC
     text: Press Z to continue.
+    portrait: {fileID: -2987510084298818118, guid: d5acee93a47ff3543bb6d16f68242169, type: 3}
     voiceOverride: {fileID: 0}
     charDelayOverride: 0
