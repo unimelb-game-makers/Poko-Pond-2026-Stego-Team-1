@@ -68,7 +68,6 @@ public class PressurePlate : MonoBehaviour
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
     private Sprite _normalSprite;
-    private bool _activated;
     private bool _playerOver;
     private bool _lockedPressed; // set on first exit when oneShot=true — plate stays pressed permanently
 
@@ -112,7 +111,6 @@ public class PressurePlate : MonoBehaviour
         _playerOver = true;
         if (_lockedPressed) return; // one-shot already fired, nothing left to do
 
-        _activated = true;
         SetPressedVisual(true);
         EventManager.PressurePlateActivated(plateId);
         onActivated?.Invoke();
@@ -131,7 +129,6 @@ public class PressurePlate : MonoBehaviour
             return;
         }
 
-        _activated = false;
         SetPressedVisual(false);
         EventManager.PressurePlateDeactivated(plateId);
         onDeactivated?.Invoke();
