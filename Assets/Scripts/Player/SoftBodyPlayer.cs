@@ -95,7 +95,6 @@ public class SoftBodyPlayer : MonoBehaviour
     public float faceFadeDuration = 0.07f;
 
     [Header("Rendering")]
-    public Color    bodyColor        = new Color(0.32f, 0.66f, 1f);
     public Material bodyMaterial;
     public string   sortingLayerName = "Default";
     public int      sortingOrder     = 0;
@@ -105,6 +104,21 @@ public class SoftBodyPlayer : MonoBehaviour
     [Range(0, 5)]
     [Tooltip("Laplacian smoothing passes before the spline. Softens spike artefacts on impact.")]
     public int meshSmoothingPasses = 4;
+
+    [Header("Visuals — Body Gradient")]
+    [Tooltip("Colour at the centre of the blob — lighter gives a rounded 3-D look.")]
+    public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    [Tooltip("Colour at the outer edge of the blob.")]
+    public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
+
+    [Header("Visuals — Highlight")]
+    [Tooltip("Colour and opacity of the specular highlight. Alpha controls strength.")]
+    public Color   highlightColor  = new Color(1f, 1f, 1f, 0.55f);
+    [Range(0.05f, 0.85f)]
+    [Tooltip("Size of the highlight relative to the blob body.")]
+    public float   highlightScale  = 0.38f;
+    [Tooltip("Offset of the highlight centre in local blob space (shift up-left for a natural light source).")]
+    public Vector2 highlightOffset = new Vector2(-0.05f, 0.10f);
 
     // ── Animation — Idle ─────────────────────────────────────────────────
     [Header("Animation — Idle")]
@@ -186,6 +200,11 @@ public class SoftBodyPlayer : MonoBehaviour
     private Vector2[] _smoothRing;
     private Vector3[] _meshVerts;
     private Vector2[] _meshUVs;
+    private Color[]   _meshColors;
+
+    private Mesh         _highlightMesh;
+    private MeshRenderer _highlightRenderer;
+    private Vector3[]    _highlightVerts;
 
     private CircleCollider2D[] _cols;
     private Vector2[]          _preSmoothA;
@@ -232,6 +251,7 @@ public class SoftBodyPlayer : MonoBehaviour
         SpawnPoints();
         SetupSprings();
         SetupMesh();
+        SetupHighlight();
         SetupFace();
     }
 
@@ -272,6 +292,7 @@ public class SoftBodyPlayer : MonoBehaviour
         if (_frozen) return;
         transform.position = _center;
         RebuildMesh();
+        RebuildHighlight();
         UpdateFace();
     }
 
@@ -825,6 +846,7 @@ public class SoftBodyPlayer : MonoBehaviour
         _smoothRing  = new Vector2[_subdivVerts];
         _meshVerts   = new Vector3[_subdivVerts + 1];
         _meshUVs     = new Vector2[_subdivVerts + 1];
+        _meshColors  = new Color[_subdivVerts + 1];
         _preSmoothA  = new Vector2[pointCount];
         _preSmoothB  = new Vector2[pointCount];
 
@@ -846,12 +868,39 @@ public class SoftBodyPlayer : MonoBehaviour
 
         var mr = GetComponent<MeshRenderer>();
         if (bodyMaterial != null)
+        {
             mr.sharedMaterial = bodyMaterial;
+        }
         else
-            mr.material = new Material(Shader.Find("Sprites/Default")) { color = bodyColor };
+        {
+            // White material so vertex colors drive the gradient unmodified
+            mr.material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+        }
 
         mr.sortingLayerName = sortingLayerName;
         mr.sortingOrder     = sortingOrder;
+    }
+
+    private void SetupHighlight()
+    {
+        _highlightVerts = new Vector3[_subdivVerts + 1];
+
+        var go = new GameObject("BodyHighlight");
+        go.transform.SetParent(transform);
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localScale    = Vector3.one;
+
+        _highlightMesh = new Mesh { name = "HighlightMesh" };
+        go.AddComponent<MeshFilter>().mesh = _highlightMesh;
+
+        _highlightRenderer                  = go.AddComponent<MeshRenderer>();
+        _highlightRenderer.material         = new Material(Shader.Find("Sprites/Default")) { color = highlightColor };
+        _highlightRenderer.sortingLayerName = sortingLayerName;
+        _highlightRenderer.sortingOrder     = sortingOrder + 1;
+
+        // Reuse the same fan topology as the main mesh
+        _highlightMesh.vertices  = _highlightVerts;
+        _highlightMesh.triangles = _triangles;
     }
 
     private void RebuildMesh()
@@ -913,8 +962,43 @@ public class SoftBodyPlayer : MonoBehaviour
 
         _mesh.vertices = _meshVerts;
         _mesh.uv       = _meshUVs;
+        UpdateBodyColors();
         _mesh.RecalculateBounds();
         _mesh.RecalculateNormals();
+    }
+
+    private void UpdateBodyColors()
+    {
+        // Centre vertex always gets the inner (highlight) colour
+        _meshColors[0] = bodyInnerColor;
+
+        // Ring vertices: radial gradient from inner to outer based on UV distance
+        for (int i = 1; i <= _subdivVerts; i++)
+        {
+            // UV is in [0,1]²; distance from centre UV (0.5,0.5) maps 0=centre → 1=edge
+            float dist = Vector2.Distance(_meshUVs[i], Vector2.one * 0.5f) * 2f;
+            _meshColors[i] = Color.Lerp(bodyInnerColor, bodyOuterColor, Mathf.Clamp01(dist));
+        }
+
+        _mesh.colors = _meshColors;
+    }
+
+    private void RebuildHighlight()
+    {
+        if (_highlightMesh == null) return;
+
+        // Highlight is a scaled-down, shifted copy of the deformed mesh verts,
+        // so it bends with squash/stretch/lean exactly like the body.
+        Vector3 offset = highlightOffset;
+        for (int i = 0; i <= _subdivVerts; i++)
+            _highlightVerts[i] = _meshVerts[i] * highlightScale + offset;
+
+        _highlightMesh.vertices = _highlightVerts;
+        _highlightMesh.triangles = _triangles;
+        _highlightMesh.RecalculateBounds();
+
+        // Keep material color in sync in case it was changed at runtime in the Inspector
+        _highlightRenderer.material.color = highlightColor;
     }
 
     private static Vector2 CentripetalCatmullRom(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float t)
