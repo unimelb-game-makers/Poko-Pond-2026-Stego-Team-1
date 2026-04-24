@@ -3840,10 +3840,6 @@ PrefabInstance:
       value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.8
       objectReference: {fileID: 0}
@@ -4001,18 +3997,10 @@ PrefabInstance:
       propertyPath: cameraProxy
       value: 
       objectReference: {fileID: 197796189}
-    - target: {fileID: 5635439805024734902, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: splitPassiveDragFraction
-      value: 0.04
-      objectReference: {fileID: 0}
     - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: levelBounds
       value: 
       objectReference: {fileID: 62156859}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: pressureForce
-      value: 30
-      objectReference: {fileID: 0}
     - target: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: m_Name
       value: Player

@@ -116,11 +116,12 @@ MonoBehaviour:
   springFrequency: 10
   springDamping: 0.97
   restoreForce: 60
-  pressureForce: 14
+  pressureForce: 30
   moveForce: 4
   maxMoveSpeed: 7
   moveDrag: 6
   airControlFraction: 0.4
+  passiveDragFraction: 0.15
   jumpForce: 15
   baseGravityScale: 3
   maxGravityScale: 7
@@ -214,9 +215,10 @@ MonoBehaviour:
   cameraProxy: {fileID: 0}
   splitBurstX: 2.5
   splitBurstY: 1.5
-  splitPinchDuration: 0.3
+  splitPassiveVelocityScale: 1
+  splitPassiveDragFraction: 0.04
   mergeProximityRadius: 0.4
-  mergePopDuration: 0.35
+  mergeCooldownDuration: 0.75
   pressureSquashDuration: 0.28
 --- !u!114 &5289004033044655933
 MonoBehaviour:
