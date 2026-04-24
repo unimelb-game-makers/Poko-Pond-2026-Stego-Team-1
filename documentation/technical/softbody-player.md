@@ -175,7 +175,9 @@ The droplet facing the player's pre-split direction becomes active; the other is
 
 Merge is triggered automatically when the two droplet centres come within `mergeProximityRadius` (default 0.4 m) after the `mergeCooldownDuration` has elapsed (default 0.75 s).
 
-**Spawn position**: the merged blob is teleported to the active droplet's rendered position at the exact frame the proximity threshold is crossed. Position is read via `RenderCenter` (averaging ring-point `transform.position` directly from the GOs) inside `PlayerSplitController.LateUpdate`, where Unity's interpolation has already updated for this render frame. This is the most accurate visual position available — no physics-step lag.
+**Spawn position**: the merged blob is teleported to the midpoint of the two droplet centres at the exact frame the proximity threshold is crossed. Position is read via `RenderCenter` (averaging ring-point `transform.position` directly from the GOs) inside `PlayerSplitController.LateUpdate`, where Unity's interpolation has already updated for this render frame — no physics-step lag.
+
+**Platform depenetration**: immediately after `TeleportTo`, `DepenetrateFromGround()` is called. The full-size player is larger than the half-size droplets, and the merge may occur on a platform surface, so some ring points can end up inside the geometry. `DepenetrateFromGround` scans downward from above each overlapping ring point to find the exact surface Y, then shifts the entire ring upward by the worst-case penetration depth.
 
 **Velocity**: the average `linearVelocity` across all ring points of both droplets is captured at the moment the proximity threshold is crossed and applied to the reformed main player.
 
@@ -203,11 +205,17 @@ When the active droplet performs a **ground pound** (C while airborne) and lands
 
 ### Why TeleportTo has three internal steps
 
-When `TeleportTo` is called after a merge, mainPlayer was frozen since the split. Three things must happen atomically to avoid visual artefacts on the first post-teleport frame:
+When `TeleportTo` is called after a merge, mainPlayer was frozen since the split. Three things must happen atomically to avoid artefacts on the first post-teleport frame:
 
 1. **Interpolation flush** — toggling `rb.interpolation` to `None` then back to `Interpolate` clears Unity's internal "previous position" buffer. Without this, the interpolation system blends between the old frozen location and the new position, visually snapping the player toward the split point for several frames.
-2. **transform.position write** — directly assigning `_pointGOs[i].transform.position` makes the visual correct this same frame, before the next LateUpdate.
-3. **`_prevPositions` sync** — `ResolveCollisions` uses a `CircleCast` from `_prevPositions[i]` (last frame's physics position) to the current position to detect tunneling. Without syncing, the cast sweeps from the frozen split position all the way to the merge position, hitting any ground in between and snapping the player back to an intermediate collision point.
+2. **`transform.position` write** — directly assigning `_pointGOs[i].transform.position` makes the visual correct this same frame, before the next LateUpdate.
+3. **`_prevPositions` sync** — `ResolveCollisions` uses a `CircleCast` from `_prevPositions[i]` (last frame's physics position) to the current position to detect tunneling. Without syncing, the cast sweeps from the frozen split position all the way to the merge position, hitting any ground in between and snapping the player to an intermediate collision point.
+
+### Why DepenetrateFromGround uses a downward raycast
+
+`DepenetrateFromGround` is called immediately after `TeleportTo` on merge. It could instead use `ColliderDistance2D` to measure penetration depth, but `TeleportTo` is called from `LateUpdate` — after the physics step. At that point the physics engine has not yet synced the ring-point colliders to their new positions, so `ColliderDistance2D` reads stale collider data and returns incorrect depths.
+
+The downward raycast approach bypasses this entirely: it casts from a known world position (`pos.y + bodyRadius * 3`) straight down to find the platform's surface Y, then computes the required lift as `surfaceY + pointRadius − pos.y`. Platform colliders are always at their correct world positions, so the raycast is reliable regardless of physics sync state.
 
 ---
 
@@ -465,6 +473,13 @@ event System.Action<float> OnGroundPoundLand;
 // transform.position directly for same-frame visual correctness, and syncs _prevPositions
 // so ResolveCollisions doesn't sweep from the old frozen location across the level.
 void TeleportTo(Vector2 center, Vector2 initialVelocity);
+
+// Call after TeleportTo on merge to prevent ring points from clipping into platforms.
+// Scans downward from above each overlapping ring point to find the surface Y, then
+// shifts the entire ring up by the worst penetration depth. Safe to call from LateUpdate —
+// uses positional raycasts rather than collider distance queries, which are stale until
+// the next physics step.
+void DepenetrateFromGround();
 
 // Freeze all physics simulation (used by dialogue and split system)
 void Freeze();
