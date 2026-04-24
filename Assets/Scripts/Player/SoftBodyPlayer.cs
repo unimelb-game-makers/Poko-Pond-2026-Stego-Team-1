@@ -108,6 +108,8 @@ public class SoftBodyPlayer : MonoBehaviour
     [Range(0f, 1f)]
     [Tooltip("Fraction of move force while airborne. Keeps mid-air steering without wall sticking.")]
     public float airControlFraction = 0.4f;
+    // Set by PlayerSplitController on spawned droplets — not tuned here.
+    [HideInInspector] public float passiveDragFraction = 0.15f;
 
     [Header("Jump")]
     [Tooltip("Upward velocity (m/s) added to every ring point on jump.")]
@@ -428,17 +430,26 @@ public class SoftBodyPlayer : MonoBehaviour
         foreach (var rb in _rbs) rb.simulated = true;
     }
 
-    // Places the ring in its natural resting shape centered at newCenter and sets velocity.
-    // Sets both rb.position and transform.position so the visual is immediately correct.
-    // Must be called AFTER Unfreeze() so rb.position writes are respected by the physics engine.
+    // Repositions the entire ring to newCenter in its natural resting shape and sets velocity.
+    // Must be called AFTER Unfreeze() — rb.position writes on a frozen Rigidbody2D are ignored.
+    // Three invariants are maintained to prevent artefacts on the first post-teleport frame:
+    //   1. rb.interpolation is toggled None→Interpolate to flush Unity's previous-position
+    //      buffer, preventing the interpolation system from blending back to the old location.
+    //   2. transform.position is written directly so the visual is correct this same frame.
+    //   3. _prevPositions is synced so ResolveCollisions' CircleCast sweep starts here, not
+    //      at the old frozen location (a cross-level sweep would snap points onto any ground
+    //      lying between the two positions).
     public void TeleportTo(Vector2 newCenter, Vector2 velocity)
     {
         for (int i = 0; i < pointCount; i++)
         {
-            Vector2 p = newCenter + _offsets[i];
-            _rbs[i].position      = p;
-            _rbs[i].linearVelocity = velocity;
-            _pointGOs[i].transform.position = p;
+            _rbs[i].interpolation            = RigidbodyInterpolation2D.None;
+            Vector2 p                        = newCenter + _offsets[i];
+            _rbs[i].position                 = p;
+            _rbs[i].linearVelocity           = velocity;
+            _pointGOs[i].transform.position  = p;
+            _rbs[i].interpolation            = RigidbodyInterpolation2D.Interpolate;
+            _prevPositions[i]                = p;
         }
         _center            = newCenter;
         transform.position = newCenter;
@@ -821,7 +832,11 @@ public class SoftBodyPlayer : MonoBehaviour
             }
             else
             {
-                rb.AddForce(new Vector2(-rb.linearVelocity.x * moveDrag, 0f), ForceMode2D.Force);
+                // Active droplets brake at full moveDrag when the player releases input.
+                // Passive droplets use a reduced fraction so repel velocity coasts briefly
+                // before decelerating, rather than stopping instantly or sliding forever.
+                float drag = InputEnabled ? moveDrag : moveDrag * passiveDragFraction;
+                rb.AddForce(new Vector2(-rb.linearVelocity.x * drag, 0f), ForceMode2D.Force);
             }
         }
     }

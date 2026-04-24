@@ -10,6 +10,7 @@
   - [Collision Resolution](#collision-resolution)
   - [Mesh Rendering](#mesh-rendering)
 - [Animation System](#animation-system)
+- [Split & Merge System](#split--merge-system)
 - [One-Time Unity Setup](#one-time-unity-setup)
 - [Important: No Collider on the Player GameObject](#important-no-collider-on-the-player-gameobject)
 - [Inspector Reference](#inspector-reference)
@@ -151,6 +152,62 @@ The jump sets `rb.linearVelocity.y = jumpForce` identically on every point. Any 
 ### Force modulation
 
 During landing, `pressureForce` is scaled by `landingPressureScale` (default 0.2) so it does not resist the squash, and `restoreForce` is scaled by `landingRestoreScale` (default 1.8) so the squash snaps in quickly. During rise, pressure is reduced to 65% so the vertical stretch is not crushed back down.
+
+---
+
+## Split & Merge System
+
+Implemented in `Assets/Scripts/Player/PlayerSplitController.cs`. Attach to the same GameObject as `SoftBodyPlayer` (or any persistent manager in the scene).
+
+### Split
+
+**Left Shift** triggers a split. The main player fades out over ~0.06 s, then two half-size `SoftBodyPlayer` instances are spawned at the left and right half-positions sampled from `GetHalfState`. Each droplet has:
+
+- **Half mass** (`pointMass × 0.5`)
+- **Half area** (`bodyRadius / √2`) — radius reduced by `1/√2` to preserve area ratio
+- **Burst velocity**: both droplets receive a small upward kick (`splitBurstY`). The active droplet additionally receives a horizontal burst in the facing direction (`splitBurstX`).
+- **Passive repel**: the passive droplet's horizontal velocity is *replaced* (not added to) with the mirrored average pre-split velocity: `vel.x = -avgVelX × splitPassiveVelocityScale`. When the player is still at the moment of split, `avgVelX = 0` so the passive droplet receives no horizontal force.
+- **Passive drag**: the passive droplet applies only a fraction of `moveDrag` (`splitPassiveDragFraction`, default 0.04), so the repel velocity coasts naturally and decelerates gradually instead of stopping abruptly.
+
+The droplet facing the player's pre-split direction becomes active; the other is passive (`InputEnabled = false`). **Tab** swaps the active droplet (camera pans across via `CameraFollowProxy.SwitchTarget`).
+
+### Merge
+
+Merge is triggered automatically when the two droplet centres come within `mergeProximityRadius` (default 0.4 m) after the `mergeCooldownDuration` has elapsed (default 0.75 s).
+
+**Spawn position**: the merged blob is teleported to the active droplet's rendered position at the exact frame the proximity threshold is crossed. Position is read via `RenderCenter` (averaging ring-point `transform.position` directly from the GOs) inside `PlayerSplitController.LateUpdate`, where Unity's interpolation has already updated for this render frame. This is the most accurate visual position available — no physics-step lag.
+
+**Velocity**: the average `linearVelocity` across all ring points of both droplets is captured at the moment the proximity threshold is crossed and applied to the reformed main player.
+
+**Face direction**: the active droplet's `LastFaceDir` (or current horizontal input if held) is preserved through the merge.
+
+### Pressure Transfer
+
+When the active droplet performs a **ground pound** (C while airborne) and lands, the passive droplet is launched upward at exactly its own `jumpForce` velocity — a fixed predictable height regardless of fall impact speed. The passive droplet must be grounded for the transfer to fire; holding C cannot repeatedly air-launch it.
+
+### PlayerSplitController Inspector Fields
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| **Split — Split Burst X** | 1.5 | Horizontal burst (m/s) added to each droplet's velocity on split. Active receives +X, passive does not receive this burst. |
+| **Split — Split Burst Y** | 1.0 | Upward burst (m/s) added to both droplets on split. |
+| **Split — Split Passive Velocity Scale** | 1.0 | Scales how much of the pre-split horizontal speed is reflected onto the passive droplet. 1 = full mirror, 0 = no repel. |
+| **Split — Split Passive Drag Fraction** | 0.04 | Fraction of `moveDrag` applied to the passive droplet. Lower values make the repel coast longer. |
+| **Merge — Merge Proximity Radius** | 0.4 | Centre-to-centre distance (world units) that triggers auto-merge. |
+| **Merge — Merge Cooldown Duration** | 0.75 | Seconds after a split before merging is allowed. Prevents immediate re-merge after spawn. |
+| **Pressure Transfer — Pressure Squash Duration** | 0.28 | Duration of extra landing-squash animation on the active droplet after a successful pressure transfer. |
+
+### SoftBodyPlayer fields used by the split system
+
+`passiveDragFraction` is a `[HideInInspector]` field on `SoftBodyPlayer`. It is **not set in the Inspector** — `PlayerSplitController.SpawnDroplet` writes it from `splitPassiveDragFraction` at spawn time. Edit `splitPassiveDragFraction` on `PlayerSplitController` instead.
+
+### Why TeleportTo has three internal steps
+
+When `TeleportTo` is called after a merge, mainPlayer was frozen since the split. Three things must happen atomically to avoid visual artefacts on the first post-teleport frame:
+
+1. **Interpolation flush** — toggling `rb.interpolation` to `None` then back to `Interpolate` clears Unity's internal "previous position" buffer. Without this, the interpolation system blends between the old frozen location and the new position, visually snapping the player toward the split point for several frames.
+2. **transform.position write** — directly assigning `_pointGOs[i].transform.position` makes the visual correct this same frame, before the next LateUpdate.
+3. **`_prevPositions` sync** — `ResolveCollisions` uses a `CircleCast` from `_prevPositions[i]` (last frame's physics position) to the current position to detect tunneling. Without syncing, the cast sweeps from the frozen split position all the way to the merge position, hitting any ground in between and snapping the player back to an intermediate collision point.
 
 ---
 
@@ -393,11 +450,36 @@ Vector2 Center { get; }
 // All ring Rigidbody2Ds — read-only, do not modify the array
 Rigidbody2D[] Points { get; }
 
-// Freeze all physics simulation (used by dialogue system)
+// Whether this player instance is accepting player input (false on passive split droplets)
+bool InputEnabled { get; set; }
+
+// Last horizontal face direction (+1 = right, -1 = left)
+float LastFaceDir { get; }
+
+// Fired by the active droplet after a ground pound lands, with the downward impact velocity
+event System.Action<float> OnGroundPoundLand;
+
+// Teleport all ring points to center with initialVelocity.
+// Always call Unfreeze() first — rb.position writes on a frozen Rigidbody2D are discarded.
+// Internally: flushes the interpolation buffer (None→Interpolate toggle), writes
+// transform.position directly for same-frame visual correctness, and syncs _prevPositions
+// so ResolveCollisions doesn't sweep from the old frozen location across the level.
+void TeleportTo(Vector2 center, Vector2 initialVelocity);
+
+// Freeze all physics simulation (used by dialogue and split system)
 void Freeze();
 
 // Resume physics simulation
 void Unfreeze();
+
+// Set the body + face opacity (0 = transparent, 1 = fully visible)
+void SetBodyAlpha(float alpha);
+
+// Show or hide the full GameObject
+void SetVisible(bool visible);
+
+// Force a specific face direction immediately without waiting for UpdateFace
+void InitFaceDirection(float dir);
 ```
 
 ### Finding the player from other scripts

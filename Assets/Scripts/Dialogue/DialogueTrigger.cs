@@ -19,11 +19,19 @@ public class DialogueTrigger : MonoBehaviour
 
     private SoftBodyPlayer _softBody;
     private bool _playerInRange;
+    // Guards against the Z key simultaneously ending dialogue and re-triggering it
+    // on the same frame (DialogueManager and DialogueTrigger both run Update).
+    private bool _dialogueEndedThisFrame;
 
     private void Start()
     {
         if (interactPrompt != null) interactPrompt.SetActive(false);
     }
+
+    private void OnEnable()  => EventManager.OnDialogueEnd += OnDialogueEnd;
+    private void OnDisable() => EventManager.OnDialogueEnd -= OnDialogueEnd;
+
+    private void OnDialogueEnd() => _dialogueEndedThisFrame = true;
 
     private void Update()
     {
@@ -43,6 +51,14 @@ public class DialogueTrigger : MonoBehaviour
 
         if (!_playerInRange) return;
         if (DialogueManager.Instance == null || DialogueManager.Instance.IsDialogueActive()) return;
+
+        // Skip interaction for one frame after dialogue ends so the advance key (Z)
+        // cannot simultaneously close the final line and re-open the conversation.
+        if (_dialogueEndedThisFrame)
+        {
+            _dialogueEndedThisFrame = false;
+            return;
+        }
 
         if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(interactKeyAlt))
             DialogueManager.Instance.StartDialogue(dialogueData);

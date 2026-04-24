@@ -24,10 +24,9 @@ using UnityEngine;
  *   - A short body-alpha fade-out plays before the split; a spawn-pop plays after.
  *
  * MERGE BEHAVIOUR
- *   - Proximity is polled every FixedUpdate; the passive droplet's exact rb.position is
- *     captured the moment the threshold is crossed.
- *   - mainPlayer is teleported to that position after the droplets are destroyed,
- *     then fades in.  The camera smooth-damps across the gap to avoid a snap.
+ *   - Proximity is polled every LateUpdate using freshly-interpolated ring-point positions.
+ *   - The merged blob spawns at the active droplet's position the moment the threshold is
+ *     crossed, then fades in.  The camera smooth-damps to avoid a hard snap.
  *   - The merged droplet inherits the active droplet's face direction.
  *
  * PRESSURE TRANSFER
@@ -52,14 +51,17 @@ public class PlayerSplitController : MonoBehaviour
     public float splitBurstX        = 1.5f;
     [Tooltip("Upward burst speed given to each droplet on split.")]
     public float splitBurstY        = 1.0f;
-    [Tooltip("Duration of the pinch animation before the split fires (seconds).")]
-    public float splitPinchDuration = 0.03f;
+    [Tooltip("How much of the pre-split horizontal velocity is reflected onto the passive droplet in the opposite direction. 1 = full speed reversal, 0 = no repel.")]
+    public float splitPassiveVelocityScale = 1.0f;
+    [Range(0f, 1f)]
+    [Tooltip("Fraction of moveDrag applied to the passive droplet. Lets repel velocity coast naturally before decelerating. 0 = no drag (slides forever), 1 = full drag (stops instantly).")]
+    public float splitPassiveDragFraction = 0.04f;
 
     [Header("Merge")]
     [Tooltip("Distance between droplet centres that triggers auto-merge (world units).")]
     public float mergeProximityRadius = 0.4f;
-    [Tooltip("Duration of the merge pop animation (seconds).")]
-    public float mergePopDuration     = 0.06f;
+    [Tooltip("Seconds after a split before merging is allowed again.")]
+    public float mergeCooldownDuration = 0.75f;
 
     [Header("Pressure Transfer")]
     [Tooltip("Duration of the extra squash on the active droplet after a pressure transfer (seconds).")]
@@ -71,14 +73,11 @@ public class PlayerSplitController : MonoBehaviour
     private int              _activeIdx = 0;
     private bool             _isSplit;
     private Coroutine        _splitCoroutine;
-    private Coroutine        _mergeCoroutine;
+    private bool             _isMerging;     // true while MergeCoroutine is executing
     private float            _mergeCooldown; // prevents immediate re-merge after split
 
-    // Captured directly from rb.position in FixedUpdate the moment proximity triggers.
-    // Using rb.position rather than the cached _center avoids a one-physics-step lag
-    // that would place mainPlayer at the wrong location when the passive droplet is moving.
-    private Vector2 _capturedMergePos;
-    private Vector2 _capturedMergeVel;
+    private Vector2 _capturedMergePos; // active droplet position at the moment proximity triggers
+    private Vector2 _capturedMergeVel; // average ring-point velocity of both droplets
 
     // ─────────────────────────────────────────────────────────────────────
 
@@ -92,7 +91,7 @@ public class PlayerSplitController : MonoBehaviour
     {
         if (mainPlayer == null) return;
 
-        if (!_isSplit && _splitCoroutine == null && _mergeCoroutine == null)
+        if (!_isSplit && _splitCoroutine == null && !_isMerging)
         {
             if (Input.GetKeyDown(KeyCode.LeftShift) && !mainPlayer.IsGroundPounding)
                 _splitCoroutine = StartCoroutine(SplitCoroutine());
@@ -104,20 +103,38 @@ public class PlayerSplitController : MonoBehaviour
 
     private void LateUpdate()
     {
+        // Proximity check in LateUpdate so ring-point transform.positions are freshly
+        // interpolated for this render frame — more current than rb.position in FixedUpdate.
+        if (_isSplit && !_isMerging && _mergeCooldown <= 0f &&
+            _droplets[0] != null && _droplets[1] != null)
+        {
+            Vector2 c0 = RenderCenter(_droplets[0]);
+            Vector2 c1 = RenderCenter(_droplets[1]);
+
+            if (Vector2.Distance(c0, c1) < mergeProximityRadius)
+            {
+                _capturedMergePos = RenderCenter(_droplets[_activeIdx]);
+
+                Vector2 velSum = Vector2.zero; int vn = 0;
+                foreach (var d in _droplets)
+                    if (d != null)
+                        foreach (var rb in d.Points) { velSum += rb.linearVelocity; vn++; }
+                _capturedMergeVel = vn > 0 ? velSum / vn : Vector2.zero;
+
+                StartCoroutine(MergeCoroutine());
+            }
+        }
+
         if (cameraProxy == null) return;
 
         if (_isSplit)
         {
-            // Normal split state: follow the active droplet
             var active = _droplets[_activeIdx];
             if (active != null)
                 cameraProxy.UpdateTarget(active.Center);
         }
-        else if (_mergeCoroutine != null)
+        else if (_isMerging)
         {
-            // Mid-merge animation: keep following the active droplet while it still exists.
-            // Once DestroyDroplets() runs it becomes null and we fall through to mainPlayer,
-            // which TeleportTo() has already placed at the correct merge position.
             var active = _droplets[_activeIdx];
             if (active != null)
                 cameraProxy.UpdateTarget(active.Center);
@@ -126,7 +143,6 @@ public class PlayerSplitController : MonoBehaviour
         }
         else
         {
-            // Fully merged: follow the main player
             if (mainPlayer != null)
                 cameraProxy.UpdateTarget(mainPlayer.Center);
         }
@@ -135,31 +151,16 @@ public class PlayerSplitController : MonoBehaviour
     private void FixedUpdate()
     {
         if (_mergeCooldown > 0f) _mergeCooldown -= Time.fixedDeltaTime;
+    }
 
-        if (!_isSplit || _mergeCoroutine != null) return;
-        if (_droplets[0] == null || _droplets[1] == null) return;
-        if (_mergeCooldown > 0f) return;
-
-        if (Vector2.Distance(_droplets[0].Center, _droplets[1].Center) < mergeProximityRadius)
-        {
-            // Read the passive droplet's position directly from rb.position (authoritative physics
-            // position) right now, before any coroutine delay or _center caching can diverge.
-            int passiveIdx = 1 - _activeIdx;
-            var passive = _droplets[passiveIdx];
-            Vector2 posSum = Vector2.zero;
-            Vector2 velSum = Vector2.zero;
-            int     n      = 0;
-            foreach (var rb in passive.Points) { posSum += rb.position; velSum += rb.linearVelocity; n++; }
-            _capturedMergePos = n > 0 ? posSum / n : passive.Center;
-            // Average velocity of both droplets for the reformed blob
-            velSum = Vector2.zero; n = 0;
-            foreach (var d in _droplets)
-                if (d != null)
-                    foreach (var rb in d.Points) { velSum += rb.linearVelocity; n++; }
-            _capturedMergeVel = n > 0 ? velSum / n : Vector2.zero;
-
-            _mergeCoroutine = StartCoroutine(MergeCoroutine());
-        }
+    // Centroid from ring-point transform.positions — valid at any point in LateUpdate
+    // regardless of script execution order, since it reads directly from the GOs.
+    private static Vector2 RenderCenter(SoftBodyPlayer d)
+    {
+        var pts = d.Points;
+        Vector2 sum = Vector2.zero;
+        foreach (var rb in pts) sum += (Vector2)rb.transform.position;
+        return sum / pts.Length;
     }
 
     // ── Split ─────────────────────────────────────────────────────────────
@@ -185,12 +186,27 @@ public class PlayerSplitController : MonoBehaviour
         mainPlayer.Freeze();
         mainPlayer.SetVisible(false);
 
-        _droplets[0] = SpawnDroplet(leftCenter,  leftVel  + new Vector2(-splitBurstX, splitBurstY));
-        _droplets[1] = SpawnDroplet(rightCenter, rightVel + new Vector2( splitBurstX, splitBurstY));
+        // Average pre-split horizontal velocity — used to repel the passive droplet.
+        float avgVelX = (leftVel.x + rightVel.x) * 0.5f;
+
+        Vector2 vel0 = leftVel  + new Vector2(-splitBurstX, splitBurstY);
+        Vector2 vel1 = rightVel + new Vector2( splitBurstX, splitBurstY);
+
+        // Override only the passive droplet's horizontal velocity.
+        // No burst X on the passive — when still, it should receive zero horizontal force.
+        // When moving, it gets the mirrored speed so it flies in the opposite direction.
+        // Drag is never applied to inactive droplets (InputEnabled = false), so this
+        // velocity coasts naturally under gravity until the player takes control.
+        int passiveIdx = 1 - activeIdx;
+        if (passiveIdx == 0) vel0.x = -avgVelX * splitPassiveVelocityScale;
+        else                 vel1.x = -avgVelX * splitPassiveVelocityScale;
+
+        _droplets[0] = SpawnDroplet(leftCenter,  vel0);
+        _droplets[1] = SpawnDroplet(rightCenter, vel1);
 
         _isSplit        = true;
         _activeIdx      = 0;
-        _mergeCooldown  = 0.75f;
+        _mergeCooldown  = mergeCooldownDuration;
         _splitCoroutine = null;
         SetActiveDroplet(activeIdx);
 
@@ -235,6 +251,7 @@ public class PlayerSplitController : MonoBehaviour
         sp.moveForce           = mainPlayer.moveForce * 0.8f;
         sp.maxMoveSpeed        = mainPlayer.maxMoveSpeed;
         sp.moveDrag            = mainPlayer.moveDrag * 0.5f;
+        sp.passiveDragFraction = splitPassiveDragFraction;
         sp.airControlFraction  = mainPlayer.airControlFraction;
         sp.jumpForce           = mainPlayer.jumpForce * 0.85f;
         sp.baseGravityScale    = mainPlayer.baseGravityScale;
@@ -310,6 +327,7 @@ public class PlayerSplitController : MonoBehaviour
 
     private IEnumerator MergeCoroutine()
     {
+        _isMerging = true;
         _isSplit = false;
 
         // Disable input on both droplets and detach the ground-pound listener so
@@ -318,37 +336,23 @@ public class PlayerSplitController : MonoBehaviour
         _droplets[1].InputEnabled = false;
         _droplets[_activeIdx].OnGroundPoundLand -= OnActiveGroundPound;
 
-        // Re-read the passive droplet's authoritative rb.position now (end of any physics
-        // movement) rather than relying on _capturedMergePos, which may be stale if the
-        // passive droplet kept moving (e.g. falling) between the proximity trigger and here.
-        Vector2 mergePos    = _capturedMergePos;
+        // The full player is larger than the half-size droplets (bodyRadius vs bodyRadius/√2).
+        // Spawning at the droplet center would sink the bottom ring points into the platform.
+        // Shift up by the difference in vertical radii so the bottom of the full player sits
+        // where the bottom of the droplet was.
+        float dropletRadius = mainPlayer.bodyRadius / Mathf.Sqrt(2f);
+        float radiusLift    = (mainPlayer.bodyRadius - dropletRadius) * mainPlayer.domeHeightScale;
+        Vector2 mergePos    = _capturedMergePos + new Vector2(0f, radiusLift);
         Vector2 combinedVel = _capturedMergeVel;
-        {
-            int passiveIdx = 1 - _activeIdx;
-            var passive = _droplets[passiveIdx];
-            if (passive != null)
-            {
-                Vector2 pSum = Vector2.zero; int n = 0;
-                foreach (var rb in passive.Points) { pSum += rb.position; n++; }
-                if (n > 0) mergePos = pSum / n;
-            }
-            // Average velocity of both droplets so the reformed blob carries momentum.
-            Vector2 vSum = Vector2.zero; int vn = 0;
-            foreach (var d in _droplets)
-                if (d != null)
-                    foreach (var rb in d.Points) { vSum += rb.linearVelocity; vn++; }
-            if (vn > 0) combinedVel = vSum / vn;
-        }
 
-        DestroyDroplets();
-
-        // Determine face direction at the moment of merge.  Raw input is the most
-        // reliable signal; fall back to LastFaceDir if no key is held (e.g. the
-        // player drifted into range after releasing the directional key).
+        // Capture face direction BEFORE destroying droplets — after DestroyDroplets() the
+        // array entries are null and LastFaceDir would always fall back to 1f.
         float rawH = Input.GetAxisRaw("Horizontal");
         float activeFaceDir = rawH > 0.05f  ?  1f
                             : rawH < -0.05f ? -1f
                             : (_droplets[_activeIdx] != null ? _droplets[_activeIdx].LastFaceDir : 1f);
+
+        DestroyDroplets();
 
         // Unfreeze BEFORE writing rb.position — position writes on a frozen (simulated=false)
         // Rigidbody2D are silently discarded by the physics engine.
@@ -367,7 +371,7 @@ public class PlayerSplitController : MonoBehaviour
         StartCoroutine(DriveMergeArrivalPop(mainPlayer, 0.38f));
         StartCoroutine(DriveWiggle(mainPlayer, 0.55f));
 
-        _mergeCoroutine = null;
+        _isMerging = false;
         EventManager.PlayerMerge();
         yield break;
     }
@@ -451,14 +455,6 @@ public class PlayerSplitController : MonoBehaviour
                 _droplets[i] = null;
             }
         }
-    }
-
-    private Vector2 AverageVelocity(SoftBodyPlayer sp)
-    {
-        if (sp == null || sp.Points == null) return Vector2.zero;
-        Vector2 sum = Vector2.zero;
-        foreach (var rb in sp.Points) sum += rb.linearVelocity;
-        return sum / sp.Points.Length;
     }
 
     // Radial outward expansion using MergePopBlend — gives each newly spawned droplet

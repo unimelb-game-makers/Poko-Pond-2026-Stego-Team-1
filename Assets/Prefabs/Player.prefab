@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6292073163466076418}
   - component: {fileID: 8263349199459693501}
   - component: {fileID: 5635439805024734902}
+  - component: {fileID: 5289004033044655933}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -217,3 +218,15 @@ MonoBehaviour:
   mergeProximityRadius: 0.4
   mergePopDuration: 0.35
   pressureSquashDuration: 0.28
+--- !u!114 &5289004033044655933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687343749860754848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d5f7c852595c5498ef0ec44f647fad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLife
