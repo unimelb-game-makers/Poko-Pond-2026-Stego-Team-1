@@ -6,7 +6,7 @@ using UnityEngine.Events;
 //
 // SETUP
 //   1. Add this component to a GameObject with a BoxCollider2D (the visual footprint of the plate).
-//   2. Ensure the Player GameObject is on a Unity Layer named exactly "Player".
+//   2. Detection works with either a "Player" layer collider or the softbody "SoftBodyPoint" layer.
 //   3. Plate Id is auto-generated on placement — no manual work needed. Override it only if a
 //      specific listener needs a human-readable name (e.g. "door_01").
 //
@@ -96,7 +96,7 @@ public class PressurePlate : MonoBehaviour
             detectionCenter,
             detectionSize,
             0f,
-            LayerMask.GetMask("Player")
+            LayerMask.GetMask("Player", "SoftBodyPoint")
         );
 
         if (playerPresent && !_playerOver)

@@ -22,19 +22,16 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Start()
     {
-        // Find the player via SoftBodyPlayer component — avoids relying on a "Player" tag
-        // that may be absent after migrating away from the old PlayerMovement setup.
-        _softBody = FindFirstObjectByType<SoftBodyPlayer>();
-
-        if (_softBody == null)
-            Debug.LogWarning($"[DialogueTrigger] '{name}' could not find a SoftBodyPlayer in the scene.", this);
-
         if (interactPrompt != null) interactPrompt.SetActive(false);
     }
 
     private void Update()
     {
-        if (_softBody == null) return;
+        if (_softBody == null)
+        {
+            _softBody = FindFirstObjectByType<SoftBodyPlayer>();
+            if (_softBody == null) return;
+        }
 
         bool inRange = Vector2.Distance(transform.position, _softBody.Center) <= interactRadius;
 

@@ -174,10 +174,63 @@ public class SoftBodyPlayer : MonoBehaviour
     [Range(1f, 3f)]
     public float landingRestoreScale  = 1.8f;
 
+    // ── Ground Pound ──────────────────────────────────────────────────────
+    [Header("Ground Pound")]
+    [Tooltip("Downward velocity (m/s) set on every point when ground pound activates.")]
+    public float groundPoundDownForce      = 16f;
+    [Tooltip("Extra gravity scale added on top of maxGravityScale during the dive.")]
+    public float groundPoundGravityBoost   = 1f;
+    [Tooltip("Vertical flatten amplitude while diving.")]
+    public float groundPoundDiveCompress   = 0.10f;
+    [Tooltip("Horizontal spread amplitude while diving.")]
+    public float groundPoundDiveSpread     = 0.06f;
+    [Tooltip("Multiplier on landing squash amplitudes for a ground-pound impact.")]
+    public float groundPoundSquashMult     = 2.2f;
+    [Tooltip("Landing squash duration override for a ground-pound impact (seconds).")]
+    public float groundPoundSquashDuration = 0.38f;
+
+    // ── Animation — Split / Merge ─────────────────────────────────────────
+    [Header("Animation — Split / Merge")]
+    [Tooltip("How far equatorial points squeeze inward during the split pinch.")]
+    public float splitPinchInward    = 0.35f;
+    [Tooltip("How far top/bottom points stretch outward during the split pinch.")]
+    public float splitPinchVertical  = 0.20f;
+    [Tooltip("How far each half pushes outward once the seam opens.")]
+    public float splitSeparateAmount = 0.22f;
+    [Tooltip("Radial burst amplitude on merge / spawn pop.")]
+    public float mergePopOutward     = 0.22f;
+    [Tooltip("Power curve exponent on merge pop — higher = faster peak, softer tail.")]
+    public float mergePopFalloff     = 2.5f;
+
+    [Header("Animation — Activate")]
+    [Tooltip("Horizontal inward squeeze when this droplet becomes the active one (Tab switch).")]
+    public float activateSquashInward   = 0.08f;
+    [Tooltip("Vertical inward squeeze on Tab switch.")]
+    public float activateSquashVertical = 0.05f;
+
+    [Header("Animation — Wiggle")]
+    [Tooltip("Horizontal deformation amplitude of the post-split/merge tension wiggle.")]
+    public float wiggleAmplitude  = 0.10f;
+    [Tooltip("Oscillations per second for the tension wiggle.")]
+    public float wiggleFrequency  = 9f;
+
     // ── Public API ───────────────────────────────────────────────────────
-    public bool          IsGrounded { get; private set; }
-    public Vector2       Center     => _center;
-    public Rigidbody2D[] Points     => _rbs;
+    public bool          IsGrounded      { get; private set; }
+    public bool          IsGroundPounding { get; private set; }
+    public Vector2       Center          => _center;
+    public Rigidbody2D[] Points          => _rbs;
+
+    // Set by PlayerSplitController — false suppresses all input on passive droplet
+    public bool  InputEnabled        = true;
+    // Driven externally by PlayerSplitController via coroutine
+    public float SplitPinchBlend      = 0f;
+    public float MergePopBlend        = 0f;
+    public float PressureSquashBlend  = 0f;
+    public float ActivateSquashBlend  = 0f;
+    public float WiggleBlend          = 0f;
+
+    // Fires with average |impact velocity| when a ground-pound landing registers
+    public event System.Action<float> OnGroundPoundLand;
 
     // ── Private — Physics ────────────────────────────────────────────────
     private Rigidbody2D[]    _rbs;
@@ -232,6 +285,8 @@ public class SoftBodyPlayer : MonoBehaviour
     private float _pressureMultiplier = 1f;
     private float _restoreMultiplier  = 1f;
     private bool  _wasGrounded;
+    private bool  _groundPoundJustLanded;
+    private float _wigglePhase;
 
     // ── Private — Face ───────────────────────────────────────────────────
     private SpriteRenderer _faceRenderer;
@@ -258,6 +313,7 @@ public class SoftBodyPlayer : MonoBehaviour
     private void Update()
     {
         if (_frozen) return;
+        if (!InputEnabled) return;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _jumpQueued      = true;
@@ -269,7 +325,7 @@ public class SoftBodyPlayer : MonoBehaviour
     {
         if (_frozen) return;
 
-        _hInput = Input.GetAxisRaw("Horizontal");
+        _hInput = InputEnabled ? Input.GetAxisRaw("Horizontal") : 0f;
 
         ResolveCollisions();
         UpdateCenter();
@@ -280,6 +336,7 @@ public class SoftBodyPlayer : MonoBehaviour
         UpdateAnimationState(); // computes new _animOffsets, _pressureMultiplier, _restoreMultiplier
         HandleMovement();
         HandleJump();
+        HandleGroundPound();
         EnforceLevelBounds();
         EnforceNeighborConstraints();
 
@@ -290,6 +347,13 @@ public class SoftBodyPlayer : MonoBehaviour
     private void LateUpdate()
     {
         if (_frozen) return;
+        // Recompute center from the interpolated transform positions so the camera
+        // and mesh are driven by the same smooth value, not the FixedUpdate-stale _center.
+        // (rb.position bypasses interpolation; _pointGOs[i].transform.position uses it.)
+        Vector2 lateSum = Vector2.zero;
+        for (int i = 0; i < pointCount; i++)
+            lateSum += (Vector2)_pointGOs[i].transform.position;
+        _center = lateSum / pointCount;
         transform.position = _center;
         RebuildMesh();
         RebuildHighlight();
@@ -306,6 +370,58 @@ public class SoftBodyPlayer : MonoBehaviour
     {
         _frozen = false;
         foreach (var rb in _rbs) rb.simulated = true;
+    }
+
+    // Places the ring in its natural resting shape centered at newCenter and sets velocity.
+    // Sets both rb.position and transform.position so the visual is immediately correct.
+    // Must be called AFTER Unfreeze() so rb.position writes are respected by the physics engine.
+    public void TeleportTo(Vector2 newCenter, Vector2 velocity)
+    {
+        for (int i = 0; i < pointCount; i++)
+        {
+            Vector2 p = newCenter + _offsets[i];
+            _rbs[i].position      = p;
+            _rbs[i].linearVelocity = velocity;
+            _pointGOs[i].transform.position = p;
+        }
+        _center            = newCenter;
+        transform.position = newCenter;
+    }
+
+    // Returns the visual centre and average velocity of each half at the moment of split.
+    // Uses interpolated transform positions so the spawn location matches what's on screen.
+    public void GetHalfState(
+        out Vector2 leftCenter,  out Vector2 rightCenter,
+        out Vector2 leftVelocity, out Vector2 rightVelocity)
+    {
+        Vector2 lc = Vector2.zero, rc = Vector2.zero;
+        Vector2 lv = Vector2.zero, rv = Vector2.zero;
+        int ln = 0, rn = 0;
+
+        for (int i = 0; i < pointCount; i++)
+        {
+            Vector2 pos = _pointGOs[i].transform.position;
+            Vector2 vel = _rbs[i].linearVelocity;
+            if (pos.x <= _center.x) { lc += pos; lv += vel; ln++; }
+            else                     { rc += pos; rv += vel; rn++; }
+        }
+
+        leftCenter    = ln > 0 ? lc / ln : _center + Vector2.left  * bodyRadius * 0.5f;
+        rightCenter   = rn > 0 ? rc / rn : _center + Vector2.right * bodyRadius * 0.5f;
+        leftVelocity  = ln > 0 ? lv / ln : Vector2.zero;
+        rightVelocity = rn > 0 ? rv / rn : Vector2.zero;
+    }
+
+    public void SetVisible(bool visible)
+    {
+        GetComponent<MeshRenderer>().enabled = visible;
+        if (_highlightRenderer != null) _highlightRenderer.enabled = visible;
+        if (_faceRenderer      != null) _faceRenderer.enabled      = visible;
+    }
+
+    public void SetFaceVisible(bool visible)
+    {
+        if (_faceRenderer != null) _faceRenderer.enabled = visible;
     }
 
     // ── Spawn ─────────────────────────────────────────────────────────────
@@ -429,7 +545,8 @@ public class SoftBodyPlayer : MonoBehaviour
         _faceRenderer                  = go.AddComponent<SpriteRenderer>();
         _faceRenderer.sprite           = faceRightSprite != null ? faceRightSprite : faceLeftSprite;
         _faceRenderer.sortingLayerName = sortingLayerName;
-        _faceRenderer.sortingOrder     = faceSortingOrder;
+        // Highlight renders at sortingOrder+1 — face must be above it (at least +2)
+        _faceRenderer.sortingOrder     = Mathf.Max(faceSortingOrder, sortingOrder + 2);
     }
 
     private void UpdateFace()
@@ -643,6 +760,30 @@ public class SoftBodyPlayer : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
 
+    private void HandleGroundPound()
+    {
+        if (!InputEnabled) return;
+
+        if (!IsGrounded && Input.GetKey(KeyCode.C) && !IsGroundPounding)
+        {
+            IsGroundPounding     = true;
+            _currentGravityScale = maxGravityScale + groundPoundGravityBoost;
+            foreach (var rb in _rbs)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, -groundPoundDownForce);
+        }
+
+        if (IsGroundPounding && IsGrounded)
+        {
+            float impactVel = 0f;
+            foreach (var rb in _rbs) impactVel += Mathf.Abs(rb.linearVelocity.y);
+            impactVel /= pointCount;
+
+            IsGroundPounding       = false;
+            _groundPoundJustLanded = true;
+            OnGroundPoundLand?.Invoke(impactVel);
+        }
+    }
+
     private void EnforceLevelBounds()
     {
         if (levelBounds == null) return;
@@ -748,11 +889,19 @@ public class SoftBodyPlayer : MonoBehaviour
 
         _wasGrounded = IsGrounded;
 
+        // Ground-pound landing: override timer from previous tick's HandleGroundPound
+        if (_groundPoundJustLanded)
+        {
+            _landingTimer          = groundPoundSquashDuration;
+            _groundPoundJustLanded = false;
+        }
+
         // Target blend values
         bool isMoving  = Mathf.Abs(_hInput) > 0.05f;
         bool isIdle    = IsGrounded && !isMoving;
         float riseTarget = IsGrounded ? 0f : Mathf.Clamp01(avgVY / Mathf.Max(riseVelocityFull, 0.01f));
-        float fallTarget = IsGrounded ? 0f : Mathf.Clamp01(-avgVY / Mathf.Max(fallVelocityFull, 0.01f));
+        // Fall blend is replaced by dive compress anim while ground-pounding
+        float fallTarget = (IsGrounded || IsGroundPounding) ? 0f : Mathf.Clamp01(-avgVY / Mathf.Max(fallVelocityFull, 0.01f));
 
         float blendStep = animBlendSpeed * dt;
         _idleBlend  = Mathf.MoveTowards(_idleBlend,  isIdle  ? 1f : 0f, blendStep);
@@ -769,6 +918,8 @@ public class SoftBodyPlayer : MonoBehaviour
         _idlePhase += idleBobFrequency * dt;
         if (IsGrounded)
             _moveBobPhase += Mathf.Abs(_hInput) * moveBobFrequency * dt;
+        if (WiggleBlend > 0.001f)
+            _wigglePhase += wiggleFrequency * dt;
 
         // Scale physics forces so animations aren't fought by pressure during landing.
         // Rise also relaxes pressure slightly to let the vertical stretch breathe.
@@ -832,6 +983,64 @@ public class SoftBodyPlayer : MonoBehaviour
             {
                 anim.x += cosA *  landingSquashSpread   * _landingSquashT;
                 anim.y += sinA * -landingSquashFlatten  * _landingSquashT;
+            }
+
+            // ── Ground pound dive: flatten vertically, spread horizontally ────────
+            if (IsGroundPounding)
+            {
+                anim.x += cosA *  groundPoundDiveSpread;
+                anim.y += sinA * -groundPoundDiveCompress;
+            }
+
+            // ── Split: vertical seam forms top-to-bottom, then halves peel apart ──
+            if (SplitPinchBlend > 0.001f)
+            {
+                float blend = SplitPinchBlend;
+
+                // Squeeze the midline inward and stretch the poles — forms hourglass
+                anim.x += cosA * -splitPinchInward   * blend;
+                anim.y += sinA *  splitPinchVertical * blend;
+
+                // Halves peel apart — upper points lead, lower points follow.
+                // topBias: 1 at crown (sinA=1), 0.4 at base (sinA=-1), so the tear
+                // starts at the top and cascades downward.
+                float topBias  = Mathf.Lerp(0.4f, 1.0f, (sinA + 1f) * 0.5f);
+                float sepBlend = Mathf.Clamp01((blend - 0.25f) / 0.75f) * topBias;
+                float side     = cosA >= 0f ? 1f : -1f;
+                anim.x += side * splitSeparateAmount * sepBlend;
+            }
+
+            // ── Merge pop: radial expansion burst ────────────────────────────────
+            // Power curve gives a fast peak and a soft settling tail.
+            if (MergePopBlend > 0.001f)
+            {
+                float popT = Mathf.Pow(MergePopBlend, 1f / mergePopFalloff);
+                anim += radial * (mergePopOutward * popT);
+            }
+
+            // ── Pressure squash: amplified landing squash on active ground-pound ─
+            // Accumulates on top of _landingSquashT so both can be active at once.
+            if (PressureSquashBlend > 0.001f)
+            {
+                float extra = Mathf.Lerp(0f, groundPoundSquashMult - 1f, PressureSquashBlend);
+                anim.x += cosA *  (landingSquashSpread  * extra * PressureSquashBlend);
+                anim.y += sinA * -(landingSquashFlatten * extra * PressureSquashBlend);
+            }
+
+            // ── Activate squash: quick inward squeeze on Tab switch ────────────
+            if (ActivateSquashBlend > 0.001f)
+            {
+                anim.x += cosA * -activateSquashInward   * ActivateSquashBlend;
+                anim.y += sinA * -activateSquashVertical * ActivateSquashBlend;
+            }
+
+            // ── Tension wiggle: dampened horizontal oscillation post-split/merge ─
+            // cosA * sin(phase) makes left/right halves oscillate out of phase,
+            // producing a lateral jello-like squeeze that decays with WiggleBlend.
+            if (WiggleBlend > 0.001f)
+            {
+                float wiggleSin = Mathf.Sin(_wigglePhase * Mathf.PI * 2f);
+                anim.x += cosA * wiggleAmplitude * wiggleSin * WiggleBlend;
             }
 
             _animOffsets[i] = anim;
@@ -909,7 +1118,7 @@ public class SoftBodyPlayer : MonoBehaviour
         int N = pointCount, S = subdivisionsPerSegment;
 
         for (int i = 0; i < N; i++)
-            _preSmoothA[i] = _rbs[i].position;
+            _preSmoothA[i] = _pointGOs[i].transform.position;
 
         for (int pass = 0; pass < meshSmoothingPasses; pass++)
         {

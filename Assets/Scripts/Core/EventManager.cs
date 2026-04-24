@@ -19,4 +19,10 @@ public static class EventManager
 
     internal static void PressurePlateActivated(string id)   => OnPressurePlateActivated?.Invoke(id);
     internal static void PressurePlateDeactivated(string id) => OnPressurePlateDeactivated?.Invoke(id);
+
+    public static event Action OnPlayerSplit;
+    public static event Action OnPlayerMerge;
+
+    internal static void PlayerSplit() => OnPlayerSplit?.Invoke();
+    internal static void PlayerMerge() => OnPlayerMerge?.Invoke();
 }
