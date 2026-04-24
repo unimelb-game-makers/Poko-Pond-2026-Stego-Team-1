@@ -10,10 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1826456579780757061}
   - component: {fileID: 5821284918770280691}
-  - component: {fileID: 6459900033612933701}
   - component: {fileID: 6774942184220141190}
   - component: {fileID: 1182218713881190306}
-  - component: {fileID: 7076613068405887169}
   - component: {fileID: 5417218318700027283}
   m_Layer: 0
   m_Name: SoftBody_Player
@@ -101,29 +99,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &6459900033612933701
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389786131885317091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 4873177907699591838}
-  m_BoneTransforms:
-  - {fileID: 4873177907699591838}
-  - {fileID: 4092044932648877686}
-  - {fileID: 617067294912065084}
-  - {fileID: 6298530501883963008}
-  m_Bounds:
-    m_Center: {x: -41.8126, y: -3.8408396, z: 0}
-    m_Extent: {x: 1.5933533, y: 1.5919001, z: 0}
-  m_AlwaysUpdate: 1
-  m_AutoRebind: 0
+
 --- !u!50 &6774942184220141190
 Rigidbody2D:
   serializedVersion: 5
@@ -187,25 +163,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.00003503263, y: 0.0000100284815}
   m_Radius: 0.15
---- !u!114 &7076613068405887169
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389786131885317091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45987a99848b646ecaf97a7b2f455336, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  jumpForce: 14
-  gravity: -30
-  groundSkin: 0.05
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
+
 --- !u!70 &5417218318700027283
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

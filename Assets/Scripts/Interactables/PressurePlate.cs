@@ -1,47 +1,51 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-// Pressure plate that activates when the player walks over it and deactivates when they leave.
-// Detection is handled via Physics2D.OverlapBox each frame — no Rigidbody2D required on the player.
-//
-// SETUP
-//   1. Add this component to a GameObject with a BoxCollider2D (the visual footprint of the plate).
-//   2. Ensure the Player GameObject is on a Unity Layer named exactly "Player".
-//   3. Plate Id is auto-generated on placement — no manual work needed. Override it only if a
-//      specific listener needs a human-readable name (e.g. "door_01").
-//
-// HOOKING UP EVENTS (Inspector)
-//   - On Activated   → drag any GameObject/component here and choose a method to call when stepped on.
-//   - On Deactivated → same, called when the player steps off (skipped if One Shot is enabled).
-//   Example: drag a Door GameObject and call Door.Open() on Activated, Door.Close() on Deactivated.
-//
-// HOOKING UP EVENTS (Code)
-//   Subscribe to EventManager.OnPressurePlateActivated / OnPressurePlateDeactivated.
-//   Both pass the plate's id string so you can tell plates apart:
-//       EventManager.OnPressurePlateActivated += id => { if (id == "door_01") OpenDoor(); };
-//
-// ONE SHOT MODE
-//   Tick One Shot to keep the plate permanently activated after the first step.
-//   Deactivated will never fire, and subsequent steps are ignored.
-//
-// ANIMATIONS
-//   Attach an Animator component and assign a controller with one Bool parameter:
-//       "IsPressed" — true while the plate is in its pressed state (including locked one-shot).
-//   Recommended state machine:
-//       Idle → Press anim (IsPressed = true,  Has Exit Time = false) → Pressed Hold (loop)
-//       Pressed Hold → Release anim (IsPressed = false, Has Exit Time = false) → Idle
-//   Disable Loop Time on the Press and Release clips — the Pressed Hold state provides the hold.
-//   The Animator is optional — the plate works without one.
-//
-// PRESSED SPRITE
-//   Assign Pressed Sprite in the inspector for a guaranteed visual even without a full animator setup.
-//   The SpriteRenderer sprite is swapped directly, so the plate always looks correct regardless of
-//   the current animator state — useful as a fallback and when quickly toggling on/off.
-//
-// DETECTION TUNING
-//   Detection Height controls how tall the overlap zone is above the plate.
-//   Increase it if activation flickers (player collider only briefly intersects the thin plate).
-//   Decrease it if nearby objects above the plate trigger it unintentionally.
+/*
+ * OVERVIEW
+ *   Pressure plate that activates when the player steps on it and deactivates when
+ *   they leave.  Detection uses Physics2D.OverlapBox each frame — no trigger collider
+ *   or Rigidbody2D on the player is required.
+ *
+ * SETUP
+ *   1. Add this component to a GameObject that has a BoxCollider2D (the plate footprint).
+ *   2. Detection works with both the "Player" layer and the softbody "SoftBodyPoint"
+ *      layer, so it responds correctly whether the player is whole or split.
+ *   3. Plate Id is auto-generated (GUID) when this component is first added in the
+ *      Editor.  Override it only when a listener needs a stable, human-readable name.
+ *
+ * HOOKING UP EVENTS — Inspector
+ *   On Activated   → drag any GameObject/component and choose a method to call.
+ *   On Deactivated → same, fires when the player leaves (skipped in One Shot mode).
+ *   Example: drag a Door and wire Door.Open() / Door.Close() to the two events.
+ *
+ * HOOKING UP EVENTS — Code
+ *   Subscribe via EventManager:
+ *       EventManager.OnPressurePlateActivated   += id => { if (id == "door_01") OpenDoor(); };
+ *       EventManager.OnPressurePlateDeactivated += id => { ... };
+ *   Both events pass the plate's id so multiple plates can share one handler.
+ *
+ * ONE SHOT MODE
+ *   Tick One Shot to lock the plate in its pressed state permanently after the first
+ *   step.  OnDeactivated never fires, and re-treading the plate does nothing.
+ *
+ * ANIMATIONS
+ *   Attach an Animator with a Bool parameter named "IsPressed":
+ *       Idle → Press anim  (IsPressed = true,  Has Exit Time = false) → Pressed Hold (loop)
+ *       Pressed Hold → Release anim  (IsPressed = false, Has Exit Time = false) → Idle
+ *   Disable Loop Time on the Press and Release clips — Pressed Hold provides the hold.
+ *   The Animator is optional; the plate functions correctly without one.
+ *
+ * PRESSED SPRITE
+ *   Assign Pressed Sprite for a guaranteed visual without a full Animator.  The sprite
+ *   is swapped directly on the SpriteRenderer, so the plate always looks correct
+ *   regardless of animator state — handy as a fallback or for simple on/off plates.
+ *
+ * DETECTION TUNING
+ *   Detection Height controls how tall the overlap zone is above the plate surface.
+ *   Increase it if activation flickers (the player barely clips the thin plate).
+ *   Decrease it if objects above the plate trigger it unintentionally.
+ */
 
 public class PressurePlate : MonoBehaviour
 {
@@ -68,7 +72,6 @@ public class PressurePlate : MonoBehaviour
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
     private Sprite _normalSprite;
-    private bool _activated;
     private bool _playerOver;
     private bool _lockedPressed; // set on first exit when oneShot=true — plate stays pressed permanently
 
@@ -97,7 +100,7 @@ public class PressurePlate : MonoBehaviour
             detectionCenter,
             detectionSize,
             0f,
-            LayerMask.GetMask("Player")
+            LayerMask.GetMask("Player", "SoftBodyPoint")
         );
 
         if (playerPresent && !_playerOver)
@@ -112,7 +115,6 @@ public class PressurePlate : MonoBehaviour
         _playerOver = true;
         if (_lockedPressed) return; // one-shot already fired, nothing left to do
 
-        _activated = true;
         SetPressedVisual(true);
         EventManager.PressurePlateActivated(plateId);
         onActivated?.Invoke();
@@ -131,7 +133,6 @@ public class PressurePlate : MonoBehaviour
             return;
         }
 
-        _activated = false;
         SetPressedVisual(false);
         EventManager.PressurePlateDeactivated(plateId);
         onDeactivated?.Invoke();
