@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8431526453316083615}
   - component: {fileID: 6292073163466076418}
   - component: {fileID: 8263349199459693501}
+  - component: {fileID: 5635439805024734902}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -163,6 +164,27 @@ MonoBehaviour:
   animBlendSpeed: 11
   landingPressureScale: 0.2
   landingRestoreScale: 1.8
+  groundPoundDownForce: 16
+  groundPoundGravityBoost: 1
+  groundPoundDiveCompress: 0.1
+  groundPoundDiveSpread: 0.06
+  groundPoundSquashMult: 2.2
+  groundPoundSquashDuration: 0.38
+  splitPinchInward: 0.35
+  splitPinchVertical: 0.2
+  splitSeparateAmount: 0.22
+  mergePopOutward: 0.22
+  mergePopFalloff: 2.5
+  activateSquashInward: 0.08
+  activateSquashVertical: 0.05
+  wiggleAmplitude: 0.1
+  wiggleFrequency: 9
+  InputEnabled: 1
+  SplitPinchBlend: 0
+  MergePopBlend: 0
+  PressureSquashBlend: 0
+  ActivateSquashBlend: 0
+  WiggleBlend: 0
 --- !u!114 &8263349199459693501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,3 +197,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92d6b68e27d7918458c0b0017e53cb2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDialogueHandler
+--- !u!114 &5635439805024734902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687343749860754848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e40e293a65b4437cb5027762360cd3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSplitController
+  mainPlayer: {fileID: 6292073163466076418}
+  cameraProxy: {fileID: 0}
+  splitBurstX: 2.5
+  splitBurstY: 1.5
+  splitPinchDuration: 0.3
+  mergeProximityRadius: 0.4
+  mergePopDuration: 0.35
+  pressureSquashDuration: 0.28

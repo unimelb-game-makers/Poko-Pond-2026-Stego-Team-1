@@ -2790,44 +2790,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1790496137 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-  m_PrefabInstance: {fileID: 4406728791540306881}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1790496138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1790496137}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e40e293a65b4437cb5027762360cd3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerSplitController
-  mainPlayer: {fileID: 1790496139}
-  cameraProxy: {fileID: 197796189}
-  splitBurstX: 2.5
-  splitBurstY: 1.5
-  splitPinchDuration: 0.3
-  mergeProximityRadius: 0.4
-  mergePopDuration: 0.35
-  pressureTransferScale: 1
-  pressureLaunchMinY: 2
-  pressureSquashDuration: 0.28
---- !u!114 &1790496139 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-  m_PrefabInstance: {fileID: 4406728791540306881}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1790496137}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50284328eea664381bb94ffe56ada202, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftBodyPlayer
 --- !u!1 &1807380257
 GameObject:
   m_ObjectHideFlags: 0
@@ -2949,7 +2911,7 @@ Transform:
   m_GameObject: {fileID: 1807380257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.027717, y: 0.89993995, z: -10}
+  m_LocalPosition: {x: 11.014021, y: 0.89993995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3124,10 +3086,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Background
       objectReference: {fileID: 0}
-    - target: {fileID: 4031188047467641964, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7201325860129015246, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: cam
       value: 
@@ -3225,10 +3183,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3141187657122812378, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
-      propertyPath: oneShot
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8068085154840443471, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_Name
       value: PressurePlate
@@ -3286,34 +3240,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: faceBias
-      value: 0.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: jumpForce
-      value: 15
-      objectReference: {fileID: 0}
+    - target: {fileID: 5635439805024734902, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
+      propertyPath: cameraProxy
+      value: 
+      objectReference: {fileID: 197796189}
     - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: levelBounds
       value: 
       objectReference: {fileID: 62156859}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: animBlendSpeed
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: faceLeftSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 94619bf52ecf84d51a095e62c7905bfa, type: 3}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: moveLeanAmount
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      propertyPath: faceRightSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 4383165d6432f429dbf30910fdbbbf87, type: 3}
     - target: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3321,10 +3255,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1790496138}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
 --- !u!1001 &6130530337058188490
 PrefabInstance:
