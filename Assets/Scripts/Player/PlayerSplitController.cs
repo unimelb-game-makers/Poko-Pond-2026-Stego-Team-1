@@ -1,10 +1,50 @@
 using System.Collections;
 using UnityEngine;
 
+/*
+ * OVERVIEW
+ *   Orchestrates the split, merge, and pressure-transfer mechanics for the
+ *   softbody water-droplet player.  Attach to the same GameObject as the main
+ *   SoftBodyPlayer (or any persistent manager GO in the scene).
+ *
+ * SCENE SETUP
+ *   1. Assign Main Player  → the scene's SoftBodyPlayer GameObject
+ *   2. Assign Camera Proxy → the CameraFollowProxy that Cinemachine follows
+ *
+ * KEY BINDINGS
+ *   Left Shift   → split into two half-size droplets
+ *   Tab          → swap which droplet is active (camera pans across)
+ *   C (airborne) → ground pound on the active droplet
+ *   Auto         → droplets merge when their centres come within mergeProximityRadius
+ *
+ * SPLIT BEHAVIOUR
+ *   - The droplet that faces the same direction as the player was facing becomes active.
+ *   - Both droplets inherit all physics and visual settings from mainPlayer, scaled to
+ *     half mass / half area.
+ *   - A short body-alpha fade-out plays before the split; a spawn-pop plays after.
+ *
+ * MERGE BEHAVIOUR
+ *   - Proximity is polled every FixedUpdate; the passive droplet's exact rb.position is
+ *     captured the moment the threshold is crossed.
+ *   - mainPlayer is teleported to that position after the droplets are destroyed,
+ *     then fades in.  The camera smooth-damps across the gap to avoid a snap.
+ *   - The merged droplet inherits the active droplet's face direction.
+ *
+ * PRESSURE TRANSFER
+ *   - When the active droplet ground-pounds, the passive droplet is launched upward
+ *     at exactly its own jumpForce — a fixed, predictable height every time.
+ *   - The passive droplet must be grounded; holding C cannot repeatedly air-launch it.
+ *
+ * EVENTS  (see EventManager)
+ *   EventManager.OnPlayerSplit  — fired at the end of every successful split
+ *   EventManager.OnPlayerMerge  — fired at the end of every merge
+ */
 public class PlayerSplitController : MonoBehaviour
 {
     [Header("References")]
-    public SoftBodyPlayer   mainPlayer;
+    [Tooltip("The main SoftBodyPlayer — hidden while split, restored on merge.")]
+    public SoftBodyPlayer    mainPlayer;
+    [Tooltip("CameraFollowProxy that Cinemachine tracks. Receives UpdateTarget / SwitchTarget calls.")]
     public CameraFollowProxy cameraProxy;
 
     [Header("Split")]
@@ -13,29 +53,32 @@ public class PlayerSplitController : MonoBehaviour
     [Tooltip("Upward burst speed given to each droplet on split.")]
     public float splitBurstY        = 1.0f;
     [Tooltip("Duration of the pinch animation before the split fires (seconds).")]
-    public float splitPinchDuration = 0.15f;
+    public float splitPinchDuration = 0.03f;
 
     [Header("Merge")]
     [Tooltip("Distance between droplet centres that triggers auto-merge (world units).")]
     public float mergeProximityRadius = 0.4f;
     [Tooltip("Duration of the merge pop animation (seconds).")]
-    public float mergePopDuration     = 0.35f;
+    public float mergePopDuration     = 0.06f;
 
     [Header("Pressure Transfer")]
-    [Tooltip("Impact velocity is multiplied by this to determine the passive droplet's launch speed.")]
-    public float pressureTransferScale  = 0.9f;
-    [Tooltip("Minimum upward launch speed on pressure transfer even for a light hit.")]
-    public float pressureLaunchMinY     = 2f;
     [Tooltip("Duration of the extra squash on the active droplet after a pressure transfer (seconds).")]
     public float pressureSquashDuration = 0.28f;
 
     // ── Runtime state ────────────────────────────────────────────────────
-    private SoftBodyPlayer[] _droplets  = new SoftBodyPlayer[2];
+
+    private SoftBodyPlayer[] _droplets  = new SoftBodyPlayer[2]; // [0] = left, [1] = right
     private int              _activeIdx = 0;
     private bool             _isSplit;
     private Coroutine        _splitCoroutine;
     private Coroutine        _mergeCoroutine;
-    private float            _mergeCooldown;
+    private float            _mergeCooldown; // prevents immediate re-merge after split
+
+    // Captured directly from rb.position in FixedUpdate the moment proximity triggers.
+    // Using rb.position rather than the cached _center avoids a one-physics-step lag
+    // that would place mainPlayer at the wrong location when the passive droplet is moving.
+    private Vector2 _capturedMergePos;
+    private Vector2 _capturedMergeVel;
 
     // ─────────────────────────────────────────────────────────────────────
 
@@ -98,52 +141,50 @@ public class PlayerSplitController : MonoBehaviour
         if (_mergeCooldown > 0f) return;
 
         if (Vector2.Distance(_droplets[0].Center, _droplets[1].Center) < mergeProximityRadius)
+        {
+            // Read the passive droplet's position directly from rb.position (authoritative physics
+            // position) right now, before any coroutine delay or _center caching can diverge.
+            int passiveIdx = 1 - _activeIdx;
+            var passive = _droplets[passiveIdx];
+            Vector2 posSum = Vector2.zero;
+            Vector2 velSum = Vector2.zero;
+            int     n      = 0;
+            foreach (var rb in passive.Points) { posSum += rb.position; velSum += rb.linearVelocity; n++; }
+            _capturedMergePos = n > 0 ? posSum / n : passive.Center;
+            // Average velocity of both droplets for the reformed blob
+            velSum = Vector2.zero; n = 0;
+            foreach (var d in _droplets)
+                if (d != null)
+                    foreach (var rb in d.Points) { velSum += rb.linearVelocity; n++; }
+            _capturedMergeVel = n > 0 ? velSum / n : Vector2.zero;
+
             _mergeCoroutine = StartCoroutine(MergeCoroutine());
+        }
     }
 
     // ── Split ─────────────────────────────────────────────────────────────
 
     private IEnumerator SplitCoroutine()
     {
-        // Phase 1 — ease-in rise to full tear (80% of duration)
-        float riseDur = splitPinchDuration * 0.80f;
-        float t = 0f;
-        while (t < riseDur)
-        {
-            t += Time.deltaTime;
-            float n = Mathf.Clamp01(t / riseDur);
-            // Ease-in quad: quick build, slows as it reaches the peak
-            mainPlayer.SplitPinchBlend = 1f - (1f - n) * (1f - n);
-            yield return null;
-        }
-        mainPlayer.SplitPinchBlend = 1f;
+        // Fade out the main player before splitting for a smooth visual transition.
+        yield return StartCoroutine(DriveBodyFade(mainPlayer, 1f, 0f, 0.06f));
 
-        // Phase 2 — hold at peak so the tear is clearly visible (20% of duration)
-        t = 0f;
-        float holdDur = splitPinchDuration * 0.20f;
-        while (t < holdDur)
-        {
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        // Sample the actual visual half-positions at peak animation for seamless spawn
+        // Sample the visual half-positions at this exact moment so the spawned
+        // droplets appear exactly where the two halves of the body currently are.
         mainPlayer.GetHalfState(
             out Vector2 leftCenter,  out Vector2 rightCenter,
             out Vector2 leftVel,     out Vector2 rightVel);
 
-        // Particles burst sideways from the seam before the droplets spawn
-        WaterParticleEffect.PlaySplit(
-            mainPlayer.Center,
-            mainPlayer.bodyOuterColor,
-            mainPlayer.sortingLayerName,
-            mainPlayer.sortingOrder + 1);
+        // Active droplet matches the direction the player was facing:
+        // facing right → right droplet (index 1), facing left → left droplet (index 0).
+        float preSplitFaceDir = mainPlayer.LastFaceDir;
+        int   activeIdx       = preSplitFaceDir > 0f ? 1 : 0;
 
         mainPlayer.SplitPinchBlend = 0f;
+        mainPlayer.SetBodyAlpha(1f); // reset alpha so mainPlayer reappears correctly on merge
         mainPlayer.Freeze();
         mainPlayer.SetVisible(false);
 
-        // Spawn both half-size droplets at their exact visual half-positions
         _droplets[0] = SpawnDroplet(leftCenter,  leftVel  + new Vector2(-splitBurstX, splitBurstY));
         _droplets[1] = SpawnDroplet(rightCenter, rightVel + new Vector2( splitBurstX, splitBurstY));
 
@@ -151,22 +192,28 @@ public class PlayerSplitController : MonoBehaviour
         _activeIdx      = 0;
         _mergeCooldown  = 0.75f;
         _splitCoroutine = null;
-        SetActiveDroplet(0);
+        SetActiveDroplet(activeIdx);
 
-        // Birth pop then tension wiggle — each droplet bursts out then jiggles
+        // Push the pre-split face direction into the active droplet immediately so the
+        // sprite is correct on the first frame before UpdateFace has a chance to run.
+        _droplets[activeIdx].InitFaceDirection(preSplitFaceDir);
+
+        // Birth pop (radial expansion) then dampened wiggle on both droplets.
         StartCoroutine(DriveSpawnPop(_droplets[0], 0.28f));
         StartCoroutine(DriveSpawnPop(_droplets[1], 0.28f));
         StartCoroutine(DriveWiggle(_droplets[0], 0.50f));
         StartCoroutine(DriveWiggle(_droplets[1], 0.50f));
 
         EventManager.PlayerSplit();
+        yield break;
     }
 
+    // Creates a half-size SoftBodyPlayer at runtime, copying all settings from mainPlayer.
+    // go.SetActive(false) before AddComponent so Awake does not fire until all fields are
+    // assigned.  MeshFilter and MeshRenderer must be added manually because [RequireComponent]
+    // only auto-adds in the Editor — it has no effect during runtime AddComponent calls.
     private SoftBodyPlayer SpawnDroplet(Vector2 center, Vector2 initialVelocity)
     {
-        // SetActive(false) before AddComponent so Awake doesn't fire until fields are set.
-        // MeshFilter and MeshRenderer must be added manually — [RequireComponent] is editor-only
-        // and does not auto-add dependencies when using AddComponent at runtime.
         var go = new GameObject("SplitDroplet");
         go.SetActive(false);
         go.AddComponent<MeshFilter>();
@@ -174,19 +221,20 @@ public class PlayerSplitController : MonoBehaviour
 
         var sp = go.AddComponent<SoftBodyPlayer>();
 
+        // ── Physics — scaled to half mass / half area ─────────────────────
         sp.pointCount          = mainPlayer.pointCount;
-        sp.bodyRadius          = mainPlayer.bodyRadius / Mathf.Sqrt(2f);
+        sp.bodyRadius          = mainPlayer.bodyRadius / Mathf.Sqrt(2f); // half area = radius / √2
         sp.domeHeightScale     = mainPlayer.domeHeightScale;
         sp.pointMass           = mainPlayer.pointMass * 0.5f;
         sp.pointRadius         = mainPlayer.pointRadius;
         sp.softBodyPointLayer  = mainPlayer.softBodyPointLayer;
         sp.springFrequency     = mainPlayer.springFrequency;
         sp.springDamping       = mainPlayer.springDamping;
-        sp.restoreForce        = mainPlayer.restoreForce  * 0.5f;  // scale with halved pointMass
-        sp.pressureForce       = mainPlayer.pressureForce * 0.5f;  // scale with halved pointMass
+        sp.restoreForce        = mainPlayer.restoreForce  * 0.5f; // proportional to pointMass
+        sp.pressureForce       = mainPlayer.pressureForce * 0.5f;
         sp.moveForce           = mainPlayer.moveForce * 0.8f;
         sp.maxMoveSpeed        = mainPlayer.maxMoveSpeed;
-        sp.moveDrag            = mainPlayer.moveDrag * 0.5f;       // scale with halved pointMass
+        sp.moveDrag            = mainPlayer.moveDrag * 0.5f;
         sp.airControlFraction  = mainPlayer.airControlFraction;
         sp.jumpForce           = mainPlayer.jumpForce * 0.85f;
         sp.baseGravityScale    = mainPlayer.baseGravityScale;
@@ -195,9 +243,9 @@ public class PlayerSplitController : MonoBehaviour
         sp.groundLayer         = mainPlayer.groundLayer;
         sp.groundCheckFraction = mainPlayer.groundCheckFraction;
         sp.levelBounds         = mainPlayer.levelBounds;
-        sp.boundaryForce       = mainPlayer.boundaryForce * 0.5f;  // scale with halved pointMass
+        sp.boundaryForce       = mainPlayer.boundaryForce * 0.5f;
 
-        // Anim params
+        // ── Animation ─────────────────────────────────────────────────────
         sp.idleBobAmplitude        = mainPlayer.idleBobAmplitude;
         sp.idleBobFrequency        = mainPlayer.idleBobFrequency;
         sp.moveLeanAmount          = mainPlayer.moveLeanAmount;
@@ -226,7 +274,7 @@ public class PlayerSplitController : MonoBehaviour
         sp.mergePopOutward         = mainPlayer.mergePopOutward;
         sp.mergePopFalloff         = mainPlayer.mergePopFalloff;
 
-        // Rendering
+        // ── Rendering ─────────────────────────────────────────────────────
         sp.bodyMaterial           = mainPlayer.bodyMaterial;
         sp.sortingLayerName       = mainPlayer.sortingLayerName;
         sp.sortingOrder           = mainPlayer.sortingOrder;
@@ -238,7 +286,7 @@ public class PlayerSplitController : MonoBehaviour
         sp.highlightScale         = mainPlayer.highlightScale;
         sp.highlightOffset        = mainPlayer.highlightOffset;
 
-        // Face — half scale to match the smaller body
+        // ── Face — half scale to match the smaller body ───────────────────
         sp.faceRightSprite  = mainPlayer.faceRightSprite;
         sp.faceLeftSprite   = mainPlayer.faceLeftSprite;
         sp.faceBias         = mainPlayer.faceBias;
@@ -250,7 +298,7 @@ public class PlayerSplitController : MonoBehaviour
         sp.wiggleFrequency  = mainPlayer.wiggleFrequency;
 
         go.transform.position = center;
-        go.SetActive(true);  // Awake fires here with all fields correctly set
+        go.SetActive(true); // Awake fires here — all fields are set, so SpawnPoints runs correctly
 
         foreach (var rb in sp.Points)
             rb.linearVelocity = initialVelocity;
@@ -264,106 +312,96 @@ public class PlayerSplitController : MonoBehaviour
     {
         _isSplit = false;
 
+        // Disable input on both droplets and detach the ground-pound listener so
+        // no further pressure transfers can fire mid-merge.
         _droplets[0].InputEnabled = false;
         _droplets[1].InputEnabled = false;
         _droplets[_activeIdx].OnGroundPoundLand -= OnActiveGroundPound;
 
-        // Capture merge midpoint for particles (before any position changes)
-        Vector2 particlePos = Vector2.zero;
-        int pCount = 0;
-        for (int i = 0; i < 2; i++)
-            if (_droplets[i] != null) { particlePos += _droplets[i].Center; pCount++; }
-        if (pCount > 0) particlePos /= pCount;
-
-        // Phase 1 — brief inward pre-squeeze: each droplet compresses as if inhaling
-        float squeezeDur = mergePopDuration * 0.25f;
-        float t = 0f;
-        while (t < squeezeDur)
+        // Re-read the passive droplet's authoritative rb.position now (end of any physics
+        // movement) rather than relying on _capturedMergePos, which may be stale if the
+        // passive droplet kept moving (e.g. falling) between the proximity trigger and here.
+        Vector2 mergePos    = _capturedMergePos;
+        Vector2 combinedVel = _capturedMergeVel;
         {
-            t += Time.deltaTime;
-            float sq = Mathf.Sin((t / squeezeDur) * Mathf.PI * 0.5f); // 0 → 1
-            if (_droplets[0] != null) _droplets[0].SplitPinchBlend = sq * 0.4f;
-            if (_droplets[1] != null) _droplets[1].SplitPinchBlend = sq * 0.4f;
-            yield return null;
+            int passiveIdx = 1 - _activeIdx;
+            var passive = _droplets[passiveIdx];
+            if (passive != null)
+            {
+                Vector2 pSum = Vector2.zero; int n = 0;
+                foreach (var rb in passive.Points) { pSum += rb.position; n++; }
+                if (n > 0) mergePos = pSum / n;
+            }
+            // Average velocity of both droplets so the reformed blob carries momentum.
+            Vector2 vSum = Vector2.zero; int vn = 0;
+            foreach (var d in _droplets)
+                if (d != null)
+                    foreach (var rb in d.Points) { vSum += rb.linearVelocity; vn++; }
+            if (vn > 0) combinedVel = vSum / vn;
         }
-
-        // Reset squeeze and fire particles + pop simultaneously
-        if (_droplets[0] != null) _droplets[0].SplitPinchBlend = 0f;
-        if (_droplets[1] != null) _droplets[1].SplitPinchBlend = 0f;
-
-        WaterParticleEffect.PlayMerge(
-            particlePos,
-            mainPlayer.bodyOuterColor,
-            mainPlayer.sortingLayerName,
-            mainPlayer.sortingOrder + 1);
-
-        // Phase 2 — radial pop on both droplets
-        t = 0f;
-        while (t < mergePopDuration)
-        {
-            t += Time.deltaTime;
-            float pop = Mathf.Sin((t / mergePopDuration) * Mathf.PI);
-            if (_droplets[0] != null) _droplets[0].MergePopBlend = pop;
-            if (_droplets[1] != null) _droplets[1].MergePopBlend = pop;
-            yield return null;
-        }
-
-        if (_droplets[0] != null) _droplets[0].MergePopBlend = 0f;
-        if (_droplets[1] != null) _droplets[1].MergePopBlend = 0f;
-
-        // Merge position = passive droplet's center (it stayed put; active moved to it)
-        int passiveForMerge = 1 - _activeIdx;
-        Vector2 mergePos    = _droplets[passiveForMerge] != null
-                              ? _droplets[passiveForMerge].Center
-                              : (_droplets[0] != null ? _droplets[0].Center : _droplets[1].Center);
-        Vector2 combinedVel = Vector2.zero;
-        int     velCount    = 0;
-        for (int i = 0; i < 2; i++)
-        {
-            if (_droplets[i] == null) continue;
-            combinedVel += AverageVelocity(_droplets[i]);
-            velCount++;
-        }
-        if (velCount > 0) combinedVel /= velCount;
 
         DestroyDroplets();
 
-        // Unfreeze FIRST so rb.position writes are respected, then teleport the ring
-        // to the merge location in its natural resting shape and show it.
+        // Determine face direction at the moment of merge.  Raw input is the most
+        // reliable signal; fall back to LastFaceDir if no key is held (e.g. the
+        // player drifted into range after releasing the directional key).
+        float rawH = Input.GetAxisRaw("Horizontal");
+        float activeFaceDir = rawH > 0.05f  ?  1f
+                            : rawH < -0.05f ? -1f
+                            : (_droplets[_activeIdx] != null ? _droplets[_activeIdx].LastFaceDir : 1f);
+
+        // Unfreeze BEFORE writing rb.position — position writes on a frozen (simulated=false)
+        // Rigidbody2D are silently discarded by the physics engine.
         mainPlayer.Unfreeze();
         mainPlayer.TeleportTo(mergePos, combinedVel);
+        mainPlayer.InitFaceDirection(activeFaceDir);
+        mainPlayer.SetBodyAlpha(0f);
         mainPlayer.SetVisible(true);
+        StartCoroutine(DriveBodyFade(mainPlayer, 0f, 1f, 0.06f));
 
-        // Elastic arrival pop on the reformed main player
+        // SwitchTarget triggers a SmoothDamp pan in CameraFollowProxy instead of a
+        // hard snap, preventing the 1-frame camera jump on merge.
+        if (cameraProxy != null)
+            cameraProxy.SwitchTarget(mergePos);
+
         StartCoroutine(DriveMergeArrivalPop(mainPlayer, 0.38f));
         StartCoroutine(DriveWiggle(mainPlayer, 0.55f));
 
         _mergeCoroutine = null;
         EventManager.PlayerMerge();
+        yield break;
     }
 
     // ── Pressure transfer ─────────────────────────────────────────────────
 
+    // Callback subscribed to the active droplet's OnGroundPoundLand event.
+    // Launches the passive droplet at a fixed, consistent height equal to its
+    // own jump force — not scaled from impact velocity, which varied with fall height.
     private void OnActiveGroundPound(float impactVel)
     {
         if (!_isSplit) return;
 
         int passiveIdx = 1 - _activeIdx;
-        if (_droplets[passiveIdx] == null) return;
+        var passive = _droplets[passiveIdx];
+        if (passive == null) return;
 
-        float launchVY = Mathf.Max(impactVel * pressureTransferScale, pressureLaunchMinY);
-        foreach (var rb in _droplets[passiveIdx].Points)
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, launchVY);
+        // Guard: passive must be grounded — prevents chained air-launches from rapid pounding.
+        if (!passive.IsGrounded) return;
+
+        foreach (var rb in passive.Points)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, passive.jumpForce);
 
         StartCoroutine(DrivePressureSquash(_droplets[_activeIdx], pressureSquashDuration));
     }
 
+    // Drives the active droplet's PressureSquashBlend from 1 → 0, amplifying the
+    // landing-squash animation to give tactile feedback on a successful transfer.
     private IEnumerator DrivePressureSquash(SoftBodyPlayer droplet, float duration)
     {
         float t = 0f;
         while (t < duration && droplet != null)
         {
-            t                        += Time.deltaTime;
+            t += Time.deltaTime;
             droplet.PressureSquashBlend = 1f - (t / duration);
             yield return null;
         }
@@ -373,17 +411,22 @@ public class PlayerSplitController : MonoBehaviour
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
+    // Switches which droplet receives player input, updates face visibility,
+    // sorting order (active draws in front), and pans the camera to the new target.
     private void SetActiveDroplet(int index)
     {
         if (_droplets[_activeIdx] != null)
             _droplets[_activeIdx].OnGroundPoundLand -= OnActiveGroundPound;
 
         _activeIdx = index;
+        int baseOrder = mainPlayer.sortingOrder;
         for (int i = 0; i < 2; i++)
         {
             if (_droplets[i] == null) continue;
             _droplets[i].InputEnabled = (i == _activeIdx);
             _droplets[i].SetFaceVisible(i == _activeIdx);
+            // Active droplet renders in front of the idle one
+            _droplets[i].SetSortingOrder(i == _activeIdx ? baseOrder + 2 : baseOrder);
         }
 
         if (_droplets[_activeIdx] != null)
@@ -418,7 +461,8 @@ public class PlayerSplitController : MonoBehaviour
         return sum / sp.Points.Length;
     }
 
-    // Radial burst 0→1→0 reusing MergePopBlend — used for birth pop on split
+    // Radial outward expansion using MergePopBlend — gives each newly spawned droplet
+    // a brief pop so the split doesn't look like a hard cut.
     private IEnumerator DriveSpawnPop(SoftBodyPlayer droplet, float duration)
     {
         float t = 0f;
@@ -444,7 +488,8 @@ public class PlayerSplitController : MonoBehaviour
         if (droplet != null) droplet.ActivateSquashBlend = 0f;
     }
 
-    // Elastic overshoot pop on main player after merge — peaks above 1.0 then settles
+    // Elastic overshoot pop on the reformed main player after merge.  The double-sine
+    // formula creates a peak above 1.0 that settles back, reading as a satisfying "thwump".
     private IEnumerator DriveMergeArrivalPop(SoftBodyPlayer player, float duration)
     {
         float t = 0f;
@@ -456,6 +501,20 @@ public class PlayerSplitController : MonoBehaviour
             yield return null;
         }
         if (player != null) player.MergePopBlend = 0f;
+    }
+
+    // Linearly fades the body, highlight, and face alpha together.  Used for the
+    // subtle ease-in/out on split (fade out) and merge (fade in).
+    private IEnumerator DriveBodyFade(SoftBodyPlayer player, float from, float to, float duration)
+    {
+        float t = 0f;
+        while (t < duration && player != null)
+        {
+            t += Time.deltaTime;
+            player.SetBodyAlpha(Mathf.Lerp(from, to, Mathf.Clamp01(t / duration)));
+            yield return null;
+        }
+        if (player != null) player.SetBodyAlpha(to);
     }
 
     // Dampened horizontal tension wiggle — WiggleBlend decays linearly so oscillations

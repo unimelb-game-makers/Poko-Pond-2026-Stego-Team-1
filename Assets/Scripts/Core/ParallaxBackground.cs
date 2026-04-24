@@ -18,14 +18,19 @@ public class ParallaxBackground : MonoBehaviour
     public float parallaxFactor = 0.2f;
 
     private Vector3 previousCamPosition;
-
-    private void Start()
-    {
-        previousCamPosition = cam.position;
-    }
+    private int     _warmupFrames = 4;
 
     private void LateUpdate()
     {
+        // Cinemachine can take several frames to snap to its target on startup.
+        // Absorb those frames silently so the background never sees a large first delta.
+        if (_warmupFrames > 0)
+        {
+            previousCamPosition = cam.position;
+            _warmupFrames--;
+            return;
+        }
+
         Vector3 delta = cam.position - previousCamPosition;
         transform.position += new Vector3(delta.x * parallaxFactor, 0f, 0f);
         previousCamPosition = cam.position;

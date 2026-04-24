@@ -1,14 +1,68 @@
 using UnityEngine;
 
 /*
- *  Softbody player — N Rigidbody2D points on a ring, connected by springs.
- *  A fan mesh is rebuilt each frame from the physics positions.
+ * OVERVIEW
+ *   Softbody water-droplet player. A ring of N Rigidbody2D "points" is held
+ *   together by a spring network; a fan mesh is rebuilt every frame from their
+ *   interpolated positions, producing a squishy, physically-reactive silhouette.
  *
- *  One-time setup:
- *    1. Create a layer named "SoftBodyPoint" (Project Settings → Tags and Layers)
- *    2. Physics 2D → Layer Collision Matrix → uncheck SoftBodyPoint × SoftBodyPoint
- *    3. Assign "SoftBodyPoint" to the Soft Body Point Layer field below
- *    4. Set Ground Layer to match your platform layers
+ * ONE-TIME PROJECT SETUP
+ *   1. Create a layer named "SoftBodyPoint"  (Project Settings → Tags and Layers)
+ *   2. Physics 2D → Layer Collision Matrix → uncheck SoftBodyPoint × SoftBodyPoint
+ *   3. Assign "SoftBodyPoint" to the Soft Body Point Layer field in the Inspector
+ *   4. Set Ground Layer to match your platform/terrain layers
+ *
+ * SCENE SETUP
+ *   - Add this component to a GameObject that also has MeshFilter + MeshRenderer.
+ *   - All N physics-point child GameObjects are spawned at runtime — do NOT add
+ *     them manually in the Editor.  Rely on the public API (Points, Center, etc.)
+ *     rather than caching child transforms directly in other scripts.
+ *
+ * SPLIT / MERGE  (managed externally by PlayerSplitController)
+ *   Left Shift   → split into two half-size droplets
+ *   Tab          → swap which droplet is active
+ *   Auto         → droplets merge when their centres come within mergeProximityRadius
+ *
+ *   Key methods used by PlayerSplitController:
+ *     Freeze() / Unfreeze()          — disable / re-enable physics simulation
+ *     TeleportTo(center, velocity)   — reposition the entire ring (call AFTER Unfreeze)
+ *     GetHalfState(...)              — read the visual centre + velocity of each half
+ *     SetVisible(bool)               — show / hide all renderers
+ *     SetBodyAlpha(float)            — fade the body, highlight, and face together
+ *     SetSortingOrder(int)           — change render layer order at runtime
+ *     InitFaceDirection(float)       — immediately set face sprite with no crossfade
+ *     LastFaceDir                    — current intended face direction (+1 right, -1 left)
+ *     InputEnabled                   — set false on the passive droplet to suppress input
+ *
+ * GROUND POUND  (C key while airborne)
+ *   Drives the blob downward at groundPoundDownForce; squash-animates the landing.
+ *   Fires OnGroundPoundLand(impactVel) on landing — PlayerSplitController listens to
+ *   this on the active droplet to launch the passive one (pressure transfer).
+ *
+ * PRESSURE TRANSFER
+ *   When the active droplet ground-pounds while split, the passive droplet is launched
+ *   upward at its own jumpForce — always a consistent, predictable height.
+ *   The passive droplet must be grounded for the transfer to trigger.
+ *
+ * CODING WITH THE SOFTBODY PLAYER
+ *   Physics points are created at runtime in Awake — never rely on child GameObjects
+ *   or their transforms before Awake has run.  Use the public properties:
+ *
+ *     sp.Points   → Rigidbody2D[] of all ring points
+ *     sp.Center   → world-space centroid (updated every LateUpdate)
+ *     sp.IsGrounded
+ *     sp.IsGroundPounding
+ *
+ *   To apply a force to the whole body, iterate sp.Points and call rb.AddForce().
+ *   To teleport, always call Unfreeze() first, then TeleportTo() — writing
+ *   rb.position on a frozen (simulated=false) Rigidbody2D has no effect.
+ *
+ *   Listen to OnGroundPoundLand for impact events:
+ *     sp.OnGroundPoundLand += vel => { ... };
+ *
+ *   Blend fields (SplitPinchBlend, MergePopBlend, etc.) are driven by coroutines
+ *   in PlayerSplitController — do not set them from other scripts unless you are
+ *   building a new controller that fully owns the animation pipeline.
  */
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class SoftBodyPlayer : MonoBehaviour
@@ -257,7 +311,9 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private Mesh         _highlightMesh;
     private MeshRenderer _highlightRenderer;
+    private MeshRenderer _bodyRenderer;
     private Vector3[]    _highlightVerts;
+    private float        _bodyAlpha = 1f;
 
     private CircleCollider2D[] _cols;
     private Vector2[]          _preSmoothA;
@@ -422,6 +478,34 @@ public class SoftBodyPlayer : MonoBehaviour
     public void SetFaceVisible(bool visible)
     {
         if (_faceRenderer != null) _faceRenderer.enabled = visible;
+    }
+
+    // Intended face direction (+1 right, -1 left). Uses _pendingFaceDir so it reflects
+    // the direction the player chose even if the crossfade sprite-swap hasn't completed yet.
+    public float LastFaceDir => _pendingFaceDir;
+
+    public void SetBodyAlpha(float alpha) => _bodyAlpha = Mathf.Clamp01(alpha);
+
+    public void SetSortingOrder(int order)
+    {
+        sortingOrder = order;
+        if (_bodyRenderer      != null) _bodyRenderer.sortingOrder      = order;
+        if (_highlightRenderer != null) _highlightRenderer.sortingOrder = order + 1;
+        if (_faceRenderer      != null) _faceRenderer.sortingOrder      = Mathf.Max(faceSortingOrder, order + 2);
+    }
+
+    // Immediately sets the face direction without a crossfade — used on split/merge
+    // to carry the pre-split or active-droplet direction into the new body.
+    public void InitFaceDirection(float dir)
+    {
+        _lastFaceDir    = dir >= 0f ? 1f : -1f;
+        _pendingFaceDir = _lastFaceDir;
+        _faceFadeState  = 0;
+        _faceAlpha      = 1f;
+        if (_faceRenderer == null) return;
+        Sprite target = _lastFaceDir > 0f ? faceRightSprite : faceLeftSprite;
+        if (target != null) _faceRenderer.sprite = target;
+        _faceRenderer.color = Color.white;
     }
 
     // ── Spawn ─────────────────────────────────────────────────────────────
@@ -589,7 +673,7 @@ public class SoftBodyPlayer : MonoBehaviour
         Sprite target = _lastFaceDir > 0f ? faceRightSprite : faceLeftSprite;
         if (target != null && _faceRenderer.sprite != target)
             _faceRenderer.sprite = target;
-        _faceRenderer.color = new Color(1f, 1f, 1f, _faceAlpha);
+        _faceRenderer.color = new Color(1f, 1f, 1f, _faceAlpha * _bodyAlpha);
 
         // ── Position ──────────────────────────────────────────────────────
         // Use precomputed rest-offset averages for X so fall/rise/landing
@@ -1075,19 +1159,18 @@ public class SoftBodyPlayer : MonoBehaviour
         _mesh.uv        = _meshUVs;
         _mesh.triangles = _triangles;
 
-        var mr = GetComponent<MeshRenderer>();
+        _bodyRenderer = GetComponent<MeshRenderer>();
         if (bodyMaterial != null)
         {
-            mr.sharedMaterial = bodyMaterial;
+            _bodyRenderer.sharedMaterial = bodyMaterial;
         }
         else
         {
-            // White material so vertex colors drive the gradient unmodified
-            mr.material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            _bodyRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
         }
 
-        mr.sortingLayerName = sortingLayerName;
-        mr.sortingOrder     = sortingOrder;
+        _bodyRenderer.sortingLayerName = sortingLayerName;
+        _bodyRenderer.sortingOrder     = sortingOrder;
     }
 
     private void SetupHighlight()
@@ -1178,15 +1261,14 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private void UpdateBodyColors()
     {
-        // Centre vertex always gets the inner (highlight) colour
-        _meshColors[0] = bodyInnerColor;
+        var inner = new Color(bodyInnerColor.r, bodyInnerColor.g, bodyInnerColor.b, bodyInnerColor.a * _bodyAlpha);
+        var outer = new Color(bodyOuterColor.r, bodyOuterColor.g, bodyOuterColor.b, bodyOuterColor.a * _bodyAlpha);
 
-        // Ring vertices: radial gradient from inner to outer based on UV distance
+        _meshColors[0] = inner;
         for (int i = 1; i <= _subdivVerts; i++)
         {
-            // UV is in [0,1]²; distance from centre UV (0.5,0.5) maps 0=centre → 1=edge
             float dist = Vector2.Distance(_meshUVs[i], Vector2.one * 0.5f) * 2f;
-            _meshColors[i] = Color.Lerp(bodyInnerColor, bodyOuterColor, Mathf.Clamp01(dist));
+            _meshColors[i] = Color.Lerp(inner, outer, Mathf.Clamp01(dist));
         }
 
         _mesh.colors = _meshColors;
@@ -1206,8 +1288,7 @@ public class SoftBodyPlayer : MonoBehaviour
         _highlightMesh.triangles = _triangles;
         _highlightMesh.RecalculateBounds();
 
-        // Keep material color in sync in case it was changed at runtime in the Inspector
-        _highlightRenderer.material.color = highlightColor;
+        _highlightRenderer.material.color = new Color(highlightColor.r, highlightColor.g, highlightColor.b, highlightColor.a * _bodyAlpha);
     }
 
     private static Vector2 CentripetalCatmullRom(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float t)
