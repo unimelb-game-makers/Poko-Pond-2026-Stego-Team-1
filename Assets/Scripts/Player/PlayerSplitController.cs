@@ -113,7 +113,7 @@ public class PlayerSplitController : MonoBehaviour
 
             if (Vector2.Distance(c0, c1) < mergeProximityRadius)
             {
-                _capturedMergePos = RenderCenter(_droplets[_activeIdx]);
+                _capturedMergePos = (c0 + c1) * 0.5f;
 
                 Vector2 velSum = Vector2.zero; int vn = 0;
                 foreach (var d in _droplets)
@@ -336,13 +336,7 @@ public class PlayerSplitController : MonoBehaviour
         _droplets[1].InputEnabled = false;
         _droplets[_activeIdx].OnGroundPoundLand -= OnActiveGroundPound;
 
-        // The full player is larger than the half-size droplets (bodyRadius vs bodyRadius/√2).
-        // Spawning at the droplet center would sink the bottom ring points into the platform.
-        // Shift up by the difference in vertical radii so the bottom of the full player sits
-        // where the bottom of the droplet was.
-        float dropletRadius = mainPlayer.bodyRadius / Mathf.Sqrt(2f);
-        float radiusLift    = (mainPlayer.bodyRadius - dropletRadius) * mainPlayer.domeHeightScale;
-        Vector2 mergePos    = _capturedMergePos + new Vector2(0f, radiusLift);
+        Vector2 mergePos    = _capturedMergePos;
         Vector2 combinedVel = _capturedMergeVel;
 
         // Capture face direction BEFORE destroying droplets — after DestroyDroplets() the
@@ -358,6 +352,7 @@ public class PlayerSplitController : MonoBehaviour
         // Rigidbody2D are silently discarded by the physics engine.
         mainPlayer.Unfreeze();
         mainPlayer.TeleportTo(mergePos, combinedVel);
+        mainPlayer.DepenetrateFromGround();
         mainPlayer.InitFaceDirection(activeFaceDir);
         mainPlayer.SetBodyAlpha(0f);
         mainPlayer.SetVisible(true);

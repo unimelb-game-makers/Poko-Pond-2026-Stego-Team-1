@@ -455,6 +455,39 @@ public class SoftBodyPlayer : MonoBehaviour
         transform.position = newCenter;
     }
 
+    // Checks every ring point for overlap with ground and shifts the entire ring upward so
+    // all points clear the surface. Uses a downward raycast from above each overlapping point
+    // to find the surface Y — a positional query that works correctly even when called from
+    // LateUpdate before the physics engine has synced the new collider positions.
+    public void DepenetrateFromGround()
+    {
+        float maxLift = 0f;
+        for (int i = 0; i < pointCount; i++)
+        {
+            Vector2 pos = (Vector2)_pointGOs[i].transform.position;
+            if (Physics2D.OverlapCircle(pos, pointRadius, groundLayer) == null) continue;
+
+            // Scan down from well above to find the surface the point is inside.
+            Vector2 above = new Vector2(pos.x, pos.y + bodyRadius * 3f);
+            RaycastHit2D rh = Physics2D.Raycast(above, Vector2.down, bodyRadius * 6f, groundLayer);
+            float lift = rh.collider != null
+                ? (rh.point.y + pointRadius) - pos.y
+                : pointRadius * 2f; // fallback for deep penetration
+            if (lift > 0f) maxLift = Mathf.Max(maxLift, lift);
+        }
+        if (maxLift < 0.001f) return;
+
+        for (int i = 0; i < pointCount; i++)
+        {
+            Vector2 p = _rbs[i].position + new Vector2(0f, maxLift);
+            _rbs[i].position                = p;
+            _pointGOs[i].transform.position = p;
+            _prevPositions[i]               = p;
+        }
+        _center.y          += maxLift;
+        transform.position  = _center;
+    }
+
     // Returns the visual centre and average velocity of each half at the moment of split.
     // Uses interpolated transform positions so the spawn location matches what's on screen.
     public void GetHalfState(
