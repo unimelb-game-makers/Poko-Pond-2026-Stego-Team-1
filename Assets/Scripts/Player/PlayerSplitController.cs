@@ -235,6 +235,10 @@ public class PlayerSplitController : MonoBehaviour
         go.AddComponent<MeshFilter>();
         go.AddComponent<MeshRenderer>();
 
+        // Important to keep visuals tracking the right objects
+        go.tag = "Player";
+        go.layer = LayerMask.NameToLayer("Player");
+
         var sp = go.AddComponent<SoftBodyPlayer>();
 
         // ── Physics — scaled to half mass / half area ─────────────────────
