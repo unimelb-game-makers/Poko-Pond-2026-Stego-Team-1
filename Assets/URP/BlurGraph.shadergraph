@@ -5,6 +5,9 @@
     "m_Properties": [
         {
             "m_Id": "ed16d9f6ca4940dcb06a3c3e3da17774"
+        },
+        {
+            "m_Id": "7cd68d946fb84d968bd009ac999c880e"
         }
     ],
     "m_Keywords": [],
@@ -41,6 +44,9 @@
         },
         {
             "m_Id": "c1d745c0c43442278716d51768300177"
+        },
+        {
+            "m_Id": "93161ad526244f16afd57620ebe2e459"
         }
     ],
     "m_GroupDatas": [],
@@ -84,6 +90,20 @@
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "4e463ad3a3dc4b22a1d83dcfae80af42"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "93161ad526244f16afd57620ebe2e459"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "c1d745c0c43442278716d51768300177"
                 },
                 "m_SlotId": 0
             }
@@ -249,6 +269,9 @@
     "m_ChildObjectList": [
         {
             "m_Id": "ed16d9f6ca4940dcb06a3c3e3da17774"
+        },
+        {
+            "m_Id": "7cd68d946fb84d968bd009ac999c880e"
         }
     ]
 }
@@ -530,6 +553,50 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "7cd68d946fb84d968bd009ac999c880e",
+    "m_Guid": {
+        "m_GuidSerialized": "7f5b95cc-128f-4238-92c5-4c61da3646ef"
+    },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
+    "m_Name": "Alpha Clip Threshold",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Alpha Clip Threshold",
+    "m_DefaultReferenceName": "_Alpha_Clip_Threshold",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_LiteralFloatMode": false,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    },
+    "m_SliderType": 0,
+    "m_SliderPower": 3.0,
+    "m_EnumType": 0,
+    "m_CSharpEnumString": "",
+    "m_EnumNames": [
+        "Default"
+    ],
+    "m_EnumValues": [
+        0
+    ]
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "7e172840e92c419f93c946abf065b443",
@@ -575,6 +642,42 @@
     "m_DefaultValue": 0.0,
     "m_Labels": [],
     "m_LiteralMode": false
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "93161ad526244f16afd57620ebe2e459",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -193.00001525878907,
+            "y": 443.5,
+            "width": 182.99996948242188,
+            "height": 33.999969482421878
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "c266589028164734971a669302e3f1be"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "7cd68d946fb84d968bd009ac999c880e"
+    }
 }
 
 {
@@ -649,6 +752,22 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "SurfaceDescription.AlphaClipThreshold"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "c266589028164734971a669302e3f1be",
+    "m_Id": 0,
+    "m_DisplayName": "Alpha Clip Threshold",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {

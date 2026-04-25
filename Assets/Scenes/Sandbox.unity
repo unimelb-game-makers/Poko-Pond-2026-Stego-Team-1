@@ -3617,7 +3617,7 @@ Transform:
   m_GameObject: {fileID: 1774653407}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.1483, y: 0.0093, z: 9}
+  m_LocalPosition: {x: 0.1483, y: 0.0093, z: 25}
   m_LocalScale: {x: 3.6296299, y: 1, z: 1.9981501}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3724,7 +3724,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 375
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -4049,7 +4049,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3255162, g: 0.40070853, b: 0.5188679, a: 0}
+  m_BackGroundColor: {r: 0.36078432, g: 0.53333336, b: 0.7294118, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -4333,6 +4333,10 @@ PrefabInstance:
       propertyPath: levelBounds
       value: 
       objectReference: {fileID: 62156859}
+    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
+      propertyPath: faceSortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: m_Name
       value: Player

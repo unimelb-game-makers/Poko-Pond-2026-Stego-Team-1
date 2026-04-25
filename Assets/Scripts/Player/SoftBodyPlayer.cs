@@ -733,7 +733,7 @@ public class SoftBodyPlayer : MonoBehaviour
         float shear      = (faceOffset.y + halfHeight) / (halfHeight * 2f);
 
         float localX     = restAvgX * faceBias + leanX * shear + faceOffset.x;
-        _faceRenderer.transform.localPosition = new Vector3(localX, faceOffset.y, 0f);
+        _faceRenderer.transform.localPosition = new Vector3(localX, faceOffset.y, 2f);
     }
 
     // ── Springs ───────────────────────────────────────────────────────────
