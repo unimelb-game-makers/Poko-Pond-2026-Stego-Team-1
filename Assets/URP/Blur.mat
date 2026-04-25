@@ -105,7 +105,7 @@ Material:
     - _Alpha_Clip_Threshold: 0.001
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _Blur: 3
+    - _Blur: 2
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0

@@ -791,11 +791,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 102754579561625528, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.4929795
+      value: 3.4858
       objectReference: {fileID: 0}
     - target: {fileID: 102754579561625528, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.12326
+      value: -6.1849
       objectReference: {fileID: 0}
     - target: {fileID: 102754579561625528, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -832,6 +832,10 @@ PrefabInstance:
     - target: {fileID: 3141187657122812378, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: plateId
       value: crusher_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3905071339516859066, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8068085154840443471, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
       propertyPath: m_Name
@@ -3636,6 +3640,7 @@ GameObject:
   - component: {fileID: 1807380259}
   - component: {fileID: 1807380258}
   - component: {fileID: 1807380262}
+  - component: {fileID: 1807380263}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3797,6 +3802,30 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &1807380263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807380257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
+  m_ComponentVersion: 1
+  m_AssetsPPU: 16
+  m_RefResolutionX: 320
+  m_RefResolutionY: 180
+  m_CropFrame: 0
+  m_GridSnapping: 0
+  m_FilterMode: 0
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
 --- !u!114 &1907246147 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2957998122547593901, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
@@ -4163,21 +4192,25 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 3273652460301204517, guid: 5447f0f795f21425fbd7649e8fc41fa7, type: 3}
+    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.18
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.18
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.8
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.02
+      value: -4.06
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.z

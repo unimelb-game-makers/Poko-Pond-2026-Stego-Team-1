@@ -1229,6 +1229,7 @@ public class SoftBodyPlayer : MonoBehaviour
         go.transform.SetParent(transform);
         go.transform.localPosition = Vector3.zero;
         go.transform.localScale    = Vector3.one;
+        go.layer = LayerMask.NameToLayer("Player");
 
         _highlightMesh = new Mesh { name = "HighlightMesh" };
         go.AddComponent<MeshFilter>().mesh = _highlightMesh;
