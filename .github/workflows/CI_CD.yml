@@ -26,7 +26,7 @@ jobs:
   build-Windows:
     name: Build Windows 
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' 
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' 
     strategy:
       matrix:
         targetPlatform: [StandaloneWindows64]
@@ -61,7 +61,7 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}-${{ matrix.targetPlatform }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}
-      # Build
+          
       - name: Build project 
         uses: game-ci/unity-builder@v4
         env:
@@ -72,6 +72,15 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           unityVersion: ${{ vars.UNITY_VERSION }}
           allowDirtyBuild: true
+
+      # RETURN LICENSE (Runs even if build fails)
+      - name: Return Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       # Output
       - name: Upload the file to Github Action
@@ -85,7 +94,7 @@ jobs:
     needs: [build-Windows]
     name: Build on Linux/Macos
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' 
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' 
     strategy:
       matrix: 
         targetPlatform: [StandaloneLinux64, StandaloneOSX]
@@ -120,7 +129,7 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}-${{ matrix.targetPlatform }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}
-      # Build
+          
       - name: Build project 
         uses: game-ci/unity-builder@v4
         env:
@@ -130,13 +139,24 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           unityVersion: ${{ vars.UNITY_VERSION }}
-        # Output
+          allowDirtyBuild: true
+
+      # RETURN LICENSE (Runs even if build fails)
+      - name: Return Unity License
+        uses: game-ci/unity-return-license@v2
+        if: always()
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      # Output
       - name: Upload the file to Github Action
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}
-
+          path: build/${{ matrix.targetPlatform }}  
+        
   # Deploy to Steam
   deploy:
     needs: [build-multiple-platforms]

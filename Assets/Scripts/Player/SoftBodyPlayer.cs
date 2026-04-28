@@ -733,7 +733,7 @@ public class SoftBodyPlayer : MonoBehaviour
         float shear      = (faceOffset.y + halfHeight) / (halfHeight * 2f);
 
         float localX     = restAvgX * faceBias + leanX * shear + faceOffset.x;
-        _faceRenderer.transform.localPosition = new Vector3(localX, faceOffset.y, 0f);
+        _faceRenderer.transform.localPosition = new Vector3(localX, faceOffset.y, 2f);
     }
 
     // ── Springs ───────────────────────────────────────────────────────────
@@ -1229,6 +1229,7 @@ public class SoftBodyPlayer : MonoBehaviour
         go.transform.SetParent(transform);
         go.transform.localPosition = Vector3.zero;
         go.transform.localScale    = Vector3.one;
+        go.layer = LayerMask.NameToLayer("Player");
 
         _highlightMesh = new Mesh { name = "HighlightMesh" };
         go.AddComponent<MeshFilter>().mesh = _highlightMesh;
