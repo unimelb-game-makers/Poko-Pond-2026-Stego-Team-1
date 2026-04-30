@@ -7,23 +7,32 @@ using UnityEngine.Events;
  *   they leave.  Detection uses Physics2D.OverlapBox each frame — no trigger collider
  *   or Rigidbody2D on the player is required.
  *
- * SETUP
- *   1. Add this component to a GameObject that has a BoxCollider2D (the plate footprint).
- *   2. Detection works with both the "Player" layer and the softbody "SoftBodyPoint"
- *      layer, so it responds correctly whether the player is whole or split.
- *   3. Plate Id is auto-generated (GUID) when this component is first added in the
- *      Editor.  Override it only when a listener needs a stable, human-readable name.
+ * PLACEMENT — TILEMAP SYSTEM
+ *   This prefab is placed via the Props tilemap using a PropTile asset, not by dragging
+ *   it into the scene directly.  Because it is spawned at runtime by PropTilemapSpawner,
+ *   the Inspector callbacks (On Activated / On Deactivated) cannot be wired up in the
+ *   Editor.  Use one of the two code-based approaches below instead.
  *
- * HOOKING UP EVENTS — Inspector
- *   On Activated   → drag any GameObject/component and choose a method to call.
- *   On Deactivated → same, fires when the player leaves (skipped in One Shot mode).
- *   Example: drag a Door and wire Door.Open() / Door.Close() to the two events.
+ * HOOKING UP EVENTS — recommended (EventManager)
+ *   Any script in the scene can subscribe to the global event bus:
+ *       private void OnEnable()  => EventManager.OnPressurePlateActivated   += HandleActivated;
+ *       private void OnDisable() => EventManager.OnPressurePlateActivated   -= HandleActivated;
+ *       private void HandleActivated(string id) { if (id == "plate_01") DoSomething(); }
+ *   Use the plate's Plate Id string to filter — set a stable, human-readable id on the
+ *   prefab (e.g. "factory_crusher_01") so listeners can reference it by name.
+ *   CrusherTrap and AutoCrusherTrap already use this pattern via their Trigger Plate Id field.
  *
- * HOOKING UP EVENTS — Code
- *   Subscribe via EventManager:
- *       EventManager.OnPressurePlateActivated   += id => { if (id == "door_01") OpenDoor(); };
- *       EventManager.OnPressurePlateDeactivated += id => { ... };
- *   Both events pass the plate's id so multiple plates can share one handler.
+ * HOOKING UP EVENTS — alternative (Inspector callbacks at runtime)
+ *   If you need to wire a specific scene object to the plate without writing a new script,
+ *   add a small connector MonoBehaviour to that object:
+ *       void OnEnable()  => EventManager.OnPressurePlateActivated += id => { if (id == "plate_01") target.Open(); };
+ *       void OnDisable() => EventManager.OnPressurePlateActivated -= ...;
+ *   This is equivalent to the On Activated Unity Event but works with runtime-spawned plates.
+ *
+ * PLATE ID
+ *   Set a fixed, human-readable Plate Id directly on the prefab in the Project window
+ *   (e.g. "factory_crusher_01").  Any listener that needs to respond to this plate
+ *   references the same string.  Ids only need to be unique per scene.
  *
  * ONE SHOT MODE
  *   Tick One Shot to lock the plate in its pressed state permanently after the first
@@ -35,6 +44,8 @@ using UnityEngine.Events;
  *       Pressed Hold → Release anim  (IsPressed = false, Has Exit Time = false) → Idle
  *   Disable Loop Time on the Press and Release clips — Pressed Hold provides the hold.
  *   The Animator is optional; the plate functions correctly without one.
+ *   IMPORTANT: set the SpriteRenderer's Order in Layer higher than the tilemaps so the
+ *   animation is visible when the prefab is spawned on top of a tilemap.
  *
  * PRESSED SPRITE
  *   Assign Pressed Sprite for a guaranteed visual without a full Animator.  The sprite
@@ -45,11 +56,13 @@ using UnityEngine.Events;
  *   Detection Height controls how tall the overlap zone is above the plate surface.
  *   Increase it if activation flickers (the player barely clips the thin plate).
  *   Decrease it if objects above the plate trigger it unintentionally.
+ *   The zone is cached at Start from the collider's world bounds — it will not shift
+ *   even if the Animator moves or resizes the collider during an animation.
  */
 
-public class PressurePlate : MonoBehaviour
+public class PressurePlate : MonoBehaviour, IPropConnectable
 {
-    [Tooltip("Auto-generated on placement. Override only if you need a human-readable id for a specific listener.")]
+    [Tooltip("Stable, human-readable id used by EventManager listeners. Must match the Trigger Plate Id on any linked CrusherTrap.")]
     [SerializeField] private string plateId;
 
     [Tooltip("If true, the plate stays activated after the player leaves and cannot be re-triggered.")]
@@ -62,43 +75,61 @@ public class PressurePlate : MonoBehaviour
     [SerializeField] private Sprite pressedSprite;
 
     [Header("Inspector Callbacks")]
-    [Tooltip("Called the moment the player steps on the plate.")]
+    [Tooltip("Called the moment the player steps on the plate. Not usable when spawned via tilemap — use EventManager instead.")]
     [SerializeField] private UnityEvent onActivated;
 
-    [Tooltip("Called when the player steps off (ignored if One Shot is true).")]
+    [Tooltip("Called when the player steps off (ignored if One Shot is true). Not usable when spawned via tilemap — use EventManager instead.")]
     [SerializeField] private UnityEvent onDeactivated;
 
-    private Collider2D _col;
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
     private Sprite _normalSprite;
     private bool _playerOver;
     private bool _lockedPressed; // set on first exit when oneShot=true — plate stays pressed permanently
 
+    // Detection zone cached at Start so Animator-driven transform/collider changes can't affect it.
+    private Vector2 _detectionCenter;
+    private Vector2 _detectionSize;
+
     private static readonly int IsPressedHash = Animator.StringToHash("IsPressed");
+
+    // Called by PropTilemapSpawner when spawned from a PropTile with a connectionId.
+    // Overrides the prefab's default plateId so no separate prefab is needed per connection.
+    public void SetConnectionId(string id) => plateId = id;
 
     // Assigns a unique id the moment this component is added in the editor
     private void Reset() => plateId = System.Guid.NewGuid().ToString();
 
     private void Awake()
     {
-        _col            = GetComponent<Collider2D>();
         _animator       = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         if (_spriteRenderer != null)
             _normalSprite = _spriteRenderer.sprite;
     }
 
-    // Polls for player overlap each frame using a box cast above the plate's collider bounds
+    private void Start()
+    {
+        // Cache detection zone from the collider's initial world bounds so animations
+        // that move or disable the collider cannot shift or break the detection area.
+        var col = GetComponent<Collider2D>();
+        if (col == null)
+        {
+            Debug.LogError("[PressurePlate] No Collider2D found — detection will not work.", this);
+            enabled = false;
+            return;
+        }
+        var bounds = col.bounds;
+        _detectionCenter = new Vector2(bounds.center.x, bounds.center.y + detectionHeight * 0.5f);
+        _detectionSize   = new Vector2(bounds.size.x, detectionHeight);
+    }
+
+    // Polls for player overlap each frame using a fixed box zone cached at Start
     private void Update()
     {
-        var bounds          = _col.bounds;
-        var detectionCenter = new Vector2(bounds.center.x, bounds.center.y + detectionHeight * 0.5f);
-        var detectionSize   = new Vector2(bounds.size.x, detectionHeight);
-
         bool playerPresent = Physics2D.OverlapBox(
-            detectionCenter,
-            detectionSize,
+            _detectionCenter,
+            _detectionSize,
             0f,
             LayerMask.GetMask("Player", "SoftBodyPoint")
         );
@@ -109,7 +140,6 @@ public class PressurePlate : MonoBehaviour
             OnPlayerExit();
     }
 
-    // Fires activation events the first frame the player is detected over the plate
     private void OnPlayerEnter()
     {
         _playerOver = true;
@@ -121,7 +151,6 @@ public class PressurePlate : MonoBehaviour
         Debug.Log($"[PressurePlate] '{name}' ({plateId}) activated.");
     }
 
-    // Fires deactivation events the first frame the player is no longer detected
     private void OnPlayerExit()
     {
         _playerOver = false;

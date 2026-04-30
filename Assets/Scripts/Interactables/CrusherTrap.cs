@@ -25,7 +25,7 @@ using UnityEngine;
 //   The orange gizmo shows the crush zone while idle and turns red while cycling.
 //   Crush Zone Center is a local-space offset from the crusher's transform.
 
-public class CrusherTrap : MonoBehaviour
+public class CrusherTrap : MonoBehaviour, IPropConnectable
 {
     [Header("Trigger")]
     [Tooltip("Plate Id of the PressurePlate that activates this crusher. Must match exactly.")]
@@ -50,6 +50,9 @@ public class CrusherTrap : MonoBehaviour
     [SerializeField] private Vector2 crushSize = new Vector2(2f, 1f);
 
     private const int SlamFrameCount = 4; // frames 1–4 belong to the slam phase
+
+    // Called by PropTilemapSpawner — sets the plate id this crusher listens for.
+    public void SetConnectionId(string id) => triggerPlateId = id;
 
     private SpriteRenderer _sprite;
     private bool _cycling;

@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -46.059, y: -7.882, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 673232444285602156, guid: 0510a71a56acf4d6c86fb4b9abf0a7a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -128,8 +128,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0006585359, y: -0.0010936977}
-  m_Size: {x: 0.25684893, y: 0.051468432}
+  m_Offset: {x: 0.011834988, y: 0.06930324}
+  m_Size: {x: 1.0524461, y: 0.192265}
   m_Direction: 1
 --- !u!95 &5569827225754220683
 Animator:
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PressurePlate
   plateId: plate_01
   oneShot: 0
-  detectionHeight: 2
+  detectionHeight: 0.4
   pressedSprite: {fileID: 0}
   onActivated:
     m_PersistentCalls:
