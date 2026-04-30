@@ -12,7 +12,7 @@
 # BUILD_PLATFORMS: JSON array of platforms (e.g. ["StandaloneWindows64", "StandaloneLinux64", "StandaloneOSX", "WebGL"])
 # ITCH_URL: Itch game slug (e.g. "my-awesome-game")
 # ITCH_USER_NAME: Itch username (e.g. "my-username")
-
+# ITCH_BUTLER_URL: https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
 
 name: CI/CD
 on:
@@ -121,7 +121,7 @@ jobs:
         env:
           BUTLER_API_KEY: ${{ secrets.ITCH_IO_API_KEY }} 
         run: |
-          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          curl -L -o butler.zip ${{vars.ITCH_BUTLER_URL}}
           unzip butler.zip
           chmod +x butler
           
