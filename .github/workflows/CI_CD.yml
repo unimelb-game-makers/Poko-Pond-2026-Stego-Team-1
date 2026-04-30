@@ -87,7 +87,7 @@ jobs:
   # Deploy to Steam and itch
   deploy:
     needs: [build-multiple-platforms]
-    name: deployment
+    name: Deployment
     runs-on: ubuntu-latest
     steps:
       - name: Download all builds
