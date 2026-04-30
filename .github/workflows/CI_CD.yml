@@ -27,7 +27,7 @@ on:
 jobs:
   # Build on multiple platforms 
   build-multiple-platforms:
-    name: Build on Linux/Macos
+    name: Build Multiple Platforms
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' 
     strategy:
@@ -87,7 +87,7 @@ jobs:
   # Deploy to Steam and itch
   deploy:
     needs: [build-multiple-platforms]
-    name: Deploy to Steam
+    name: deployment
     runs-on: ubuntu-latest
     steps:
       - name: Download all builds
