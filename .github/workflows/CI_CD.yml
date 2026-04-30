@@ -86,6 +86,7 @@ jobs:
         
   # Deploy to Steam and itch
   deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: [build-multiple-platforms]
     name: Deployment
     runs-on: ubuntu-latest
