@@ -95,25 +95,51 @@ jobs:
         with:
           path: build
         
+      - name: Auto-detect Steam Builds
+        id: steam_detect
+        run: |
+          if [ -d "build/StandaloneWindows64" ]; then echo "win=StandaloneWindows64" >> $GITHUB_ENV; fi
+          if [ -d "build/StandaloneLinux64" ]; then echo "linux=StandaloneLinux64" >> $GITHUB_ENV; fi
+          if [ -d "build/StandaloneOSX" ]; then echo "mac=StandaloneOSX" >> $GITHUB_ENV; fi
+
       - name: Deploy to Steam
-        uses: game-ci/steam-deploy@v3
         if: ${{ vars.STEAM_APP_ID != '' }}
+        uses: game-ci/steam-deploy@v3
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
           appId: ${{ vars.STEAM_APP_ID }}
           buildDescription: ${{ github.event.head_commit.message }}
           rootPath: build
-          depot1Path: StandaloneWindows64
-          depot2Path: StandaloneLinux64
-          depot3Path: StandaloneOSX
+          # By using env variables, if a platform isn't built, it passes an empty string
+          depot1Path: ${{ env.win }}
+          depot2Path: ${{ env.linux }}
+          depot3Path: ${{ env.mac }}
 
-      - name: Deploy to Itch 
-        uses: manleydev/butler-publish-itchio-action@master
+      - name: Deploy to Itch
         if: ${{ vars.ITCH_URL != '' }}
         env:
-          BUTLER_CREDENTIALS: ${{ secrets.ITCH_IO_API_KEY }}
-          CHANNEL: web     
-          ITCH_GAME: ${{vars.ITCH_URL}}
-          ITCH_USER: ${{vars.ITCH_USER_NAME}}
-          PACKAGE: build/WebGL 
+          BUTLER_API_KEY: ${{ secrets.ITCH_IO_API_KEY }} 
+        run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          
+          # Loop through every folder inside 'build/'
+          for folder in build/*; do
+            if [ -d "$folder" ]; then
+              platform=$(basename "$folder")
+              channel=""
+            
+              if [ "$platform" == "StandaloneWindows64" ]; then channel="windows"; fi
+              if [ "$platform" == "StandaloneOSX" ]; then channel="mac"; fi
+              if [ "$platform" == "StandaloneLinux64" ]; then channel="linux"; fi
+              if [ "$platform" == "WebGL" ]; then channel="web"; fi
+              
+              # If a valid channel is found, push it
+              if [ "$channel" != "" ]; then
+                echo "Uploading $platform to Itch channel: $channel..."
+                ./butler push "$folder" "${{ vars.ITCH_USER_NAME }}/${{ vars.ITCH_URL }}:$channel"
+              fi
+            fi
+          done
