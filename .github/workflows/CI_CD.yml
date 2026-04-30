@@ -31,7 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' 
     strategy:
-      max-parallel: 2
       matrix: 
         targetPlatform: ${{ fromJSON(vars.BUILD_PLATFORMS) }}
     steps:
