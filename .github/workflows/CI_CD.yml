@@ -1,14 +1,17 @@
-#  GitHub Action Secret:
-#  UNITY_LICENSE: Unity license file content
-#  UNITY_EMAIL: Unity account email
-#  UNITY_PASSWORD: Unity account password
+# GitHub Action Secrets:
+# UNITY_LICENSE: Unity license file content
+# UNITY_EMAIL: Unity account email
+# UNITY_PASSWORD: Unity account password
 # STEAM_USERNAME: Steam account username
 # STEAM_CONFIG_VDF: Steam config file content
+# ITCH_IO_API_KEY: Itch.io API Key (Required for Itch deployment)
 
-#  Github Action Variables:
-#  UNITY_VERSION: Unity version (e.g. 2023.2.9f1)
-#  STEAM_APP_ID: Steam app ID (e.g. 123456)
-
+# Github Action Variables:
+# UNITY_VERSION: Unity version (e.g. 2023.2.9f1)
+# STEAM_APP_ID: Steam app ID (e.g. 123456)
+# BUILD_PLATFORMS: JSON array of platforms (e.g. ["StandaloneWindows64", "StandaloneLinux64", "StandaloneOSX", "WebGL"])
+# ITCH_URL: Itch game slug (e.g. "my-awesome-game")
+# ITCH_USER_NAME: Itch username (e.g. "my-username")
 
 
 name: CI/CD
@@ -22,82 +25,15 @@ on:
       - main
 
 jobs:
-    # Build on Windows
-  build-Windows:
-    name: Build Windows 
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' 
-    strategy:
-      matrix:
-        targetPlatform: [StandaloneWindows64]
-    steps:
-      # Checkout
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-
-      # Git LFS
-      - name: Create LFS file list
-        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
-
-      - name: Restore LFS cache
-        uses: actions/cache@v4
-        id: lfs-cache
-        with:
-          path: .git/lfs
-          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
-
-      - name: Git LFS Pull
-        run: |
-          git lfs pull
-          git add .
-          git reset --hard
-      # Cache
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}-${{ matrix.targetPlatform }}
-          restore-keys: |
-            Library-${{ matrix.targetPlatform }}
-          
-      - name: Build project 
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: ${{ matrix.targetPlatform }}
-          unityVersion: ${{ vars.UNITY_VERSION }}
-          allowDirtyBuild: true
-
-      # RETURN LICENSE (Runs even if build fails)
-      - name: Return Unity License
-        uses: game-ci/unity-return-license@v2
-        if: always()
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
-      # Output
-      - name: Upload the file to Github Action
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}  
-
   # Build on multiple platforms 
   build-multiple-platforms:
-    needs: [build-Windows]
     name: Build on Linux/Macos
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' 
     strategy:
+      max-parallel: 2
       matrix: 
-        targetPlatform: [StandaloneLinux64, StandaloneOSX]
+        targetPlatform: ${{ fromJSON(vars.BUILD_PLATFORMS) }}
     steps:
       # Checkout
       - name: Checkout repository
@@ -141,48 +77,26 @@ jobs:
           unityVersion: ${{ vars.UNITY_VERSION }}
           allowDirtyBuild: true
 
-      # RETURN LICENSE (Runs even if build fails)
-      - name: Return Unity License
-        uses: game-ci/unity-return-license@v2
-        if: always()
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
       # Output
       - name: Upload the file to Github Action
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.targetPlatform }}
+          name: ${{ matrix.targetPlatform }}  
           path: build/${{ matrix.targetPlatform }}  
         
-  # Deploy to Steam
+  # Deploy to Steam and itch
   deploy:
     needs: [build-multiple-platforms]
     name: Deploy to Steam
     runs-on: ubuntu-latest
     steps:
-      - name: Download Windows build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-StandaloneWindows64
-          path: build/StandaloneWindows64
-
-      - name: Download Linux build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-StandaloneLinux64
-          path: build/StandaloneLinux64
-
-      - name: Download macOS build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-StandaloneOSX
-          path: build/StandaloneOSX
-
+      - name: Download all builds
+              uses: actions/download-artifact@v4
+              with:
+                path: build
       - name: Deploy to Steam
         uses: game-ci/steam-deploy@v3
+        if: ${{ vars.STEAM_APP_ID != '' }}
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
@@ -192,3 +106,13 @@ jobs:
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
           depot3Path: StandaloneOSX
+
+      - name: Deploy to Itch 
+        uses: manleydev/butler-publish-itchio-action@master
+        if: ${{ vars.ITCH_URL != '' }}
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_IO_API_KEY }}
+          CHANNEL: web     
+          ITCH_GAME: ${{vars.ITCH_URL}}
+          ITCH_USER: ${{vars.ITCH_USER_NAME}}
+          PACKAGE: build/WebGL 
