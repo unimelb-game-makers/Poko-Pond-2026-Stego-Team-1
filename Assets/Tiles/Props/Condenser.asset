@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcaf8b4cb58f24036b4e48b34535d8ef, type: 3}
-  m_Name: PressurePlate_PropTile
+  m_Name: Condenser
   m_EditorClassIdentifier: Assembly-CSharp::PropTile
-  previewSprite: {fileID: 673232444285602156, guid: 0510a71a56acf4d6c86fb4b9abf0a7a1, type: 3}
-  prefab: {fileID: 8068085154840443471, guid: 41a09c3cc264e4b9c83203fe06d6fae9, type: 3}
-  spawnOffset: {x: 0, y: 0, z: 0}
+  previewSprite: {fileID: 21300000, guid: 4cb1eb4a03736474ebd1d481275eeb4e, type: 3}
+  prefab: {fileID: 9077519281397374647, guid: a98f34a57a88341fbae218e3c8390788, type: 3}
+  spawnOffset: {x: 0.5, y: 0, z: 0}
   connectionId: 

@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 0510a71a56acf4d6c86fb4b9abf0a7a1
+guid: 4cb1eb4a03736474ebd1d481275eeb4e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 673232444285602156
-    second: pressure_plate_vertical_0
-  - first:
-      213: -6524781412385197232
-    second: pressure_plate_vertical_1
-  - first:
-      213: -2348438306726508273
-    second: pressure_plate_vertical_2
+      213: 3405678033340726238
+    second: condenser_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -81,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -119,67 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pressure_plate_vertical_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c6949e4575dc75900800000000000000
-      internalID: 673232444285602156
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pressure_plate_vertical_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 16
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 05375bd00e15375a0800000000000000
-      internalID: -6524781412385197232
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pressure_plate_vertical_2
+      name: condenser_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f0985a67dcba86fd0800000000000000
-      internalID: -2348438306726508273
+      spriteID: edbff949026634f20800000000000000
+      internalID: 3405678033340726238
       vertices: []
       indices: 
       edges: []
@@ -188,8 +138,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 118c9ddabd87c4282ac1fce2fef20b31
-    internalID: 0
+    spriteID: 0a1bbc2aefb6c4bed9d241fa5410b1e8
+    internalID: -1798558758
     vertices: []
     indices: 
     edges: []
@@ -198,11 +148,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":3.0},"gridSpriteSize":{"x":32.0,"y":16.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":3.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      pressure_plate_vertical_0: 673232444285602156
-      pressure_plate_vertical_1: -6524781412385197232
-      pressure_plate_vertical_2: -2348438306726508273
+      condenser_0: 3405678033340726238
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

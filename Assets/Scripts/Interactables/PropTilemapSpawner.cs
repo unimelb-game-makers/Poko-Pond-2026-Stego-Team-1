@@ -30,7 +30,12 @@ public class PropTilemapSpawner : MonoBehaviour
     {
         [HideInInspector] public string propName; // shown via custom label in inspector
         public Vector3Int cell;
+        [Tooltip("Shared ID linking this prop to a trigger (pressure plate, lever, button). Leave empty for no connection.")]
         public string connectionId;
+        [Tooltip("Hold: prop state matches the trigger — active while held, reverts on release. Toggle: each trigger press flips the prop state.")]
+        public ConnectionMode connectionMode;
+        [Tooltip("Whether this prop starts active (on) or inactive (off) before any trigger fires.")]
+        public bool initialActive;
     }
 
     [Tooltip("Per-cell connection IDs. Right-click this component → Sync Cell List after painting to auto-populate.")]
@@ -45,19 +50,22 @@ public class PropTilemapSpawner : MonoBehaviour
         var tilemap = GetComponent<Tilemap>();
         tilemap.CompressBounds();
 
-        var existing = new Dictionary<Vector3Int, string>();
+        var existing = new Dictionary<Vector3Int, CellOverride>();
         foreach (var entry in cellOverrides)
-            existing[entry.cell] = entry.connectionId;
+            existing[entry.cell] = entry;
 
         cellOverrides.Clear();
         foreach (Vector3Int cell in tilemap.cellBounds.allPositionsWithin)
         {
             if (tilemap.GetTile(cell) is not PropTile propTile) continue;
+            bool hadEntry = existing.TryGetValue(cell, out var prev);
             cellOverrides.Add(new CellOverride
             {
-                propName     = propTile.prefab != null ? propTile.prefab.name : propTile.name,
-                cell         = cell,
-                connectionId = existing.TryGetValue(cell, out var id) ? id : ""
+                propName       = propTile.prefab != null ? propTile.prefab.name : propTile.name,
+                cell           = cell,
+                connectionId   = hadEntry ? prev.connectionId   : "",
+                connectionMode = hadEntry ? prev.connectionMode : ConnectionMode.Hold,
+                initialActive  = hadEntry ? prev.initialActive  : true,
             });
         }
 
@@ -78,10 +86,9 @@ public class PropTilemapSpawner : MonoBehaviour
         var tilemap = GetComponent<Tilemap>();
         tilemap.CompressBounds();
 
-        var overrideLookup = new Dictionary<Vector3Int, string>();
+        var overrideLookup = new Dictionary<Vector3Int, CellOverride>();
         foreach (var entry in cellOverrides)
-            if (!string.IsNullOrEmpty(entry.connectionId))
-                overrideLookup[entry.cell] = entry.connectionId;
+            overrideLookup[entry.cell] = entry;
 
         foreach (Vector3Int cell in tilemap.cellBounds.allPositionsWithin)
         {
@@ -91,9 +98,18 @@ public class PropTilemapSpawner : MonoBehaviour
             Vector3 worldPos = tilemap.GetCellCenterWorld(cell) + propTile.spawnOffset;
             var go = Instantiate(propTile.prefab, worldPos, Quaternion.identity, transform.parent);
 
-            var connId = overrideLookup.TryGetValue(cell, out var id) ? id : propTile.connectionId;
+            bool hasOverride = overrideLookup.TryGetValue(cell, out var ov);
+
+            // Pass connection ID to any prop that links to a trigger
+            var connId = hasOverride && !string.IsNullOrEmpty(ov.connectionId) ? ov.connectionId : propTile.connectionId;
             if (!string.IsNullOrEmpty(connId) && go.TryGetComponent(out IPropConnectable connectable))
                 connectable.SetConnectionId(connId);
+
+            // Pass activation config (mode + initial state) to any prop that supports it
+            if (go.TryGetComponent(out IPropActivatable activatable))
+                activatable.SetActivationConfig(
+                    hasOverride ? ov.connectionMode : ConnectionMode.Hold,
+                    hasOverride ? ov.initialActive  : true);
         }
     }
 

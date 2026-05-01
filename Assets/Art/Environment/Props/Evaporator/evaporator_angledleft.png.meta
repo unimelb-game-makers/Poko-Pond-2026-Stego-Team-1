@@ -1,16 +1,22 @@
 fileFormatVersion: 2
-guid: 0510a71a56acf4d6c86fb4b9abf0a7a1
+guid: 8994fcb5c1d1f420fa5aff8a9c9dabc3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 673232444285602156
-    second: pressure_plate_vertical_0
+      213: -5421316550358290892
+    second: evaporator_angledleft_0
   - first:
-      213: -6524781412385197232
-    second: pressure_plate_vertical_1
+      213: 2861484389769077288
+    second: evaporator_angledleft_1
   - first:
-      213: -2348438306726508273
-    second: pressure_plate_vertical_2
+      213: 756968615767425349
+    second: evaporator_angledleft_2
+  - first:
+      213: -2437011070120123501
+    second: evaporator_angledleft_3
+  - first:
+      213: -1165944720542368489
+    second: evaporator_angledleft_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -81,7 +87,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -119,67 +125,111 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pressure_plate_vertical_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c6949e4575dc75900800000000000000
-      internalID: 673232444285602156
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pressure_plate_vertical_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 16
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 05375bd00e15375a0800000000000000
-      internalID: -6524781412385197232
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pressure_plate_vertical_2
+      name: evaporator_angledleft_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
+        width: 28
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f0985a67dcba86fd0800000000000000
-      internalID: -2348438306726508273
+      spriteID: 43ea2f0225d93c4b0800000000000000
+      internalID: -5421316550358290892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: evaporator_angledleft_1
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 0
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 822e28644e806b720800000000000000
+      internalID: 2861484389769077288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: evaporator_angledleft_2
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 0
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 541cfe802fa418a00800000000000000
+      internalID: 756968615767425349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: evaporator_angledleft_3
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 0
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 393abc3f75ffd2ed0800000000000000
+      internalID: -2437011070120123501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: evaporator_angledleft_4
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 0
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71d7450447bb1dfe0800000000000000
+      internalID: -1165944720542368489
       vertices: []
       indices: 
       edges: []
@@ -188,7 +238,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 118c9ddabd87c4282ac1fce2fef20b31
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -196,13 +246,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":3.0},"gridSpriteSize":{"x":32.0,"y":16.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      pressure_plate_vertical_0: 673232444285602156
-      pressure_plate_vertical_1: -6524781412385197232
-      pressure_plate_vertical_2: -2348438306726508273
+      evaporator_angledleft_0: -5421316550358290892
+      evaporator_angledleft_1: 2861484389769077288
+      evaporator_angledleft_2: 756968615767425349
+      evaporator_angledleft_3: -2437011070120123501
+      evaporator_angledleft_4: -1165944720542368489
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

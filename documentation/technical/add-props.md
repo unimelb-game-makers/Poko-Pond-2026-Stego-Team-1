@@ -102,18 +102,28 @@ One entry per prop type.
 
 For multi-cell props, paint only the **one anchor cell** — the oversized sprite handles the rest visually.
 
-### Step 8 — Set connection IDs (for linked props)
+### Step 8 — Configure Cell Overrides (connections, mode, initial state)
 
-If the prop needs to connect to another prop (plate → crusher):
+After painting, configure each cell in the **PropTilemapSpawner** Cell Overrides list:
 
 1. Select the **Props** Tilemap GameObject.
-2. In the **PropTilemapSpawner** component, right-click → **Sync Cell List**.
-   - All PropTile cells appear in the list with their prop name and cell coordinates.
-   - Existing connection IDs are preserved on re-sync.
-3. Find the two cells you want to link and type the **same string** in both Connection ID fields (e.g. `crusher_a`).
-4. With PropTilemapSpawner selected, the Scene view labels and colour-codes each cell — linked props share the same colour.
+2. Right-click **PropTilemapSpawner** → **Sync Cell List**.
+   - All PropTile cells appear with their prop name and cell coordinates.
+   - Existing values are preserved on re-sync.
+3. For each cell, three fields are available:
 
-See [`prop-connections.md`](prop-connections.md) for the full connection system.
+| Field | Purpose |
+|-------|---------|
+| **Connection ID** | Shared string linking this prop to a trigger. Leave empty for no connection. |
+| **Connection Mode** | `Hold` — prop state matches trigger state (reverts on release). `Toggle` — each press flips state, release does nothing. |
+| **Initial Active** | Whether this prop starts on (`true`) or off (`false`) before any trigger fires. |
+
+4. To link a trigger to a prop, type the **same Connection ID** on both cells.
+5. With PropTilemapSpawner selected, the Scene view labels and colour-codes linked cells.
+
+`Initial Active` applies even with no Connection ID — it sets the permanent state of an unlinked prop.
+
+See [`prop-connections.md`](prop-connections.md) for the full connection and mode system.
 
 ### Step 9 — Test in Play mode
 
@@ -158,9 +168,54 @@ An activator is a prop the player interacts with that fires an event. Model new 
 | Prefab | `PressurePlate` prefab |
 | Sprite pivot | Bottom |
 | Sorting Order | Higher than all tilemaps |
-| Implements | `IPropConnectable` → sets `plateId` |
+| Implements | `IPropConnectable` |
 | Animator parameter | `IsPressed` (Bool) |
-| Connection | Match Connection ID with linked crusher in Cell Overrides |
+| Role | Activator — fires `OnPressurePlateActivated` / `OnPressurePlateDeactivated` |
+
+---
+
+### Evaporator (1×1)
+
+| Field | Value |
+|-------|-------|
+| Tile asset | `PropTile_Evaporator` |
+| Anchor cell | The single painted cell |
+| Prefab | `Evaporator` prefab |
+| Sprite pivot | Bottom |
+| Sorting Order | Higher than all tilemaps |
+| Layer | `Props` |
+| Implements | `IPropConnectable`, `IPropActivatable` |
+| Animator parameter | `IsActive` (Bool) — idle animation plays when true |
+| Role | Activatee — converts liquid player to gas cloud on contact |
+| Connection Mode | Hold or Toggle (set per cell in PropTilemapSpawner) |
+| Initial Active | Default `true` (always on unless configured otherwise) |
+| Detection | `OverlapBoxAll` on `"Player"` + `"SoftBodyPoint"` layers above collider |
+| Burst | Straight upward velocity burst applied to gas cloud at moment of conversion |
+
+See [`evaporator-condenser.md`](evaporator-condenser.md) for the full evaporation/condensation system.
+
+---
+
+### Condenser (2×1 — 64×32px, spans two tile cells)
+
+| Field | Value |
+|-------|-------|
+| Tile asset | `PropTile_Condenser` |
+| Anchor cell | Left cell (entrance side) |
+| Prefab | `Condenser` prefab |
+| Sprite pivot | Left (on preview sprite), Centre (on animation frames) |
+| Sorting Order | Higher than all tilemaps |
+| Layer | `Props` |
+| Implements | `IPropConnectable`, `IPropActivatable` |
+| Animator parameter | `Condense` (Trigger) — plays once on condensation, Loop Time off |
+| Role | Activatee — converts gas cloud back to liquid player on left-side entry |
+| Connection Mode | Hold or Toggle (set per cell in PropTilemapSpawner) |
+| Initial Active | Default `true` |
+| Detection | `OverlapBox` on `"GasCloud"` layer at left-edge entry zone |
+| Entry direction | Gas cloud must enter from the left — entry zone is on the left edge of the collider |
+| Collision | Liquid player (SoftBodyPoint layer) is physically blocked. Gas cloud passes through (GasCloud × Props disabled in Layer Collision Matrix) |
+
+See [`evaporator-condenser.md`](evaporator-condenser.md) for the full evaporation/condensation system.
 
 ---
 
@@ -188,7 +243,8 @@ void ClearAll() => GetComponent<UnityEngine.Tilemaps.Tilemap>().ClearAllTiles();
 ## Checklist for a New Prop
 
 - [ ] Prefab built and saved to `Assets/Prefabs/`
-- [ ] `IPropConnectable` implemented if the prop links to another prop
+- [ ] `IPropConnectable` implemented if the prop links to a trigger
+- [ ] `IPropActivatable` implemented if the prop supports Hold/Toggle modes and Initial Active state
 - [ ] Sprite sized to full footprint (multi-cell props use one oversized sprite)
 - [ ] Sprite pivot set correctly (Bottom for floor props, Top for ceiling props)
 - [ ] SpriteRenderer **Order in Layer** set higher than tilemaps

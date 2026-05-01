@@ -33,4 +33,14 @@ public static class EventManager
 
     internal static void PlayerSplit() => OnPlayerSplit?.Invoke();
     internal static void PlayerMerge() => OnPlayerMerge?.Invoke();
+
+    // ── Evaporation / Condensation ────────────────────────────────────────
+
+    // Fired by PlayerSplitController when any droplet (main or split) becomes a gas cloud.
+    public static event Action OnPlayerEvaporate;
+    // Fired by PlayerSplitController when a gas cloud condenses back into a liquid droplet.
+    public static event Action OnPlayerCondense;
+
+    internal static void PlayerEvaporate() => OnPlayerEvaporate?.Invoke();
+    internal static void PlayerCondense()  => OnPlayerCondense?.Invoke();
 }
