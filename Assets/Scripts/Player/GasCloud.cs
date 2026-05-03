@@ -132,6 +132,8 @@ public class GasCloud : MonoBehaviour
         GetComponent<MeshFilter>().mesh = _mesh;
 
         var mr              = GetComponent<MeshRenderer>();
+        if (bodyMaterial == null)
+            Debug.LogError("[GasCloud] bodyMaterial is null — assign the player body material on SoftBodyPlayer in the Inspector.", this);
         mr.material         = bodyMaterial;
         mr.sortingLayerName = sortingLayerName;
         mr.sortingOrder     = sortingOrder;
@@ -151,7 +153,11 @@ public class GasCloud : MonoBehaviour
             tris[i * 3 + 1] = i + 1;
             tris[i * 3 + 2] = (i + 1) % vertexCount + 1; // wraps last vertex back to index 1
         }
+        // Set vertices before triangles so mesh bounds are valid from frame 0
+        _mesh.vertices  = _verts;
+        _mesh.colors    = _colors;
         _mesh.triangles = tris;
+        _mesh.RecalculateBounds();
     }
 
     private void SpawnFaceRenderer()

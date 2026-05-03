@@ -41,7 +41,7 @@ Idle → Off  : IsActive = false, Has Exit Time off
 ```
 
 ### Detection
-`Physics2D.OverlapBoxAll` on `"Player"` + `"SoftBodyPoint"` layers, polled every frame. Conversion is instant on contact — no hold time. The detection zone is cached from the BoxCollider2D bounds in `Start()`.
+`Physics2D.OverlapBoxAll` on `"Player"` + `"SoftBodyPoint"` layers, polled every frame. Conversion is instant on contact — no hold time. The detection zone is cached from the BoxCollider2D bounds in `Start()` — the zone sits above `b.max.y` (top surface of the collider), not above `b.center.y`.
 
 ### Activation config (set in PropTilemapSpawner Cell Overrides)
 - **Initial Active `true`** — evaporator is on by default; a linked plate turns it off.

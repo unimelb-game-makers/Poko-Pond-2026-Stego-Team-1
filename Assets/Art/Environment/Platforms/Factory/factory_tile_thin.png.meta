@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 0510a71a56acf4d6c86fb4b9abf0a7a1
+guid: d28d3092fde2e4b4e8a3b90b526f7897
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 673232444285602156
-    second: pressure_plate_vertical_0
-  - first:
-      213: -6524781412385197232
-    second: pressure_plate_vertical_1
-  - first:
-      213: -2348438306726508273
-    second: pressure_plate_vertical_2
+      213: 5522384561867133775
+    second: factory_tile_thin_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -43,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -57,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -119,67 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pressure_plate_vertical_0
+      name: factory_tile_thin_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 32
+        y: 24
         width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c6949e4575dc75900800000000000000
-      internalID: 673232444285602156
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pressure_plate_vertical_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 16
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 05375bd00e15375a0800000000000000
-      internalID: -6524781412385197232
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pressure_plate_vertical_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 32
-        height: 16
-      alignment: 2
-      pivot: {x: 0.5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f0985a67dcba86fd0800000000000000
-      internalID: -2348438306726508273
+      spriteID: f43113b008373ac40800000000000000
+      internalID: 5522384561867133775
       vertices: []
       indices: 
       edges: []
@@ -188,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 118c9ddabd87c4282ac1fce2fef20b31
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -196,13 +146,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":3.0},"gridSpriteSize":{"x":32.0,"y":16.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      pressure_plate_vertical_0: 673232444285602156
-      pressure_plate_vertical_1: -6524781412385197232
-      pressure_plate_vertical_2: -2348438306726508273
+      factory_tile_thin_0: 5522384561867133775
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

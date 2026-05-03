@@ -86,7 +86,7 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 
         // Cache the detection zone above the collider so Animator-driven transforms can't shift it
         var b            = col.bounds;
-        _detectionCenter = new Vector2(b.center.x, b.center.y + detectionHeight * 0.5f);
+        _detectionCenter = new Vector2(b.center.x, b.max.y + detectionHeight * 0.5f);
         _detectionSize   = new Vector2(b.size.x,   detectionHeight);
     }
 
@@ -137,11 +137,12 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 
         foreach (var col in hits)
         {
-            var sp = col.GetComponentInParent<SoftBodyPlayer>();
+            // Ring-point GOs are not parented to SoftBodyPlayer, so use the ref component instead
+            var pointRef = col.GetComponent<SoftBodyPointRef>();
+            var sp = pointRef != null ? pointRef.owner : col.GetComponent<SoftBodyPlayer>();
             if (sp == null) continue;
-            // TryEvaporate returns false if the droplet is already gas — safe to call every frame
             if (_controller.TryEvaporate(sp, new Vector2(0f, burstSpeed)))
-                break; // one evaporation per frame max
+                break;
         }
     }
 
