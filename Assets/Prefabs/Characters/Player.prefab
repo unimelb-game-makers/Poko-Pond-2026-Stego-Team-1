@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8263349199459693501}
   - component: {fileID: 5635439805024734902}
   - component: {fileID: 5289004033044655933}
+  - component: {fileID: 1692660458411853611}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -107,7 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoftBodyPlayer
   pointCount: 30
-  bodyRadius: 0.7
+  bodyRadius: 0.5
   domeHeightScale: 0.85
   pointMass: 0.1
   pointRadius: 0.05
@@ -128,7 +129,7 @@ MonoBehaviour:
   gravityRampRate: 4
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
   groundCheckFraction: 0.2
   levelBounds: {fileID: 0}
   boundaryForce: 40
@@ -137,9 +138,9 @@ MonoBehaviour:
   faceBias: 0.4
   faceOffset: {x: 0, y: 0}
   faceScale: 1
-  faceSortingOrder: 1
+  faceSortingOrder: 0
   faceFadeDuration: 0.07
-  bodyMaterial: {fileID: 0}
+  bodyMaterial: {fileID: 2100000, guid: 741a0b7593c474a58b58ba7483f0d722, type: 2}
   sortingLayerName: Default
   sortingOrder: 0
   subdivisionsPerSegment: 4
@@ -232,3 +233,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8d5f7c852595c5498ef0ec44f647fad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLife
+--- !u!114 &1692660458411853611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687343749860754848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fca4901614c74ddda689b7c80056b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlatformDropThrough
+  platformLayer: Platform
+  passDuration: 0.3
+  passProbeDistance: 0.4
+  passUpVelocityThreshold: 3

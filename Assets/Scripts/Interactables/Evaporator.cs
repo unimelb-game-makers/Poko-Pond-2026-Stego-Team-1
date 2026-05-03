@@ -2,7 +2,8 @@ using UnityEngine;
 
 /*
  * OVERVIEW
- *   Evaporator prop — converts a SoftBodyPlayer into a GasCloud on contact.
+ *   Evaporator prop — currently logs when the player enters/exits its detection zone.
+ *   Gas-cloud transformation is not implemented; this is a placeholder for the future mechanic.
  *   Placed via the Props tilemap using a PropTile asset; spawned at runtime by PropTilemapSpawner.
  *   Burst velocity is always straight up.
  *
@@ -19,8 +20,7 @@ using UnityEngine;
  *
  * DETECTION
  *   OverlapBoxAll on "Player" and "SoftBodyPoint" layers each frame.
- *   Conversion is instant. PlayerSplitController.TryEvaporate guards against
- *   double-conversion (returns false if the droplet is already a gas cloud).
+ *   Logging is edge-triggered — fires once on enter and once on exit.
  *
  * SETUP
  *   1. Add a SpriteRenderer, Animator, and BoxCollider2D to the prefab.
@@ -39,14 +39,14 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 
     // ── Private ─────────────────────────────────────────────────────────────
 
-    private bool                  _isActive        = true;  // default until SetActivationConfig is called
-    private bool                  _initialActive   = true;
-    private ConnectionMode        _connectionMode  = ConnectionMode.Hold;
-    private string                _connectionId    = "";
-    private PlayerSplitController _controller;
-    private Animator              _animator;
-    private Vector2               _detectionCenter;
-    private Vector2               _detectionSize;
+    private bool             _isActive        = true;  // default until SetActivationConfig is called
+    private bool             _initialActive   = true;
+    private ConnectionMode   _connectionMode  = ConnectionMode.Hold;
+    private string           _connectionId    = "";
+    private Animator         _animator;
+    private Vector2          _detectionCenter;
+    private Vector2          _detectionSize;
+    private bool             _playerOver;     // edge-triggered logging — only fire on enter
 
     private static readonly int IsActiveHash = Animator.StringToHash("IsActive");
 
@@ -69,10 +69,6 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Start()
     {
-        _controller = Object.FindFirstObjectByType<PlayerSplitController>();
-        if (_controller == null)
-            Debug.LogError("[Evaporator] No PlayerSplitController found in scene.", this);
-
         // Drive initial animator state — covers the case where SetActivationConfig was not called
         SetAnimatorState(_isActive);
 
@@ -126,23 +122,21 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Update()
     {
-        if (!_isActive || _controller == null) return;
+        if (!_isActive) { _playerOver = false; return; }
 
-        var hits = Physics2D.OverlapBoxAll(
-            _detectionCenter,
-            _detectionSize,
-            0f,
-            LayerMask.GetMask("Player", "SoftBodyPoint")
-        );
+        bool present = Physics2D.OverlapBox(
+            _detectionCenter, _detectionSize, 0f,
+            LayerMask.GetMask("Player", "SoftBodyPoint")) != null;
 
-        foreach (var col in hits)
+        if (present && !_playerOver)
         {
-            // Ring-point GOs are not parented to SoftBodyPlayer, so use the ref component instead
-            var pointRef = col.GetComponent<SoftBodyPointRef>();
-            var sp = pointRef != null ? pointRef.owner : col.GetComponent<SoftBodyPlayer>();
-            if (sp == null) continue;
-            if (_controller.TryEvaporate(sp, new Vector2(0f, burstSpeed)))
-                break;
+            _playerOver = true;
+            Debug.Log($"[Evaporator] Player entered (id='{_connectionId}')", this);
+        }
+        else if (!present && _playerOver)
+        {
+            _playerOver = false;
+            Debug.Log($"[Evaporator] Player exited (id='{_connectionId}')", this);
         }
     }
 

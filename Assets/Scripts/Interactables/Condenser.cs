@@ -2,7 +2,8 @@ using UnityEngine;
 
 /*
  * OVERVIEW
- *   Condenser prop — converts a GasCloud back into a liquid SoftBodyPlayer on contact.
+ *   Condenser prop — currently logs when the player enters/exits the left-side detection zone.
+ *   Gas-cloud transformation is not implemented; this is a placeholder for the future mechanic.
  *   Placed via the Props tilemap using a PropTile asset; spawned at runtime by PropTilemapSpawner.
  *
  * ENTRY DIRECTION
@@ -38,14 +39,14 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
 
     // ── Private ─────────────────────────────────────────────────────────────
 
-    private bool                  _isActive       = true;  // default until SetActivationConfig is called
-    private bool                  _initialActive  = true;
-    private ConnectionMode        _connectionMode = ConnectionMode.Hold;
-    private string                _connectionId   = "";
-    private PlayerSplitController _controller;
-    private Animator              _animator;
-    private Vector2               _entryCenter;
-    private Vector2               _entrySize;
+    private bool             _isActive       = true;  // default until SetActivationConfig is called
+    private bool             _initialActive  = true;
+    private ConnectionMode   _connectionMode = ConnectionMode.Hold;
+    private string           _connectionId   = "";
+    private Animator         _animator;
+    private Vector2          _entryCenter;
+    private Vector2          _entrySize;
+    private bool             _playerOver;
 
     private static readonly int CondenseTriggerHash = Animator.StringToHash("Condense");
 
@@ -67,10 +68,6 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Start()
     {
-        _controller = Object.FindFirstObjectByType<PlayerSplitController>();
-        if (_controller == null)
-            Debug.LogError("[Condenser] No PlayerSplitController found in scene.", this);
-
         var col = GetComponent<Collider2D>();
         if (col == null)
         {
@@ -113,23 +110,22 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Update()
     {
-        if (!_isActive || _controller == null) return;
+        if (!_isActive) { _playerOver = false; return; }
 
-        var hit = Physics2D.OverlapBox(
-            _entryCenter,
-            _entrySize,
-            0f,
-            LayerMask.GetMask("GasCloud")
-        );
-        if (hit == null) return;
+        bool present = Physics2D.OverlapBox(
+            _entryCenter, _entrySize, 0f,
+            LayerMask.GetMask("Player", "SoftBodyPoint")) != null;
 
-        var gc = hit.GetComponent<GasCloud>();
-        if (gc == null) return;
-
-        if (_controller.TryCondense(gc, transform.position))
+        if (present && !_playerOver)
         {
-            if (_animator != null)
-                _animator.SetTrigger(CondenseTriggerHash);
+            _playerOver = true;
+            Debug.Log($"[Condenser] Player entered (id='{_connectionId}')", this);
+            if (_animator != null) _animator.SetTrigger(CondenseTriggerHash);
+        }
+        else if (!present && _playerOver)
+        {
+            _playerOver = false;
+            Debug.Log($"[Condenser] Player exited (id='{_connectionId}')", this);
         }
     }
 

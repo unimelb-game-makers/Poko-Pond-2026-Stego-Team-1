@@ -76,14 +76,6 @@ public class PlayerSplitController : MonoBehaviour
     private bool             _isMerging;     // true while MergeCoroutine is executing
     private float            _mergeCooldown; // prevents immediate re-merge after split
 
-    // ── Gas cloud tracking ───────────────────────────────────────────────
-    // Parallel to _droplets — non-null when that split slot has been evaporated.
-    private GasCloud[] _gasClouds             = new GasCloud[2];
-    // Non-null when mainPlayer (not split) has been evaporated.
-    private GasCloud   _mainGasCloud;
-    // Throttles the mismatch-pulse coroutine so it doesn't spam every frame.
-    private float      _mismatchPulseCooldown;
-
     private Vector2 _capturedMergePos; // active droplet position at the moment proximity triggers
     private Vector2 _capturedMergeVel; // average ring-point velocity of both droplets
 
@@ -101,13 +93,8 @@ public class PlayerSplitController : MonoBehaviour
 
         if (!_isSplit && _splitCoroutine == null && !_isMerging)
         {
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                if (_mainGasCloud != null)
-                    _splitCoroutine = StartCoroutine(SplitGasCoroutine());
-                else if (!mainPlayer.IsGroundPounding)
-                    _splitCoroutine = StartCoroutine(SplitCoroutine());
-            }
+            if (Input.GetKeyDown(KeyCode.LeftShift) && !mainPlayer.IsGroundPounding)
+                _splitCoroutine = StartCoroutine(SplitCoroutine());
         }
 
         if (_isSplit && Input.GetKeyDown(KeyCode.Tab))
@@ -116,57 +103,25 @@ public class PlayerSplitController : MonoBehaviour
 
     private void LateUpdate()
     {
-        // Mismatch pulse cooldown ticks here (visual feedback, not physics)
-        if (_mismatchPulseCooldown > 0f)
-            _mismatchPulseCooldown -= Time.deltaTime;
-
         // Proximity check in LateUpdate so ring-point transform.positions are freshly
         // interpolated for this render frame — more current than rb.position in FixedUpdate.
-        // Each slot may hold a liquid droplet, a gas cloud, or both (evaporated-while-split).
-        // We only need SOMETHING in each slot to attempt a proximity merge.
-        bool slot0Exists = _droplets[0] != null || _gasClouds[0] != null;
-        bool slot1Exists = _droplets[1] != null || _gasClouds[1] != null;
-
-        if (_isSplit && !_isMerging && _mergeCooldown <= 0f && slot0Exists && slot1Exists)
+        if (_isSplit && !_isMerging && _mergeCooldown <= 0f &&
+            _droplets[0] != null && _droplets[1] != null)
         {
-            PlayerForm form0 = _gasClouds[0] != null ? PlayerForm.Gas : PlayerForm.Liquid;
-            PlayerForm form1 = _gasClouds[1] != null ? PlayerForm.Gas : PlayerForm.Liquid;
-
-            Vector2 c0 = form0 == PlayerForm.Gas ? _gasClouds[0].Center : RenderCenter(_droplets[0]);
-            Vector2 c1 = form1 == PlayerForm.Gas ? _gasClouds[1].Center : RenderCenter(_droplets[1]);
+            Vector2 c0 = RenderCenter(_droplets[0]);
+            Vector2 c1 = RenderCenter(_droplets[1]);
 
             if (Vector2.Distance(c0, c1) < mergeProximityRadius)
             {
-                if (form0 != form1)
-                {
-                    // Mismatched states — merge blocked, pulse both to signal mismatch.
-                    if (_mismatchPulseCooldown <= 0f)
-                    {
-                        StartCoroutine(MismatchPulseCoroutine());
-                        _mismatchPulseCooldown = 0.5f;
-                    }
-                }
-                else if (form0 == PlayerForm.Gas)
-                {
-                    // Both gas — merge into a single mainGasCloud
-                    _capturedMergePos = (c0 + c1) * 0.5f;
-                    _capturedMergeVel = ((_gasClouds[0].Rb != null ? _gasClouds[0].Rb.linearVelocity : Vector2.zero)
-                                       + (_gasClouds[1].Rb != null ? _gasClouds[1].Rb.linearVelocity : Vector2.zero)) * 0.5f;
-                    StartCoroutine(MergeGasCloudsCoroutine());
-                }
-                else
-                {
-                    // Both liquid — standard merge path
-                    _capturedMergePos = (c0 + c1) * 0.5f;
+                _capturedMergePos = (c0 + c1) * 0.5f;
 
-                    Vector2 velSum = Vector2.zero; int vn = 0;
-                    foreach (var d in _droplets)
-                        if (d != null)
-                            foreach (var rb in d.Points) { velSum += rb.linearVelocity; vn++; }
-                    _capturedMergeVel = vn > 0 ? velSum / vn : Vector2.zero;
+                Vector2 velSum = Vector2.zero; int vn = 0;
+                foreach (var d in _droplets)
+                    if (d != null)
+                        foreach (var rb in d.Points) { velSum += rb.linearVelocity; vn++; }
+                _capturedMergeVel = vn > 0 ? velSum / vn : Vector2.zero;
 
-                    StartCoroutine(MergeCoroutine());
-                }
+                StartCoroutine(MergeCoroutine());
             }
         }
 
@@ -174,32 +129,19 @@ public class PlayerSplitController : MonoBehaviour
 
         if (_isSplit)
         {
-            // Track the active slot — prefer gas cloud position if that slot is evaporated
-            Vector2 target;
-            if (_gasClouds[_activeIdx] != null)
-                target = _gasClouds[_activeIdx].Center;
-            else
-            {
-                var active = _droplets[_activeIdx];
-                target = active != null ? active.Center : (Vector2)mainPlayer.transform.position;
-            }
+            var active = _droplets[_activeIdx];
+            Vector2 target = active != null ? active.Center : (Vector2)mainPlayer.transform.position;
             cameraProxy.UpdateTarget(target);
         }
         else if (_isMerging)
         {
             var active = _droplets[_activeIdx];
-            if (active != null)
-                cameraProxy.UpdateTarget(active.Center);
-            else if (mainPlayer != null)
-                cameraProxy.UpdateTarget(mainPlayer.Center);
+            if (active != null) cameraProxy.UpdateTarget(active.Center);
+            else if (mainPlayer != null) cameraProxy.UpdateTarget(mainPlayer.Center);
         }
-        else
+        else if (mainPlayer != null)
         {
-            // Not split — track mainGasCloud if evaporated, otherwise mainPlayer
-            if (_mainGasCloud != null)
-                cameraProxy.UpdateTarget(_mainGasCloud.Center);
-            else if (mainPlayer != null)
-                cameraProxy.UpdateTarget(mainPlayer.Center);
+            cameraProxy.UpdateTarget(mainPlayer.Center);
         }
     }
 
@@ -473,8 +415,7 @@ public class PlayerSplitController : MonoBehaviour
     // sorting order (active draws in front), and pans the camera to the new target.
     private void SetActiveDroplet(int index)
     {
-        // Remove ground pound listener from current active (only applies to liquid droplets)
-        if (_droplets[_activeIdx] != null && _gasClouds[_activeIdx] == null)
+        if (_droplets[_activeIdx] != null)
             _droplets[_activeIdx].OnGroundPoundLand -= OnActiveGroundPound;
 
         _activeIdx = index;
@@ -482,29 +423,14 @@ public class PlayerSplitController : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
+            if (_droplets[i] == null) continue;
             bool isActive = (i == _activeIdx);
-            if (_gasClouds[i] != null)
-            {
-                // This slot is currently a gas cloud
-                _gasClouds[i].InputEnabled = isActive;
-                _gasClouds[i].SetFaceVisible(isActive);
-                _gasClouds[i].SetSortingOrder(isActive ? baseOrder + 2 : baseOrder);
-            }
-            else if (_droplets[i] != null)
-            {
-                _droplets[i].InputEnabled = isActive;
-                _droplets[i].SetFaceVisible(isActive);
-                _droplets[i].SetSortingOrder(isActive ? baseOrder + 2 : baseOrder);
-            }
+            _droplets[i].InputEnabled    = isActive;
+            _droplets[i].SetFaceVisible(isActive);
+            _droplets[i].SetSortingOrder(isActive ? baseOrder + 2 : baseOrder);
         }
 
-        if (_gasClouds[_activeIdx] != null)
-        {
-            // Active slot is a gas cloud — camera pans to it; no ground pound listener
-            if (cameraProxy != null)
-                cameraProxy.SwitchTarget(_gasClouds[_activeIdx].Center);
-        }
-        else if (_droplets[_activeIdx] != null)
+        if (_droplets[_activeIdx] != null)
         {
             _droplets[_activeIdx].OnGroundPoundLand += OnActiveGroundPound;
             StartCoroutine(DriveActivateSquash(_droplets[_activeIdx], 0.18f));
@@ -517,11 +443,6 @@ public class PlayerSplitController : MonoBehaviour
     {
         for (int i = 0; i < 2; i++)
         {
-            if (_gasClouds[i] != null)
-            {
-                Destroy(_gasClouds[i].gameObject);
-                _gasClouds[i] = null;
-            }
             if (_droplets[i] != null)
             {
                 Destroy(_droplets[i].gameObject);
@@ -600,286 +521,4 @@ public class PlayerSplitController : MonoBehaviour
         if (droplet != null) droplet.WiggleBlend = 0f;
     }
 
-    // ── Evaporation / Condensation ────────────────────────────────────────
-
-    // Called by Evaporator when sp steps onto it. Returns true if evaporation occurred.
-    // Returns false if sp is already a gas cloud, or the scene state doesn't match.
-    public bool TryEvaporate(SoftBodyPlayer sp, Vector2 burst)
-    {
-        // Not split: evaporate mainPlayer
-        if (!_isSplit && !_isMerging && sp == mainPlayer && _mainGasCloud == null)
-        {
-            mainPlayer.InputEnabled = false;
-            _mainGasCloud = SpawnGasCloud(mainPlayer, -1, burst);
-            return true;
-        }
-
-        // Split: evaporate whichever droplet is touching the evaporator
-        if (_isSplit)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                if (_droplets[i] != sp || _gasClouds[i] != null) continue;
-
-                // Remove ground pound listener before freezing the active droplet
-                if (i == _activeIdx)
-                    _droplets[i].OnGroundPoundLand -= OnActiveGroundPound;
-
-                _gasClouds[i] = SpawnGasCloud(sp, i, burst);
-                bool isActive = (i == _activeIdx);
-                _gasClouds[i].InputEnabled = isActive;
-                _gasClouds[i].SetFaceVisible(isActive);
-                _gasClouds[i].SetSortingOrder(isActive
-                    ? mainPlayer.sortingOrder + 2
-                    : mainPlayer.sortingOrder);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // Called by Condenser when a GasCloud enters its left-side detection zone.
-    // Returns true if condensation occurred.
-    public bool TryCondense(GasCloud gc, Vector2 condensePosition)
-    {
-        // Condense the un-split mainPlayer gas cloud
-        if (gc == _mainGasCloud)
-        {
-            Vector2 vel = gc.Rb != null ? gc.Rb.linearVelocity * 0.3f : Vector2.zero;
-            Destroy(gc.gameObject);
-            _mainGasCloud = null;
-
-            mainPlayer.InputEnabled = true;
-            mainPlayer.Unfreeze();
-            mainPlayer.TeleportTo(condensePosition, vel);
-            mainPlayer.DepenetrateFromGround();
-            mainPlayer.SetVisible(true);
-            mainPlayer.SetBodyAlpha(0f);
-            StartCoroutine(DriveBodyFade(mainPlayer, 0f, 1f, 0.06f));
-            StartCoroutine(DriveMergeArrivalPop(mainPlayer, 0.30f));
-            if (cameraProxy != null) cameraProxy.SwitchTarget(condensePosition);
-
-            EventManager.PlayerCondense();
-            return true;
-        }
-
-        // Condense one of the split gas cloud slots
-        if (_isSplit)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                if (_gasClouds[i] != gc) continue;
-
-                Vector2 vel    = gc.Rb != null ? gc.Rb.linearVelocity * 0.3f : Vector2.zero;
-
-                Destroy(gc.gameObject);
-                _gasClouds[i] = null;
-
-                if (_droplets[i] == null)
-                {
-                    // Pure gas split (no frozen liquid underneath) — destroy the other cloud
-                    // and restore mainPlayer directly at the condenser.
-                    int other = 1 - i;
-                    if (_gasClouds[other] != null) { Destroy(_gasClouds[other].gameObject); _gasClouds[other] = null; }
-                    _isSplit   = false;
-                    _activeIdx = 0;
-
-                    mainPlayer.InputEnabled = true;
-                    mainPlayer.Unfreeze();
-                    mainPlayer.TeleportTo(condensePosition, vel);
-                    mainPlayer.DepenetrateFromGround();
-                    mainPlayer.SetVisible(true);
-                    mainPlayer.SetBodyAlpha(0f);
-                    StartCoroutine(DriveBodyFade(mainPlayer, 0f, 1f, 0.06f));
-                    StartCoroutine(DriveMergeArrivalPop(mainPlayer, 0.30f));
-                    if (cameraProxy != null) cameraProxy.SwitchTarget(condensePosition);
-                }
-                else
-                {
-                    bool wasActive = (i == _activeIdx);
-                    var sp = _droplets[i];
-                    sp.InputEnabled = wasActive;
-                    sp.Unfreeze();
-                    sp.TeleportTo(condensePosition, vel);
-                    sp.DepenetrateFromGround();
-                    sp.SetVisible(true);
-                    sp.SetBodyAlpha(0f);
-                    sp.SetFaceVisible(wasActive);
-                    StartCoroutine(DriveBodyFade(sp, 0f, 1f, 0.06f));
-                    StartCoroutine(DriveSpawnPop(sp, 0.28f));
-
-                    if (wasActive)
-                    {
-                        sp.OnGroundPoundLand += OnActiveGroundPound;
-                        if (cameraProxy != null) cameraProxy.SwitchTarget(condensePosition);
-                    }
-                }
-
-                EventManager.PlayerCondense();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // Freezes and hides sp, then spawns a GasCloud at sp's current position with the given burst velocity.
-    private GasCloud SpawnGasCloud(SoftBodyPlayer sp, int slotIndex, Vector2 burst)
-    {
-        sp.Freeze();
-        sp.SetVisible(false);
-
-        var go = new GameObject("GasCloud");
-        go.SetActive(false);
-        go.AddComponent<MeshFilter>();
-        go.AddComponent<MeshRenderer>();
-        var gc = go.AddComponent<GasCloud>();
-
-        gc.bodyMaterial     = sp.bodyMaterial;
-        gc.bodyRadius       = sp.bodyRadius * 1.15f; // slightly puffier than liquid form
-        gc.sortingLayerName = sp.sortingLayerName;
-        gc.sortingOrder     = sp.sortingOrder;
-        gc.faceRightSprite  = sp.faceRightSprite;
-        gc.faceLeftSprite   = sp.faceLeftSprite;
-        gc.faceScale        = sp.faceScale;
-        gc.faceSortingOrder = sp.faceSortingOrder;
-
-        gc.LinkedDroplet      = sp;
-        gc.LinkedDropletIndex = slotIndex;
-
-        go.transform.position = sp.Center;
-        go.SetActive(true); // Awake fires here — adds Rigidbody2D and CircleCollider2D
-
-        if (gc.Rb != null)
-            gc.Rb.linearVelocity = burst;
-
-        EventManager.PlayerEvaporate();
-        return gc;
-    }
-
-    // Splits the un-split mainGasCloud into two half-size gas clouds (same as liquid SplitCoroutine).
-    // The underlying mainPlayer stays frozen until both clouds merge back or a condenser is touched.
-    private IEnumerator SplitGasCoroutine()
-    {
-        Vector2 splitCenter = _mainGasCloud.Center;
-        Vector2 splitVel    = _mainGasCloud.Rb != null ? _mainGasCloud.Rb.linearVelocity : Vector2.zero;
-        float   faceDir     = mainPlayer.LastFaceDir;
-
-        Destroy(_mainGasCloud.gameObject);
-        _mainGasCloud = null;
-
-        int activeIdx = faceDir > 0f ? 1 : 0;
-
-        // Horizontal burst in opposite directions; vertical burst is gentler for gas
-        float passiveVelX = -splitVel.x * splitPassiveVelocityScale;
-        Vector2 vel0 = splitVel + new Vector2(-splitBurstX, splitBurstY * 0.5f);
-        Vector2 vel1 = splitVel + new Vector2( splitBurstX, splitBurstY * 0.5f);
-        if (activeIdx == 1) vel0.x = passiveVelX;
-        else                vel1.x = passiveVelX;
-
-        float halfBodyRadius = mainPlayer.bodyRadius * 1.15f / Mathf.Sqrt(2f);
-        _gasClouds[0] = SpawnSplitGasCloud(splitCenter + Vector2.left  * halfBodyRadius, vel0, 0);
-        _gasClouds[1] = SpawnSplitGasCloud(splitCenter + Vector2.right * halfBodyRadius, vel1, 1);
-
-        _isSplit        = true;
-        _activeIdx      = 0;
-        _mergeCooldown  = mergeCooldownDuration;
-        _splitCoroutine = null;
-
-        SetActiveDroplet(activeIdx);
-
-        EventManager.PlayerSplit();
-        yield break;
-    }
-
-    // Spawns a half-size gas cloud at a given world position — used by SplitGasCoroutine.
-    // Does NOT freeze any SoftBodyPlayer (mainPlayer is already frozen).
-    private GasCloud SpawnSplitGasCloud(Vector2 position, Vector2 velocity, int slotIndex)
-    {
-        var go = new GameObject("GasCloud");
-        go.SetActive(false);
-        go.AddComponent<MeshFilter>();
-        go.AddComponent<MeshRenderer>();
-        var gc = go.AddComponent<GasCloud>();
-
-        gc.bodyMaterial      = mainPlayer.bodyMaterial;
-        gc.bodyRadius        = mainPlayer.bodyRadius * 1.15f / Mathf.Sqrt(2f);
-        gc.sortingLayerName  = mainPlayer.sortingLayerName;
-        gc.sortingOrder      = mainPlayer.sortingOrder;
-        gc.faceRightSprite   = mainPlayer.faceRightSprite;
-        gc.faceLeftSprite    = mainPlayer.faceLeftSprite;
-        gc.faceScale         = mainPlayer.faceScale;
-        gc.faceSortingOrder  = mainPlayer.faceSortingOrder;
-
-        gc.LinkedDroplet      = mainPlayer;
-        gc.LinkedDropletIndex = slotIndex;
-
-        go.transform.position = position;
-        go.SetActive(true);
-        if (gc.Rb != null) gc.Rb.linearVelocity = velocity;
-        return gc;
-    }
-
-    // Both split slots are gas — merge them into a single mainGasCloud.
-    // mainPlayer stays frozen/hidden until that cloud touches a condenser.
-    private IEnumerator MergeGasCloudsCoroutine()
-    {
-        _isMerging = true;
-        _isSplit   = false;
-
-        if (_droplets[0] != null) _droplets[0].InputEnabled = false;
-        if (_droplets[1] != null) _droplets[1].InputEnabled = false;
-        if (_droplets[_activeIdx] != null && _gasClouds[_activeIdx] == null)
-            _droplets[_activeIdx].OnGroundPoundLand -= OnActiveGroundPound;
-
-        Vector2 mergePos = _capturedMergePos;
-        Vector2 mergeVel = _capturedMergeVel;
-
-        DestroyDroplets(); // clears both _gasClouds[] and _droplets[]
-
-        // Spawn a new mainGasCloud at the average merge position
-        var go = new GameObject("GasCloud");
-        go.SetActive(false);
-        go.AddComponent<MeshFilter>();
-        go.AddComponent<MeshRenderer>();
-        var gc = go.AddComponent<GasCloud>();
-
-        gc.bodyMaterial     = mainPlayer.bodyMaterial;
-        gc.bodyRadius       = mainPlayer.bodyRadius * 1.15f;
-        gc.sortingLayerName = mainPlayer.sortingLayerName;
-        gc.sortingOrder     = mainPlayer.sortingOrder;
-        gc.faceRightSprite  = mainPlayer.faceRightSprite;
-        gc.faceLeftSprite   = mainPlayer.faceLeftSprite;
-        gc.faceScale        = mainPlayer.faceScale;
-        gc.faceSortingOrder = mainPlayer.faceSortingOrder;
-        gc.LinkedDroplet      = mainPlayer;
-        gc.LinkedDropletIndex = -1;
-
-        go.transform.position = mergePos;
-        go.SetActive(true);
-        if (gc.Rb != null) gc.Rb.linearVelocity = mergeVel;
-
-        _mainGasCloud = gc;
-
-        if (cameraProxy != null) cameraProxy.SwitchTarget(mergePos);
-
-        _isMerging = false;
-        EventManager.PlayerMerge();
-        yield break;
-    }
-
-    // Brief pulse on all split entities (droplets or gas clouds) to signal a rejected
-    // merge attempt due to mismatched states (one liquid, one gas).
-    private IEnumerator MismatchPulseCoroutine()
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            if (_gasClouds[i] != null)
-                _gasClouds[i].PlayMismatchPulse();
-            else if (_droplets[i] != null)
-                StartCoroutine(DriveSpawnPop(_droplets[i], 0.20f));
-        }
-        yield break;
-    }
 }
