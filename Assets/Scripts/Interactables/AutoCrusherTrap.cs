@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class AutoCrusherTrap : MonoBehaviour
+public class AutoCrusherTrap : MonoBehaviour, IPropConnectable
 {
     [Header("Trigger")]
     [Tooltip("Plate Id of the PressurePlate that PAUSES this crusher. Must match exactly.")]
@@ -29,6 +29,9 @@ public class AutoCrusherTrap : MonoBehaviour
     [SerializeField] private Vector2 crushSize = new Vector2(2f, 1f);
 
     private const int SlamFrameCount = 4;
+
+    // Called by PropTilemapSpawner — sets the plate id this crusher listens for.
+    public void SetConnectionId(string id) => triggerPlateId = id;
 
     private SpriteRenderer _sprite;
     private SoftBodyPlayer _player;

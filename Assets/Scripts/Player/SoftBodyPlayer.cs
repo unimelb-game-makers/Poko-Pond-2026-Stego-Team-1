@@ -607,6 +607,8 @@ public class SoftBodyPlayer : MonoBehaviour
             col.radius = pointRadius;
             if (pointMaterial != null) col.sharedMaterial = pointMaterial;
 
+            go.AddComponent<SoftBodyPointRef>().owner = this;
+
             _rbs[i]      = rb;
             _cols[i]     = col;
             _pointGOs[i] = go;

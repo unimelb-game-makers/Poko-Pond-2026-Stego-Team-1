@@ -130,21 +130,18 @@ public class PlayerSplitController : MonoBehaviour
         if (_isSplit)
         {
             var active = _droplets[_activeIdx];
-            if (active != null)
-                cameraProxy.UpdateTarget(active.Center);
+            Vector2 target = active != null ? active.Center : (Vector2)mainPlayer.transform.position;
+            cameraProxy.UpdateTarget(target);
         }
         else if (_isMerging)
         {
             var active = _droplets[_activeIdx];
-            if (active != null)
-                cameraProxy.UpdateTarget(active.Center);
-            else if (mainPlayer != null)
-                cameraProxy.UpdateTarget(mainPlayer.Center);
+            if (active != null) cameraProxy.UpdateTarget(active.Center);
+            else if (mainPlayer != null) cameraProxy.UpdateTarget(mainPlayer.Center);
         }
-        else
+        else if (mainPlayer != null)
         {
-            if (mainPlayer != null)
-                cameraProxy.UpdateTarget(mainPlayer.Center);
+            cameraProxy.UpdateTarget(mainPlayer.Center);
         }
     }
 
@@ -423,22 +420,20 @@ public class PlayerSplitController : MonoBehaviour
 
         _activeIdx = index;
         int baseOrder = mainPlayer.sortingOrder;
+
         for (int i = 0; i < 2; i++)
         {
             if (_droplets[i] == null) continue;
-            _droplets[i].InputEnabled = (i == _activeIdx);
-            _droplets[i].SetFaceVisible(i == _activeIdx);
-            // Active droplet renders in front of the idle one
-            _droplets[i].SetSortingOrder(i == _activeIdx ? baseOrder + 2 : baseOrder);
+            bool isActive = (i == _activeIdx);
+            _droplets[i].InputEnabled    = isActive;
+            _droplets[i].SetFaceVisible(isActive);
+            _droplets[i].SetSortingOrder(isActive ? baseOrder + 2 : baseOrder);
         }
 
         if (_droplets[_activeIdx] != null)
         {
             _droplets[_activeIdx].OnGroundPoundLand += OnActiveGroundPound;
-
-            // Squeeze-in feedback on newly active droplet
             StartCoroutine(DriveActivateSquash(_droplets[_activeIdx], 0.18f));
-
             if (cameraProxy != null)
                 cameraProxy.SwitchTarget(_droplets[_activeIdx].Center);
         }
@@ -525,4 +520,5 @@ public class PlayerSplitController : MonoBehaviour
         }
         if (droplet != null) droplet.WiggleBlend = 0f;
     }
+
 }
