@@ -33,6 +33,14 @@ public class GameStateManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnEnable()  => EventManager.OnPlayerKilled += HandlePlayerKilled;
+    private void OnDisable() => EventManager.OnPlayerKilled -= HandlePlayerKilled;
+
+    private void HandlePlayerKilled()
+    {
+        if (State == GameState.Playing) Set(GameState.GameOver);
+    }
+
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;

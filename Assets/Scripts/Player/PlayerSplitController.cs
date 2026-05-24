@@ -315,6 +315,8 @@ public class PlayerSplitController : MonoBehaviour
         sp.wiggleAmplitude  = mainPlayer.wiggleAmplitude;
         sp.wiggleFrequency  = mainPlayer.wiggleFrequency;
 
+        go.AddComponent<PlayerLife>();
+
         go.transform.position = center;
         go.SetActive(true); // Awake fires here — all fields are set, so SpawnPoints runs correctly
 

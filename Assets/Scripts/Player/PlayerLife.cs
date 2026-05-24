@@ -1,15 +1,16 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /*
- *  Attach to the Player GameObject. Hazards (spikes, pits, enemies) call Kill()
- *  on this component — e.g.  other.GetComponent<PlayerLife>()?.Kill();
+ *  Attach to any player body — the main SoftBodyPlayer or a split droplet.
+ *  Hazards call Kill() directly, or use the static KillAllInBox() helper to
+ *  hit any player body inside a world-space rectangle without needing to track
+ *  whether the player is merged or split.
  *
- *  Kill() is a no-op if the player is already dead, so it's safe to call
- *  from multiple hazards on the same frame.
- *
- *  Requires a GameStateManager in the scene to show a Game Over screen.
- *  If none is present, falls back to reloading the current scene directly.
+ *  Kill() fires EventManager.OnPlayerKilled; GameStateManager listens to that
+ *  event and handles the Game Over transition.  Hazards have no dependency on
+ *  GameStateManager — new hazard types just call Kill() or KillAllInBox() and
+ *  everything else is handled automatically.
  */
 public class PlayerLife : MonoBehaviour
 {
@@ -19,19 +20,31 @@ public class PlayerLife : MonoBehaviour
     {
         if (_dead) return;
         _dead = true;
+        EventManager.PlayerKilled();
+    }
 
-        Debug.Log($"[PlayerLife] Kill called. GameStateManager present: {GameStateManager.Instance != null}");
-
-        if (GameStateManager.Instance != null)
+    // Finds every player body (main or split droplet) whose softbody points
+    // overlap the given world-space box and calls Kill() on each.
+    // Uses the SoftBodyPoint physics layer so the check works regardless of
+    // split state — callers never need to know about PlayerSplitController.
+    public static void KillAllInBox(Vector2 center, Vector2 size)
+    {
+        int layer = LayerMask.NameToLayer("SoftBodyPoint");
+        if (layer < 0)
         {
-            Debug.Log($"[PlayerLife] Current state: {GameStateManager.Instance.State}");
-            if (GameStateManager.Instance.State != GameState.Playing) return;
-            GameStateManager.Instance.Set(GameState.GameOver);
+            Debug.LogWarning("[PlayerLife] 'SoftBodyPoint' layer not found — KillAllInBox had no effect.");
+            return;
         }
-        else
+
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f, 1 << layer);
+        var seen = new HashSet<PlayerLife>();
+        foreach (Collider2D col in hits)
         {
-            Debug.LogWarning("[PlayerLife] No GameStateManager in scene — reloading scene as fallback. Add a GameStateManager GameObject to the scene for a proper Game Over screen.");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SoftBodyPointRef pointRef = col.GetComponent<SoftBodyPointRef>();
+            if (pointRef == null) continue;
+            PlayerLife life = pointRef.owner.GetComponent<PlayerLife>();
+            if (life != null && seen.Add(life))
+                life.Kill();
         }
     }
 }
