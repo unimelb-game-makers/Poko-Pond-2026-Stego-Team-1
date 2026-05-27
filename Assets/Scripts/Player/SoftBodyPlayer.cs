@@ -1411,4 +1411,25 @@ public class SoftBodyPlayer : MonoBehaviour
             }
         }
     }
+    
+    // ── Misc ───────────────────────────────────────────────────────────
+    
+    public Vector2 CalculateAverageVelocity()
+    {
+        if (_pointGOs.Length == 0)
+        {
+            return Vector2.zero;
+        }
+
+        Vector2 totalVelocity = Vector2.zero;
+
+        // Sum up all velocities
+        for (int i = 0; i < _pointGOs.Length; i++)
+        {
+            totalVelocity += _pointGOs[i].GetComponent<Rigidbody2D>().linearVelocity;
+        }
+
+        // Divide by count to get the average
+        return totalVelocity / _pointGOs.Length;
+    }
 }
