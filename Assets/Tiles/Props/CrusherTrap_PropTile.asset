@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcaf8b4cb58f24036b4e48b34535d8ef, type: 3}
   m_Name: CrusherTrap_PropTile
   m_EditorClassIdentifier: Assembly-CSharp::PropTile
-  previewSprite: {fileID: 0}
-  prefab: {fileID: 0}
+  previewSprite: {fileID: 352918639, guid: d2e693ebe8d10c2418229cea538922e3, type: 3}
+  prefab: {fileID: 2727160855884400037, guid: 3be2aded2264dbc4c9b5636e159643c3, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  connectionId: 

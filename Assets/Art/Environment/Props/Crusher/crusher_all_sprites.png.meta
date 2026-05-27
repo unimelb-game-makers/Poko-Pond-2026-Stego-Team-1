@@ -5,6 +5,9 @@ TextureImporter:
   - first:
       213: -9076132226850712986
     second: crusher_all_sprites_0
+  - first:
+      213: -1206943455616696323
+    second: crusher_all_sprites_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,7 +78,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -118,10 +121,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -138,20 +141,20 @@ TextureImporter:
       name: crusher_all_sprites_1
       rect:
         serializedVersion: 2
-        x: 162
+        x: 64
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: eec9a3beb3d88ae42a20915723f39a62
-      internalID: -1510920227
+      spriteID: dfffbff5253104fe0800000000000000
+      internalID: -1206943455616696323
       vertices: []
       indices: 
       edges: []
@@ -160,20 +163,20 @@ TextureImporter:
       name: crusher_all_sprites_2
       rect:
         serializedVersion: 2
-        x: 324
+        x: 128
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 62a54a881acc7da4ba8b2db1d3c4ac0d
-      internalID: -2007673803
+      spriteID: e943407d2c180354ea1e8af62de30fc2
+      internalID: -801937600
       vertices: []
       indices: 
       edges: []
@@ -182,20 +185,20 @@ TextureImporter:
       name: crusher_all_sprites_3
       rect:
         serializedVersion: 2
-        x: 486
+        x: 192
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c25332be19d091840a325a9c8f31d3e7
-      internalID: 1143953325
+      spriteID: 26bcd0c59d8863d4ca4b26ced3841799
+      internalID: -1428796334
       vertices: []
       indices: 
       edges: []
@@ -204,20 +207,20 @@ TextureImporter:
       name: crusher_all_sprites_4
       rect:
         serializedVersion: 2
-        x: 648
+        x: 256
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aee0ab3839f19a942b08e7533564a736
-      internalID: 433131920
+      spriteID: 4331546ec4e05e24e8f66f371698df1c
+      internalID: 2064993007
       vertices: []
       indices: 
       edges: []
@@ -226,20 +229,20 @@ TextureImporter:
       name: crusher_all_sprites_5
       rect:
         serializedVersion: 2
-        x: 810
+        x: 320
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0b8b34b891bc794e868ff48c850d048
-      internalID: 2081114477
+      spriteID: ada7d5bd500a6d44ea16faf4dddee2e1
+      internalID: 1519994908
       vertices: []
       indices: 
       edges: []
@@ -248,20 +251,20 @@ TextureImporter:
       name: crusher_all_sprites_6
       rect:
         serializedVersion: 2
-        x: 972
+        x: 384
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c8bc895879c4edd49ac7c0c4eff17271
-      internalID: 1018821136
+      spriteID: bdf72748e1a93f84dbd11829006df48b
+      internalID: -152259600
       vertices: []
       indices: 
       edges: []
@@ -270,20 +273,20 @@ TextureImporter:
       name: crusher_all_sprites_7
       rect:
         serializedVersion: 2
-        x: 1134
+        x: 448
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aca3f0e3eb0c32f4ea9e076b6db66a53
-      internalID: 1041000492
+      spriteID: 7fcb193f18b25a54296385d51f08e86a
+      internalID: -1185177695
       vertices: []
       indices: 
       edges: []
@@ -292,20 +295,20 @@ TextureImporter:
       name: crusher_all_sprites_8
       rect:
         serializedVersion: 2
-        x: 1296
+        x: 512
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 569d15f58bd3af94bbe8aa4a7689572d
-      internalID: -149375231
+      spriteID: a2afb70edebc2be4080cf3d32479c1e4
+      internalID: 637585253
       vertices: []
       indices: 
       edges: []
@@ -314,20 +317,20 @@ TextureImporter:
       name: crusher_all_sprites_9
       rect:
         serializedVersion: 2
-        x: 1458
+        x: 576
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 27a7232482517424e9c648fb022842d1
-      internalID: -1357274956
+      spriteID: 636a88b9819accc4f8ea02ec28b87a8d
+      internalID: 352918639
       vertices: []
       indices: 
       edges: []
@@ -336,20 +339,20 @@ TextureImporter:
       name: crusher_all_sprites_10
       rect:
         serializedVersion: 2
-        x: 1620
+        x: 640
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b4bf79e2052fbd4d8a07548ed1d1de2
-      internalID: 192843981
+      spriteID: 482d4c258211ba947b23a1a02d837644
+      internalID: -1445483571
       vertices: []
       indices: 
       edges: []
@@ -358,20 +361,20 @@ TextureImporter:
       name: crusher_all_sprites_11
       rect:
         serializedVersion: 2
-        x: 1782
+        x: 704
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4a3018af08d62d54595020bfb198936b
-      internalID: -593533050
+      spriteID: f12abb660085b0340a9d8f6a257f1a88
+      internalID: 1336886329
       vertices: []
       indices: 
       edges: []
@@ -380,20 +383,20 @@ TextureImporter:
       name: crusher_all_sprites_12
       rect:
         serializedVersion: 2
-        x: 1944
+        x: 768
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f5a8840dc362db4bbcce92cee96cc3b
-      internalID: -744214853
+      spriteID: 01a794817c3781e40b04dcdbe82e6cc8
+      internalID: -746081455
       vertices: []
       indices: 
       edges: []
@@ -402,20 +405,20 @@ TextureImporter:
       name: crusher_all_sprites_13
       rect:
         serializedVersion: 2
-        x: 2106
+        x: 832
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0629b6e3c6ef2ec4a88d01971c5aa289
-      internalID: -789065633
+      spriteID: 18d911777819b0f449a05c3ff6cc87c6
+      internalID: 1862314225
       vertices: []
       indices: 
       edges: []
@@ -424,20 +427,20 @@ TextureImporter:
       name: crusher_all_sprites_14
       rect:
         serializedVersion: 2
-        x: 2268
+        x: 896
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b5488a51ff8cdb84797bb7da3b486232
-      internalID: 795459256
+      spriteID: 980020797bc64824184e15a91ccf21f7
+      internalID: 18125278
       vertices: []
       indices: 
       edges: []
@@ -446,20 +449,20 @@ TextureImporter:
       name: crusher_all_sprites_15
       rect:
         serializedVersion: 2
-        x: 2430
+        x: 960
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: def8bf88377b6bc4a82aa0fb7dbfb3a0
-      internalID: -1695777009
+      spriteID: d63e2a8ee683a89449f68249a67f92c0
+      internalID: 987686793
       vertices: []
       indices: 
       edges: []
@@ -468,20 +471,20 @@ TextureImporter:
       name: crusher_all_sprites_16
       rect:
         serializedVersion: 2
-        x: 2592
+        x: 1024
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d516d5730345bde4ebe836ddad341555
-      internalID: -894340203
+      spriteID: 704a18b8dccf9de48afe56e5c87f4114
+      internalID: 1573013170
       vertices: []
       indices: 
       edges: []
@@ -490,20 +493,20 @@ TextureImporter:
       name: crusher_all_sprites_17
       rect:
         serializedVersion: 2
-        x: 2754
+        x: 1088
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d6de3562cf9ae4e43885057606494c00
-      internalID: -1079189846
+      spriteID: f25dabe2618c96d4888e3edc110f67a3
+      internalID: 939334580
       vertices: []
       indices: 
       edges: []
@@ -512,20 +515,20 @@ TextureImporter:
       name: crusher_all_sprites_18
       rect:
         serializedVersion: 2
-        x: 2916
+        x: 1152
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7c7bdea935e2ae7459957ebf2c2a8b88
-      internalID: 1800078811
+      spriteID: 31388515baf279e48988c04a050cb545
+      internalID: -2052869260
       vertices: []
       indices: 
       edges: []
@@ -534,20 +537,20 @@ TextureImporter:
       name: crusher_all_sprites_19
       rect:
         serializedVersion: 2
-        x: 3078
+        x: 1216
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2caac93e33338cb4ca4d7204f25d1741
-      internalID: 140277002
+      spriteID: a441290d0c12bc54c8c2afe7fe23690d
+      internalID: -51777423
       vertices: []
       indices: 
       edges: []
@@ -556,20 +559,20 @@ TextureImporter:
       name: crusher_all_sprites_20
       rect:
         serializedVersion: 2
-        x: 3240
+        x: 1280
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0b6f179812760b943b80f4dc1b4edb7f
-      internalID: -870183321
+      spriteID: 4fe51c4ae5af6be4ca960539f0cc13d0
+      internalID: 358614985
       vertices: []
       indices: 
       edges: []
@@ -578,20 +581,20 @@ TextureImporter:
       name: crusher_all_sprites_21
       rect:
         serializedVersion: 2
-        x: 3402
+        x: 1344
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 702995aaac5234044b625e4e46ebf926
-      internalID: 890894385
+      spriteID: 6ee60e95d3378104888ba6256696cc29
+      internalID: -1819914859
       vertices: []
       indices: 
       edges: []
@@ -600,20 +603,20 @@ TextureImporter:
       name: crusher_all_sprites_22
       rect:
         serializedVersion: 2
-        x: 3564
+        x: 1408
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 59d8da0bece4f0a43ac7d97a126735ac
-      internalID: -1172127087
+      spriteID: cf70b530a12d21d4183b3e5e27ec8be0
+      internalID: -980484575
       vertices: []
       indices: 
       edges: []
@@ -622,20 +625,20 @@ TextureImporter:
       name: crusher_all_sprites_23
       rect:
         serializedVersion: 2
-        x: 3726
+        x: 1472
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dce74e5fd9857f94c967f75eadceb9dd
-      internalID: -1738308926
+      spriteID: 6d1f0d1bf01989341abf919cd6e6b042
+      internalID: 1080198113
       vertices: []
       indices: 
       edges: []
@@ -644,20 +647,20 @@ TextureImporter:
       name: crusher_all_sprites_24
       rect:
         serializedVersion: 2
-        x: 3888
+        x: 1536
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 180f629fe7c93e74cbba60121c95f3d5
-      internalID: 1690250414
+      spriteID: a59c51cd878d41f4ba023e0baaee11d2
+      internalID: -1793759841
       vertices: []
       indices: 
       edges: []
@@ -666,20 +669,152 @@ TextureImporter:
       name: crusher_all_sprites_25
       rect:
         serializedVersion: 2
-        x: 4050
+        x: 1600
         y: 0
-        width: 162
-        height: 118
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f6d234f0b14307a42a99d0c8e2ae77ba
-      internalID: 158319900
+      spriteID: 5aaff4e44a21b3b43aee45db2706a18f
+      internalID: 261441352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crusher_all_sprites_26
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 0
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f32db10075d9074eaa6fe56f79a944b
+      internalID: 1541464531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crusher_all_sprites_27
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 0
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 825dd15f49ea39744ad32d39a5c3b935
+      internalID: -456160526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crusher_all_sprites_28
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 0
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9fc0141c8024154e95ad39c5281dc79
+      internalID: -1499942260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crusher_all_sprites_29
+      rect:
+        serializedVersion: 2
+        x: 1856
+        y: 0
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53ebad98a37c5794cb71e0c9267c9bd0
+      internalID: 1686473717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crusher_all_sprites_30
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c1a27238f510cc47afba2754cfc7b0e
+      internalID: -1844207039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crusher_all_sprites_31
+      rect:
+        serializedVersion: 2
+        x: 1984
+        y: 0
+        width: 64
+        height: 64
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81d26c00c2d61734c9944a03731e7ba0
+      internalID: -1896689777
       vertices: []
       indices: 
       edges: []
@@ -688,7 +823,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: af995998c70bfae4c96c9490efee0038
+    spriteID: 17422d6ddb0553f4c9b10534976c39b3
     internalID: 0
     vertices: []
     indices: 
@@ -698,34 +833,40 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":26.0,"y":1.0},"gridSpriteSize":{"x":162.0,"y":118.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":32.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":1.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":2,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       crusher_all_sprites_0: -9076132226850712986
-      crusher_all_sprites_1: -1510920227
-      crusher_all_sprites_10: 192843981
-      crusher_all_sprites_11: -593533050
-      crusher_all_sprites_12: -744214853
-      crusher_all_sprites_13: -789065633
-      crusher_all_sprites_14: 795459256
-      crusher_all_sprites_15: -1695777009
-      crusher_all_sprites_16: -894340203
-      crusher_all_sprites_17: -1079189846
-      crusher_all_sprites_18: 1800078811
-      crusher_all_sprites_19: 140277002
-      crusher_all_sprites_2: -2007673803
-      crusher_all_sprites_20: -870183321
-      crusher_all_sprites_21: 890894385
-      crusher_all_sprites_22: -1172127087
-      crusher_all_sprites_23: -1738308926
-      crusher_all_sprites_24: 1690250414
-      crusher_all_sprites_25: 158319900
-      crusher_all_sprites_3: 1143953325
-      crusher_all_sprites_4: 433131920
-      crusher_all_sprites_5: 2081114477
-      crusher_all_sprites_6: 1018821136
-      crusher_all_sprites_7: 1041000492
-      crusher_all_sprites_8: -149375231
-      crusher_all_sprites_9: -1357274956
+      crusher_all_sprites_1: -1206943455616696323
+      crusher_all_sprites_10: -1445483571
+      crusher_all_sprites_11: 1336886329
+      crusher_all_sprites_12: -746081455
+      crusher_all_sprites_13: 1862314225
+      crusher_all_sprites_14: 18125278
+      crusher_all_sprites_15: 987686793
+      crusher_all_sprites_16: 1573013170
+      crusher_all_sprites_17: 939334580
+      crusher_all_sprites_18: -2052869260
+      crusher_all_sprites_19: -51777423
+      crusher_all_sprites_2: -801937600
+      crusher_all_sprites_20: 358614985
+      crusher_all_sprites_21: -1819914859
+      crusher_all_sprites_22: -980484575
+      crusher_all_sprites_23: 1080198113
+      crusher_all_sprites_24: -1793759841
+      crusher_all_sprites_25: 261441352
+      crusher_all_sprites_26: 1541464531
+      crusher_all_sprites_27: -456160526
+      crusher_all_sprites_28: -1499942260
+      crusher_all_sprites_29: 1686473717
+      crusher_all_sprites_3: -1428796334
+      crusher_all_sprites_30: -1844207039
+      crusher_all_sprites_31: -1896689777
+      crusher_all_sprites_4: 2064993007
+      crusher_all_sprites_5: 1519994908
+      crusher_all_sprites_6: -152259600
+      crusher_all_sprites_7: -1185177695
+      crusher_all_sprites_8: 637585253
+      crusher_all_sprites_9: 352918639
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
