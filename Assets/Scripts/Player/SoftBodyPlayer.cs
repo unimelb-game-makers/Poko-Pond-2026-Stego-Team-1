@@ -473,6 +473,9 @@ public class SoftBodyPlayer : MonoBehaviour
             float lift = rh.collider != null
                 ? (rh.point.y + pointRadius) - pos.y
                 : pointRadius * 2f; // fallback for deep penetration
+            // Cap per-point lift so a single outlier near a ledge edge can't
+            // hoist the whole ring (which caused the post-merge "appears above" bug).
+            lift = Mathf.Min(lift, bodyRadius * 0.5f);
             if (lift > 0f) maxLift = Mathf.Max(maxLift, lift);
         }
         if (maxLift < 0.001f) return;
@@ -722,20 +725,23 @@ public class SoftBodyPlayer : MonoBehaviour
         _faceRenderer.color = new Color(1f, 1f, 1f, _faceAlpha * _bodyAlpha);
 
         // ── Position ──────────────────────────────────────────────────────
-        // Use precomputed rest-offset averages for X so fall/rise/landing
-        // deformation never moves the face outward. Lean shear is the only
-        // visual-space transform we layer on top, using the same formula as
-        // RebuildMesh so the face tracks the tilted body correctly.
-        bool  wantRight  = _lastFaceDir > 0f;
-        float restAvgX   = wantRight ? _rightRestAvgX : _leftRestAvgX;
+        // Derive face X from the actual current interpolated point positions so
+        // the face tracks the deformed body exactly at any frame rate.
+        // This fixes a WebGL-specific desync where sparse physics frames caused
+        // _leanDir (FixedUpdate) to lag the interpolated mesh (LateUpdate).
+        bool wantRight = _lastFaceDir > 0f;
 
-        float leanX      = _leanDir * moveLeanAmount * _leanBlend;
-        float halfHeight = bodyRadius * domeHeightScale;
-        // shear at the face's Y position (faceOffset.y, typically 0)
-        float shear      = (faceOffset.y + halfHeight) / (halfHeight * 2f);
-
-        float localX     = restAvgX * faceBias + leanX * shear + faceOffset.x;
-        _faceRenderer.transform.localPosition = new Vector3(localX, faceOffset.y, 2f);
+        Vector2 lpSum = Vector2.zero;
+        int     lpCnt = 0;
+        Vector2 origin = transform.position;
+        for (int i = 0; i < pointCount; i++)
+        {
+            float lx = _pointGOs[i].transform.position.x - origin.x;
+            if (wantRight ? lx >= 0f : lx <= 0f) { lpSum.x += lx; lpCnt++; }
+        }
+        float liveX  = lpCnt > 0 ? lpSum.x / lpCnt : (wantRight ? _rightRestAvgX : _leftRestAvgX);
+        float localX = liveX * faceBias + faceOffset.x;
+        _faceRenderer.transform.localPosition = new Vector3(localX, faceOffset.y, -0.1f);
     }
 
     // ── Springs ───────────────────────────────────────────────────────────
