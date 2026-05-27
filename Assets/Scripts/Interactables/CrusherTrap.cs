@@ -56,27 +56,12 @@ public class CrusherTrap : MonoBehaviour, IPropConnectable
 
     private SpriteRenderer _sprite;
     private bool _cycling;
-    private SoftBodyPlayer _player;
-    private PlayerLife _playerLife;
 
     private void Awake()
     {
         _sprite = GetComponent<SpriteRenderer>();
         if (_sprite != null && frames != null && frames.Length > 0)
             _sprite.sprite = frames[0];
-    }
-
-    private void Start()
-    {
-        _player = Object.FindFirstObjectByType<SoftBodyPlayer>();
-        if (_player == null)
-        {
-            Debug.LogError("[CrusherTrap] No SoftBodyPlayer found in scene — crusher will not kill.", this);
-            return;
-        }
-        _playerLife = _player.GetComponent<PlayerLife>();
-        if (_playerLife == null)
-            Debug.LogError("[CrusherTrap] SoftBodyPlayer GameObject is missing a PlayerLife component — crusher will not kill. Add PlayerLife to the Player prefab.", _player);
     }
 
     private void OnEnable()  => EventManager.OnPressurePlateActivated += HandlePlateActivated;
@@ -103,15 +88,10 @@ public class CrusherTrap : MonoBehaviour, IPropConnectable
         }
 
         // Kill check fires the instant frame 4 is on screen — the moment of impact.
-        // The softbody player has no collider on the Player layer, so we check geometry
-        // directly against the player centroid and all ring-point positions.
+        // KillAllInBox uses a physics overlap on the SoftBodyPoint layer so it finds
+        // any player body (main or split droplet) without needing split-state awareness.
         Vector2 worldCenter = (Vector2)transform.position + crushCenter;
-        if (_player != null && _playerLife != null)
-        {
-            bool inZone = IsPlayerInCrushZone(worldCenter);
-            Debug.Log($"[CrusherTrap] Impact check — player center: {_player.Center}, zone center: {worldCenter}, size: {crushSize}, in zone: {inZone}");
-            if (inZone) _playerLife.Kill();
-        }
+        PlayerLife.KillAllInBox(worldCenter, crushSize);
 
         // Retract: play frames 5→26 evenly across retractDuration (harmless during this phase)
         int retractFrameCount = Mathf.Max(0, frames.Length - SlamFrameCount);
@@ -130,17 +110,6 @@ public class CrusherTrap : MonoBehaviour, IPropConnectable
             _sprite.sprite = frames[0];
 
         _cycling = false;
-    }
-
-    // Returns true if the player centroid or any ring point lies inside the crush zone.
-    private bool IsPlayerInCrushZone(Vector2 zoneCenter)
-    {
-        Vector2 half = crushSize * 0.5f;
-        Rect zone = new Rect(zoneCenter - half, crushSize);
-        if (zone.Contains(_player.Center)) return true;
-        foreach (Rigidbody2D pt in _player.Points)
-            if (zone.Contains(pt.position)) return true;
-        return false;
     }
 
     private void OnDrawGizmosSelected()
