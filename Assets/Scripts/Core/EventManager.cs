@@ -33,4 +33,13 @@ public static class EventManager
 
     internal static void PlayerSplit() => OnPlayerSplit?.Invoke();
     internal static void PlayerMerge() => OnPlayerMerge?.Invoke();
+
+    // ── Player death ──────────────────────────────────────────────────────
+
+    // Fired by PlayerLife.Kill() whenever any player body (main or split droplet) dies.
+    // GameStateManager listens to this to trigger Game Over — hazards never talk to
+    // GameStateManager directly, so adding new hazards never requires wiring death logic.
+    public static event Action OnPlayerKilled;
+
+    internal static void PlayerKilled() => OnPlayerKilled?.Invoke();
 }

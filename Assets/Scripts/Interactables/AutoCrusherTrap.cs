@@ -34,8 +34,6 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable
     public void SetConnectionId(string id) => triggerPlateId = id;
 
     private SpriteRenderer _sprite;
-    private SoftBodyPlayer _player;
-    private PlayerLife _playerLife;
     private bool _paused;
 
     private void Awake()
@@ -47,16 +45,6 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable
 
     private void Start()
     {
-        _player = Object.FindFirstObjectByType<SoftBodyPlayer>();
-        if (_player == null)
-        {
-            Debug.LogError("[AutoCrusherTrap] No SoftBodyPlayer found in scene — crusher will not kill.", this);
-            return;
-        }
-        _playerLife = _player.GetComponent<PlayerLife>();
-        if (_playerLife == null)
-            Debug.LogError("[AutoCrusherTrap] SoftBodyPlayer is missing a PlayerLife component.", _player);
-
         StartCoroutine(CycleLoop());
     }
 
@@ -98,11 +86,7 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable
 
             // Kill check at impact
             Vector2 worldCenter = (Vector2)transform.position + crushCenter;
-            if (_player != null && _playerLife != null)
-            {
-                bool inZone = IsPlayerInCrushZone(worldCenter);
-                if (inZone) _playerLife.Kill();
-            }
+            PlayerLife.KillAllInBox(worldCenter, crushSize);
 
             // Retract: frames 5→26
             int retractFrameCount = Mathf.Max(0, frames.Length - SlamFrameCount);
@@ -128,16 +112,6 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable
     {
         while (_paused)
             yield return null;
-    }
-
-    private bool IsPlayerInCrushZone(Vector2 zoneCenter)
-    {
-        Vector2 half = crushSize * 0.5f;
-        Rect zone = new Rect(zoneCenter - half, crushSize);
-        if (zone.Contains(_player.Center)) return true;
-        foreach (Rigidbody2D pt in _player.Points)
-            if (zone.Contains(pt.position)) return true;
-        return false;
     }
 
     private void OnDrawGizmosSelected()
