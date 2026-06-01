@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 /*
  * OVERVIEW
@@ -287,6 +288,8 @@ public class SoftBodyPlayer : MonoBehaviour
 
     // Fires with average |impact velocity| when a ground-pound landing registers
     public event System.Action<float> OnGroundPoundLand;
+    
+    public UnityEvent OnJump;
 
     // ── Private — Physics ────────────────────────────────────────────────
     private Rigidbody2D[]    _rbs;
@@ -301,6 +304,9 @@ public class SoftBodyPlayer : MonoBehaviour
     private bool  _jumpQueued;
     private float _jumpQueueWindow;
     private bool  _frozen;
+
+    private Vector3 _constantForce = new Vector3(0f, 0f, 0f);
+    private float _constantForceMultiplier = 0.06f;
 
     // ── Private — Mesh ───────────────────────────────────────────────────
     private Mesh      _mesh;
@@ -384,7 +390,8 @@ public class SoftBodyPlayer : MonoBehaviour
         if (_frozen) return;
 
         _hInput = InputEnabled ? Input.GetAxisRaw("Horizontal") : 0f;
-
+        
+        ApplyConstantForce();
         ResolveCollisions();
         UpdateCenter();
         UpdateGravity();
@@ -568,13 +575,14 @@ public class SoftBodyPlayer : MonoBehaviour
         int layer = LayerMask.NameToLayer(softBodyPointLayer);
         if (layer >= 0)
         {
-            Physics2D.IgnoreLayerCollision(layer, layer, true);
+            // TODO: Figure out why this exists
+            //Physics2D.IgnoreLayerCollision(layer, layer, true);
 
             for (int l = 0; l < 32; l++)
             {
                 if (l == layer) continue;
                 bool isGround = ((1 << l) & groundLayer.value) != 0;
-                Physics2D.IgnoreLayerCollision(layer, l, !isGround);
+                //Physics2D.IgnoreLayerCollision(layer, l, !isGround);
             }
         }
 
@@ -797,6 +805,18 @@ public class SoftBodyPlayer : MonoBehaviour
         foreach (var rb in _rbs) rb.gravityScale = _currentGravityScale;
     }
 
+    private void ApplyConstantForce()
+    {
+        if (_constantForce.Equals(Vector2.zero)) return;
+        for (int i = 0; i < pointCount; i++)
+        {
+            _rbs[i].gameObject.transform.position = new Vector2(
+                _rbs[i].position.x + _constantForce.x*_constantForceMultiplier, 
+                _rbs[i].position.y
+                );
+        }
+    }
+
     private void ApplyRestoreForces()
     {
         float scale = restoreForce * _restoreMultiplier;
@@ -891,6 +911,8 @@ public class SoftBodyPlayer : MonoBehaviour
 
         _jumpQueued          = false;
         _currentGravityScale = baseGravityScale;
+
+        OnJump.Invoke();
 
         // Uniform velocity delta across every point — identical Δvy means no
         // differential motion between points so no compression wave can form in the
@@ -1437,5 +1459,13 @@ public class SoftBodyPlayer : MonoBehaviour
 
         // Divide by count to get the average
         return totalVelocity / _pointGOs.Length;
+    }
+
+    public void SetConstantForce(Vector3 force, float multiplier = 0.06f)
+    {
+        _constantForce = force;
+        _constantForce = _constantForce.normalized;
+        _constantForceMultiplier = multiplier;
+        ApplyConstantForce();
     }
 }
