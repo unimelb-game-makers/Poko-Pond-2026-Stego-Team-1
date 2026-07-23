@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public enum PlayerBodyState {
-	Liquid,
-	Solid,
-	Gas
-}
-
 /*
  * OVERVIEW
  *   Softbody water-droplet player. A ring of N Rigidbody2D "points" is held
@@ -125,6 +119,9 @@ public class SoftBodyPlayer : MonoBehaviour
     [Tooltip("Upward velocity (m/s) added to every ring point on jump.")]
     public float jumpForce = 13.5f;
 
+    public float liquidJumpForce = 13.5f;
+    public float solidJumpForce = 0.0f;
+
     [Header("Gravity")]
     public float baseGravityScale = 3f;
     [Tooltip("Gravity scale while falling.")]
@@ -171,11 +168,17 @@ public class SoftBodyPlayer : MonoBehaviour
     [Tooltip("Laplacian smoothing passes before the spline. Softens spike artefacts on impact.")]
     public int meshSmoothingPasses = 4;
 
-    [Header("Visuals — Body Gradient")]
+    [Header("Liquid Visuals — Body Gradient")]
     [Tooltip("Colour at the centre of the blob — lighter gives a rounded 3-D look.")]
-    public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    public Color liquidbodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
     [Tooltip("Colour at the outer edge of the blob.")]
-    public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
+    public Color liquidbodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
+    
+    [Header("Solid Visuals — Body Gradient")]
+    [Tooltip("Colour at the centre of the blob — lighter gives a rounded 3-D look.")]
+    public Color solidbodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    [Tooltip("Colour at the outer edge of the blob.")]
+    public Color solidbodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
 
     [Header("Visuals — Highlight")]
     [Tooltip("Colour and opacity of the specular highlight. Alpha controls strength.")]
@@ -371,11 +374,21 @@ public class SoftBodyPlayer : MonoBehaviour
     private int            _faceFadeState  = 0;   // 0 stable, -1 fading out, 1 fading in
     
 	// ── Private — PlayerBodyState ────────────────────────────────────────
-    private PlayerBodyState bodystate = PlayerBodyState.Solid;
+    private PlayerBodyState bodystate = PlayerBodyState.Liquid;
+    
+    // What the current active body colors are, options are/should be publically defined for each state
+    public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
 
     // ─────────────────────────────────────────────────────────────────────
 
     private void Awake()
+    {
+        initBody();
+        SetupFace();
+    }
+
+    private void initBody()
     {
         _currentGravityScale = baseGravityScale;
         _center = transform.position;
@@ -383,7 +396,6 @@ public class SoftBodyPlayer : MonoBehaviour
         SetupSprings();
         SetupMesh();
         SetupHighlight();
-        SetupFace();
     }
 
     private void Update()
@@ -481,6 +493,8 @@ public class SoftBodyPlayer : MonoBehaviour
     // all points clear the surface. Uses a downward raycast from above each overlapping point
     // to find the surface Y — a positional query that works correctly even when called from
     // LateUpdate before the physics engine has synced the new collider positions.
+
+	// TODO: This is way too complicated^, there has to be a simplier way to do a ground check. I can't see why a single raycast down from center won't work?
     public void DepenetrateFromGround()
     {
         float maxLift = 0f;
@@ -627,7 +641,7 @@ public class SoftBodyPlayer : MonoBehaviour
         {
             if (l == layer) continue;
             bool isGround = ((1 << l) & groundLayer.value) != 0;
-            Physics2D.IgnoreLayerCollision(layer, l, !isGround);
+            //Physics2D.IgnoreLayerCollision(layer, l, !isGround);
         }
     }
 
@@ -747,7 +761,7 @@ public class SoftBodyPlayer : MonoBehaviour
         	if (_rbs[i] != null) 
             	_prevPositions[i] = _rbs[i].position;
     		}
-		} else if (bodystate == PlayerBodyState.Liquid) {
+    } else if (bodystate == PlayerBodyState.Liquid) {
 			// circular connectivity.
 			for (int i = 0; i < pointCount; i++)
             	_prevPositions[i] = _rbs[i].position;
@@ -1656,7 +1670,32 @@ public class SoftBodyPlayer : MonoBehaviour
         ApplyConstantForce();
     }
 
-	public void changeBodyState(PlayerBodyState newState) {
-		bodystate = newState;
+	public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint)
+    {
+        if (newState != bodystate)
+        {
+            bodystate = newState;
+            OnDestroy();
+
+            if (newState == PlayerBodyState.Solid)
+            {
+                pointCount = 40;
+                bodyRadius = 0.05f;
+                jumpForce = solidJumpForce;
+                bodyInnerColor = solidbodyInnerColor;
+                bodyOuterColor = solidbodyOuterColor;
+            }
+            else
+            {
+                pointCount = 30;
+                bodyRadius = 0.5f;
+                jumpForce = liquidJumpForce;
+                bodyInnerColor = liquidbodyInnerColor;
+                bodyOuterColor = liquidbodyOuterColor;
+            }
+
+            initBody();
+            TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));   
+        }
 	}
 }
