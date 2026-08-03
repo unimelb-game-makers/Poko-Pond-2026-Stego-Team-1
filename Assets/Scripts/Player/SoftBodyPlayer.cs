@@ -288,8 +288,6 @@ public class SoftBodyPlayer : MonoBehaviour
 
     // Fires with average |impact velocity| when a ground-pound landing registers
     public event System.Action<float> OnGroundPoundLand;
-    
-    public UnityEvent OnJump;
 
     // ── Private — Physics ────────────────────────────────────────────────
     private Rigidbody2D[]    _rbs;
@@ -911,8 +909,6 @@ public class SoftBodyPlayer : MonoBehaviour
 
         _jumpQueued          = false;
         _currentGravityScale = baseGravityScale;
-
-        OnJump.Invoke();
 
         // Uniform velocity delta across every point — identical Δvy means no
         // differential motion between points so no compression wave can form in the

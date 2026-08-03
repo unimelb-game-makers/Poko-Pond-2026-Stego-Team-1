@@ -17,7 +17,6 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private Collider2D platformCollider;
 
     [Header("Player")] public GameObject Player;
-    private UnityEvent OnPlayerJump;
 
     private Rigidbody2D rb;
     private Vector2 moveDirection;
@@ -28,18 +27,11 @@ public class MovingPlatform : MonoBehaviour
         Player = GameObject.FindWithTag("Player");
         
         platformCollider = GetComponent<Collider2D>();
-        OnPlayerJump = Player.GetComponent<SoftBodyPlayer>().OnJump;
-        OnPlayerJump.AddListener(RespondToEvent);
 
         rb.isKinematic = true;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         moveDirection = moveRightInitially ? Vector2.right : Vector2.left;
-    }
-    
-    void RespondToEvent()
-    {
-        Player.transform.SetParent(null);
     }
 
     void FixedUpdate()
