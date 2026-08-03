@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 /*
  * OVERVIEW
@@ -116,6 +119,9 @@ public class SoftBodyPlayer : MonoBehaviour
     [Tooltip("Upward velocity (m/s) added to every ring point on jump.")]
     public float jumpForce = 13.5f;
 
+    public float liquidJumpForce = 13.5f;
+    public float solidJumpForce = 0.0f;
+
     [Header("Gravity")]
     public float baseGravityScale = 3f;
     [Tooltip("Gravity scale while falling.")]
@@ -162,11 +168,17 @@ public class SoftBodyPlayer : MonoBehaviour
     [Tooltip("Laplacian smoothing passes before the spline. Softens spike artefacts on impact.")]
     public int meshSmoothingPasses = 4;
 
-    [Header("Visuals — Body Gradient")]
+    [Header("Liquid Visuals — Body Gradient")]
     [Tooltip("Colour at the centre of the blob — lighter gives a rounded 3-D look.")]
-    public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    public Color liquidbodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
     [Tooltip("Colour at the outer edge of the blob.")]
-    public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
+    public Color liquidbodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
+    
+    [Header("Solid Visuals — Body Gradient")]
+    [Tooltip("Colour at the centre of the blob — lighter gives a rounded 3-D look.")]
+    public Color solidbodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    [Tooltip("Colour at the outer edge of the blob.")]
+    public Color solidbodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
 
     [Header("Visuals — Highlight")]
     [Tooltip("Colour and opacity of the specular highlight. Alpha controls strength.")]
@@ -360,10 +372,23 @@ public class SoftBodyPlayer : MonoBehaviour
     private float          _pendingFaceDir = 1f;  // direction waiting to be shown after fade
     private float          _faceAlpha      = 1f;
     private int            _faceFadeState  = 0;   // 0 stable, -1 fading out, 1 fading in
+    
+	// ── Private — PlayerBodyState ────────────────────────────────────────
+    private PlayerBodyState bodystate = PlayerBodyState.Liquid;
+    
+    // What the current active body colors are, options are/should be publically defined for each state
+    public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
+    public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
 
     // ─────────────────────────────────────────────────────────────────────
 
     private void Awake()
+    {
+        initBody();
+        SetupFace();
+    }
+
+    private void initBody()
     {
         _currentGravityScale = baseGravityScale;
         _center = transform.position;
@@ -371,7 +396,6 @@ public class SoftBodyPlayer : MonoBehaviour
         SetupSprings();
         SetupMesh();
         SetupHighlight();
-        SetupFace();
     }
 
     private void Update()
@@ -395,8 +419,6 @@ public class SoftBodyPlayer : MonoBehaviour
         ResolveCollisions();
         UpdateCenter();
         UpdateGravity();
-        ApplyRestoreForces();   // uses _animOffsets and _restoreMultiplier from previous tick
-        ApplyPressureForces();  // uses _pressureMultiplier from previous tick
         DetectGround();
         UpdateAnimationState(); // computes new _animOffsets, _pressureMultiplier, _restoreMultiplier
         HandleMovement();
@@ -404,6 +426,11 @@ public class SoftBodyPlayer : MonoBehaviour
         HandleGroundPound();
         EnforceLevelBounds();
         EnforceNeighborConstraints();
+
+		if(bodystate == PlayerBodyState.Liquid) {
+			ApplyRestoreForces();   // uses _animOffsets and _restoreMultiplier from previous tick
+        	ApplyPressureForces();  // uses _pressureMultiplier from previous tick
+		}
 
         for (int i = 0; i < pointCount; i++)
             _prevPositions[i] = _rbs[i].position;
@@ -466,6 +493,8 @@ public class SoftBodyPlayer : MonoBehaviour
     // all points clear the surface. Uses a downward raycast from above each overlapping point
     // to find the surface Y — a positional query that works correctly even when called from
     // LateUpdate before the physics engine has synced the new collider positions.
+
+	// TODO: This is way too complicated^, there has to be a simplier way to do a ground check. I can't see why a single raycast down from center won't work?
     public void DepenetrateFromGround()
     {
         float maxLift = 0f;
@@ -564,38 +593,127 @@ public class SoftBodyPlayer : MonoBehaviour
 
     // ── Spawn ─────────────────────────────────────────────────────────────
 
-    private void SpawnPoints()
+	// Used only by Solid State
+	List<Vector2> GenerateIceCubeBorder(int pointsPerSide)
     {
-        _rbs      = new Rigidbody2D[pointCount];
-        _cols     = new CircleCollider2D[pointCount];
-        _offsets  = new Vector2[pointCount];
-        _pointGOs = new GameObject[pointCount];
-        _angles   = new float[pointCount];
+        float halfSize = (pointsPerSide*4) / 2;
+		List<Vector3> points = new List<Vector3>();
 
-        int layer = LayerMask.NameToLayer(softBodyPointLayer);
-        if (layer >= 0)
+        for (int i = 0; i < pointsPerSide; i++)
         {
-            // TODO: Figure out why this exists
-            //Physics2D.IgnoreLayerCollision(layer, layer, true);
+            // Normalize current step along the side
+            float t = (float)i / (pointsPerSide - 1);
+            float currentPos = Mathf.Lerp(-halfSize, halfSize, t);
 
-            for (int l = 0; l < 32; l++)
+            // 1. Bottom Edge (Left to Right)
+			points.Add(new Vector3(currentPos, -halfSize, 0));
+
+            // 2. Top Edge (Left to Right)
+			points.Add(new Vector3(currentPos, -halfSize, 0));
+
+            // Avoid duplicating corner points on vertical sides
+            if (i > 0 && i < pointsPerSide - 1)
             {
-                if (l == layer) continue;
-                bool isGround = ((1 << l) & groundLayer.value) != 0;
-                //Physics2D.IgnoreLayerCollision(layer, l, !isGround);
+                // 3. Left Edge (Bottom to Top)
+				points.Add(new Vector3(-halfSize, currentPos, 0));
+
+                // 4. Right Edge (Bottom to Top)
+				points.Add(new Vector3(halfSize, currentPos, 0));
             }
         }
+		List<Vector2> v2List = points.Select(v => (Vector2)v).ToList();
+		return v2List;
+    }
 
-        if (pointMaterial == null)
+	private void SpawnPoints()
+	{
+    	_rbs = new Rigidbody2D[pointCount];
+    	_cols = new CircleCollider2D[pointCount];
+    	_offsets = new Vector2[pointCount];
+    	_pointGOs = new GameObject[pointCount];
+    	_angles = new float[pointCount]; // Only used by Liquid so far
+
+    int layer = LayerMask.NameToLayer(softBodyPointLayer);
+    if (layer >= 0)
+    {
+        Physics2D.IgnoreLayerCollision(layer, layer, true);
+        for (int l = 0; l < 32; l++)
         {
-            pointMaterial            = new PhysicsMaterial2D("SoftBodyPoint_Mat");
-            pointMaterial.friction   = 0f;
-            pointMaterial.bounciness = 0.15f;
+            if (l == layer) continue;
+            bool isGround = ((1 << l) & groundLayer.value) != 0;
+            //Physics2D.IgnoreLayerCollision(layer, l, !isGround);
         }
+    }
 
-        Vector2 spawnCenter = transform.position;
+    if (pointMaterial == null)
+    {
+        pointMaterial = new PhysicsMaterial2D("SoftBodyPoint_Mat");
+        pointMaterial.friction = 0f;
+        pointMaterial.bounciness = 0.15f;
+    }
 
-        for (int i = 0; i < pointCount; i++)
+    Vector2 spawnCenter = transform.position;
+
+	if(bodystate == PlayerBodyState.Solid) {
+    
+    	// Calculate grid dimensions based on total points requested
+    	int pointsPerSide = (pointCount)/4; 
+
+    	float spacingX = bodyRadius *2;
+    	float spacingY = bodyRadius *2; 
+    	int currentPointIndex = 0;
+
+    	// Define loop range to cover the square area centered at transform.position
+    	// We use pointsPerSide - 1 because that's the offset from center to edge in a grid
+    	int halfSize = (pointsPerSide) / 2; 
+
+    	for (int y = -halfSize; y <= halfSize; y++) {
+        	for (int x = -halfSize; x <= halfSize; x++) {
+            	// Calculate distance from center to decide if it's a border or interior.
+            	// A point is on the border if: abs(x) == max_X OR abs(y) == max_Y.
+            	bool isBorder = (Mathf.Abs(x) == halfSize || Mathf.Abs(y) == halfSize);
+
+            	if (!isBorder) continue; 
+
+            	Vector2 offset = new Vector2(x * spacingX, y * spacingY);
+            
+            	// Ensure we don't exceed the requested point count (useful for non-perfect squares)
+            	if (currentPointIndex >= pointCount) break;
+
+            	_offsets[currentPointIndex] = offset;
+
+            	var go = new GameObject($"SoftPoint_{currentPointIndex}");
+            	go.transform.position = spawnCenter + offset;
+            	if (layer >= 0) go.layer = layer;
+
+            	// Setup Rigidbody and Collider
+            	var rb = go.AddComponent<Rigidbody2D>();
+            	rb.mass = pointMass;
+            	rb.gravityScale = baseGravityScale;
+            	rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            	rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+            	rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+            	var col = go.AddComponent<CircleCollider2D>(); 
+            	col.radius = pointRadius;
+            	if (pointMaterial != null) col.sharedMaterial = pointMaterial;
+
+            	go.AddComponent<SoftBodyPointRef>().owner = this;
+
+            	_rbs[currentPointIndex] = rb;
+            	_cols[currentPointIndex] = col;
+            	_pointGOs[currentPointIndex] = go;
+            
+            	currentPointIndex++;
+        	}
+    	}
+
+    	// Update the array length to match actual spawned points if less than pointCount (due to break conditions)
+    	if (currentPointIndex < pointCount) {
+        	Array.Resize(ref _rbs, currentPointIndex); // Note: This might fail depending on Unity's Resize behavior with nulls, usually safer to reallocate but it lowkey works so idc
+    	}
+	} else if (bodystate == PlayerBodyState.Liquid) {
+		for (int i = 0; i < pointCount; i++)
         {
             float   angle  = i / (float)pointCount * Mathf.PI * 2f;
             _angles[i] = angle;
@@ -624,21 +742,33 @@ public class SoftBodyPlayer : MonoBehaviour
             _cols[i]     = col;
             _pointGOs[i] = go;
         }
+	}
 
-        PrecomputeIndices();
-        PrecomputeFaceHalves();
-        _restArea = Mathf.PI * bodyRadius * bodyRadius * domeHeightScale;
+    PrecomputeIndices();
+    PrecomputeFaceHalves();
+    _restArea = Mathf.PI * bodyRadius * bodyRadius * domeHeightScale;
 
-        _neighborRestDist = new float[pointCount];
-        for (int i = 0; i < pointCount; i++)
+    _neighborRestDist = new float[pointCount];
+	if(bodystate == PlayerBodyState.Liquid) {
+		for (int i = 0; i < pointCount; i++)
             _neighborRestDist[i] = Vector2.Distance(_offsets[i], _offsets[(i + 1) % pointCount]);
+	}
 
-        _prevPositions = new Vector2[pointCount];
-        for (int i = 0; i < pointCount; i++)
-            _prevPositions[i] = _rbs[i].position;
+    _prevPositions = new Vector2[pointCount];
 
-        _animOffsets = new Vector2[pointCount];
-    }
+	if(bodystate == PlayerBodyState.Solid) {
+		for (int i = 0; i < pointCount; i++) {
+        	if (_rbs[i] != null) 
+            	_prevPositions[i] = _rbs[i].position;
+    		}
+    } else if (bodystate == PlayerBodyState.Liquid) {
+			// circular connectivity.
+			for (int i = 0; i < pointCount; i++)
+            	_prevPositions[i] = _rbs[i].position;
+		}
+
+    	_animOffsets = new Vector2[pointCount];
+	}
 
     private void OnDestroy()
     {
@@ -774,13 +904,23 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private void AddSpring(int i, int j, float freq, float damp)
     {
-        var joint                   = _rbs[i].gameObject.AddComponent<SpringJoint2D>();
-        joint.connectedBody         = _rbs[j];
-        joint.distance              = Vector2.Distance(_offsets[i], _offsets[j]);
-        joint.frequency             = freq;
-        joint.dampingRatio          = damp;
-        joint.autoConfigureDistance = false;
-        joint.enableCollision       = false;
+		if(bodystate == PlayerBodyState.Solid) {
+			var joint = _rbs[i].gameObject.AddComponent<DistanceJoint2D>();	
+
+			joint.connectedBody         = _rbs[j];
+        	joint.distance              = Vector2.Distance(_offsets[i], _offsets[j]);
+        	joint.autoConfigureDistance = false;
+        	joint.enableCollision       = false;
+		} else {
+			var joint = _rbs[i].gameObject.AddComponent<SpringJoint2D>();
+			
+			joint.connectedBody         = _rbs[j];
+        	joint.distance              = Vector2.Distance(_offsets[i], _offsets[j]);
+        	joint.frequency             = freq;
+        	joint.dampingRatio          = damp;
+        	joint.autoConfigureDistance = false;
+        	joint.enableCollision       = false;
+		}
     }
 
     // ── Physics ───────────────────────────────────────────────────────────
@@ -1210,46 +1350,107 @@ public class SoftBodyPlayer : MonoBehaviour
     }
 
     // ── Mesh ──────────────────────────────────────────────────────────────
+	
+	// Used in Solid State
+	private void SortPointsRadially()
+	{
+    	// Create an index array to track the original positions
+    	int[] indices = new int[pointCount];
+    	for (int i = 0; i < pointCount; i++) 
+    	{
+        	indices[i] = i;
+    	}
 
-    private void SetupMesh()
-    {
-        _subdivVerts = pointCount * subdivisionsPerSegment;
-        _smoothRing  = new Vector2[_subdivVerts];
-        _meshVerts   = new Vector3[_subdivVerts + 1];
-        _meshUVs     = new Vector2[_subdivVerts + 1];
-        _meshColors  = new Color[_subdivVerts + 1];
-        _preSmoothA  = new Vector2[pointCount];
-        _preSmoothB  = new Vector2[pointCount];
+    	// Sort the indices based on their angle from the center.
+    	// Atan2 naturally sorts from -PI to PI, creating a perfect perimeter loop.
+    	Array.Sort(indices, (a, b) => {
+        	Vector2 dirA = _rbs[a].transform.position - transform.position;
+        	Vector2 dirB = _rbs[b].transform.position - transform.position;
+        	float angleA = Mathf.Atan2(dirA.y, dirA.x);
+        	float angleB = Mathf.Atan2(dirB.y, dirB.x);
+        	return angleA.CompareTo(angleB);
+    	});
 
-        _mesh = new Mesh { name = "SoftBodyMesh" };
-        GetComponent<MeshFilter>().mesh = _mesh;
+    	// Create temporary arrays to hold the correctly ordered references
+    	Rigidbody2D[] sortedRbs = new Rigidbody2D[pointCount];
+    	CircleCollider2D[] sortedCols = new CircleCollider2D[pointCount];
+    	GameObject[] sortedGOs = new GameObject[pointCount];
 
-        _triangles = new int[_subdivVerts * 3];
-        for (int i = 0; i < _subdivVerts; i++)
-        {
-            int next              = (i + 1) % _subdivVerts;
-            _triangles[i * 3]     = 0;
-            _triangles[i * 3 + 1] = i + 1;
-            _triangles[i * 3 + 2] = next + 1;
-        }
+    	for (int i = 0; i < pointCount; i++) 
+    	{
+        	int sortedIdx = indices[i];
+        	sortedRbs[i] = _rbs[sortedIdx];
+        	sortedCols[i] = _cols[sortedIdx];
+        	sortedGOs[i] = _pointGOs[sortedIdx];
+        
+        	// Rename the objects so the Unity Hierarchy matches the new logical order
+        	sortedGOs[i].name = $"SoftPoint{i}"; 
+    	}
 
-        _mesh.vertices  = _meshVerts;
-        _mesh.uv        = _meshUVs;
-        _mesh.triangles = _triangles;
+    	// Apply the sorted arrays back to the main variables
+    	_rbs = sortedRbs;
+    	_cols = sortedCols;
+    	_pointGOs = sortedGOs;
 
-        _bodyRenderer = GetComponent<MeshRenderer>();
-        if (bodyMaterial != null)
-        {
-            _bodyRenderer.sharedMaterial = bodyMaterial;
-        }
-        else
-        {
-            _bodyRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
-        }
+    	// If _prevPositions was already populated in your first snippet, sort it too
+    	if (_prevPositions != null && _prevPositions.Length >= pointCount) 
+    	{
+        	Vector2[] sortedPrev = new Vector2[_prevPositions.Length];
+        	for (int i = 0; i < pointCount; i++) 
+        	{
+            	sortedPrev[i] = _prevPositions[indices[i]];
+        	}
+        	_prevPositions = sortedPrev;
+    	}
+	}
 
-        _bodyRenderer.sortingLayerName = sortingLayerName;
-        _bodyRenderer.sortingOrder     = sortingOrder;
-    }
+	private void SetupMesh() 
+	{
+    	// reorder the row-by-row grid points into a perimeter ring
+    	SortPointsRadially();
+
+    	// Proceed with mesh generation exactly as before
+    	_subdivVerts = pointCount * subdivisionsPerSegment;
+    
+    	_smoothRing  = new Vector2[_subdivVerts];
+    	_meshVerts   = new Vector3[_subdivVerts + 1];
+    	_meshUVs     = new Vector2[_subdivVerts + 1];
+    	_meshColors  = new Color[_subdivVerts + 1];
+    	_preSmoothA  = new Vector2[pointCount];
+    	_preSmoothB  = new Vector2[pointCount];
+
+		_mesh = new Mesh { name = "SoftBodyMesh" };
+    	GetComponent<MeshFilter>().mesh = _mesh;
+
+    	_triangles = new int[_subdivVerts * 3];
+
+    	// Standard triangle fan: connects the center vertex (0) to the perimeter ring
+    	for (int i = 0; i < _subdivVerts; i++)
+    	{
+        	int next = (i + 1) % _subdivVerts;
+        
+        	_triangles[i * 3]     = 0;          // Center vertex
+        	_triangles[i * 3 + 1] = i + 1;      // Current perimeter vertex
+        	_triangles[i * 3 + 2] = next + 1;   // Next perimeter vertex
+    	}
+
+    	_mesh.vertices  = _meshVerts;
+    	_mesh.uv        = _meshUVs;
+    	_mesh.triangles = _triangles;
+
+    	_bodyRenderer = GetComponent<MeshRenderer>();
+    	if (bodyMaterial != null)
+    	{
+        	_bodyRenderer.sharedMaterial = bodyMaterial;
+    	}
+    	else
+    	{
+        	_bodyRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+    	}
+
+    	_bodyRenderer.sortingLayerName = sortingLayerName;
+    	_bodyRenderer.sortingOrder     = sortingOrder;
+	}    
 
     private void SetupHighlight()
     {
@@ -1317,7 +1518,7 @@ public class SoftBodyPlayer : MonoBehaviour
         // Visual-only lean — shear transform: bottom stays planted, top shifts forward.
         // Scaling by normalised Y means bottom vertices get ~0 offset and top gets full
         // leanX, producing a distinct directional tilt rather than a whole-body slide.
-        if (_leanBlend > 0.001f)
+        if (_leanBlend > 0.001f && bodystate == PlayerBodyState.Liquid)
         {
             float leanX     = _leanDir * moveLeanAmount * _leanBlend;
             float halfHeight = bodyRadius * domeHeightScale;
@@ -1468,4 +1669,33 @@ public class SoftBodyPlayer : MonoBehaviour
         _constantForceMultiplier = multiplier;
         ApplyConstantForce();
     }
+
+	public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint)
+    {
+        if (newState != bodystate)
+        {
+            bodystate = newState;
+            OnDestroy();
+
+            if (newState == PlayerBodyState.Solid)
+            {
+                pointCount = 40;
+                bodyRadius = 0.05f;
+                jumpForce = solidJumpForce;
+                bodyInnerColor = solidbodyInnerColor;
+                bodyOuterColor = solidbodyOuterColor;
+            }
+            else
+            {
+                pointCount = 30;
+                bodyRadius = 0.5f;
+                jumpForce = liquidJumpForce;
+                bodyInnerColor = liquidbodyInnerColor;
+                bodyOuterColor = liquidbodyOuterColor;
+            }
+
+            initBody();
+            TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));   
+        }
+	}
 }
