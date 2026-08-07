@@ -36,6 +36,12 @@ public class PropTilemapSpawner : MonoBehaviour
         public ConnectionMode connectionMode;
         [Tooltip("Whether this prop starts active (on) or inactive (off) before any trigger fires.")]
         public bool initialActive;
+        [Tooltip("Use per-cell direction and strength instead of the Blower prefab defaults.")]
+        public bool overrideBlowerSettings;
+        [Tooltip("Local direction for this Blower cell. Common values: Right (1,0), Up (0,1), Left (-1,0), Down (0,-1).")]
+        public Vector2 blowerDirection;
+        [Tooltip("Acceleration applied by this Blower cell.")]
+        public float blowerStrength;
     }
 
     [Tooltip("Per-cell connection IDs. Right-click this component → Sync Cell List after painting to auto-populate.")]
@@ -66,6 +72,11 @@ public class PropTilemapSpawner : MonoBehaviour
                 connectionId   = hadEntry ? prev.connectionId   : "",
                 connectionMode = hadEntry ? prev.connectionMode : ConnectionMode.Hold,
                 initialActive  = hadEntry ? prev.initialActive  : true,
+                overrideBlowerSettings = hadEntry && prev.overrideBlowerSettings,
+                blowerDirection = hadEntry && prev.blowerDirection.sqrMagnitude > 0.0001f
+                    ? prev.blowerDirection
+                    : Vector2.right,
+                blowerStrength = hadEntry && prev.blowerStrength > 0f ? prev.blowerStrength : 30f,
             });
         }
 
@@ -96,7 +107,9 @@ public class PropTilemapSpawner : MonoBehaviour
             if (tile is not PropTile propTile || propTile.prefab == null) continue;
 
             Vector3 worldPos = tilemap.GetCellCenterWorld(cell) + propTile.spawnOffset;
-            var go = Instantiate(propTile.prefab, worldPos, Quaternion.identity, transform.parent);
+            Quaternion cellRotation = tilemap.GetTransformMatrix(cell).rotation;
+            Quaternion spawnRotation = cellRotation * propTile.prefab.transform.rotation;
+            var go = Instantiate(propTile.prefab, worldPos, spawnRotation, transform.parent);
 
             bool hasOverride = overrideLookup.TryGetValue(cell, out var ov);
 
@@ -110,6 +123,13 @@ public class PropTilemapSpawner : MonoBehaviour
                 activatable.SetActivationConfig(
                     hasOverride ? ov.connectionMode : ConnectionMode.Hold,
                     hasOverride ? ov.initialActive  : true);
+
+            // Pass optional per-cell wind settings to directional airflow props
+            if (hasOverride && ov.overrideBlowerSettings
+                && go.TryGetComponent(out IPropWindConfigurable windConfigurable))
+            {
+                windConfigurable.SetWindConfig(ov.blowerDirection, ov.blowerStrength);
+            }
         }
     }
 

@@ -467,6 +467,10 @@ float LastFaceDir { get; }
 // Fired by the active droplet after a ground pound lands, with the downward impact velocity
 event System.Action<float> OnGroundPoundLand;
 
+// Apply acceleration uniformly to the full ring. Multiple callers accumulate naturally.
+// Use for wind, currents, and other continuous external forces.
+void AddExternalAcceleration(Vector2 acceleration);
+
 // Teleport all ring points to center with initialVelocity.
 // Always call Unfreeze() first — rb.position writes on a frozen Rigidbody2D are discarded.
 // Internally: flushes the interpolation buffer (None→Interpolate toggle), writes
