@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b6dcda768ed14f96b2877140c4584828, type: 3}
+  m_Sprite: {fileID: 1710981365271166214, guid: 432daa80c71080d478f67ebe17642072, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -188,3 +188,10 @@ MonoBehaviour:
   windRange: 4
   windWidth: 1.5
   directionVisual: {fileID: 6100000000000000005}
+  fanRenderer: {fileID: 6100000000000000006}
+  animationFrames:
+  - {fileID: 1710981365271166214, guid: 432daa80c71080d478f67ebe17642072, type: 3}
+  - {fileID: -4047725483211045721, guid: 432daa80c71080d478f67ebe17642072, type: 3}
+  - {fileID: 6289942371165083462, guid: 432daa80c71080d478f67ebe17642072, type: 3}
+  - {fileID: -729441830162507903, guid: 432daa80c71080d478f67ebe17642072, type: 3}
+  animationFramesPerSecond: 8

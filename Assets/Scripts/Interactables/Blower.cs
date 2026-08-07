@@ -22,13 +22,24 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
     [SerializeField, Min(0.1f)] private float windWidth = 1.5f;
 
     [Header("Visual")]
-    [Tooltip("Child transform containing the arrow SpriteRenderer.")]
+    [Tooltip("Child transform containing the right-facing fan SpriteRenderer.")]
     [SerializeField] private Transform directionVisual;
+
+    [Tooltip("SpriteRenderer used for the continuously looping fan animation.")]
+    [SerializeField] private SpriteRenderer fanRenderer;
+
+    [Tooltip("Four fan sprites in their left-to-right source-sheet order.")]
+    [SerializeField] private Sprite[] animationFrames;
+
+    [Tooltip("Playback speed for the always-on fan animation.")]
+    [SerializeField, Min(0.1f)] private float animationFramesPerSecond = 8f;
 
     private readonly HashSet<SoftBodyPlayer> _playersInWind = new();
 
     private Collider2D _sourceCollider;
     private int _softBodyPointMask;
+    private int _animationFrame;
+    private float _animationTimer;
 
     private Vector2 LocalDirection => blowDirection.sqrMagnitude > 0.0001f
         ? blowDirection.normalized
@@ -45,6 +56,8 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
     private void Awake()
     {
         _sourceCollider = GetComponent<Collider2D>();
+        CacheFanRenderer();
+        SetAnimationFrame(0);
         _softBodyPointMask = LayerMask.GetMask("SoftBodyPoint");
 
         if (_softBodyPointMask == 0)
@@ -57,6 +70,21 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         UpdateDirectionVisual();
     }
 
+    private void Update()
+    {
+        if (fanRenderer == null || animationFrames == null || animationFrames.Length == 0)
+            return;
+
+        _animationTimer += Time.deltaTime * animationFramesPerSecond;
+        if (_animationTimer < 1f)
+            return;
+
+        int elapsedFrames = Mathf.FloorToInt(_animationTimer);
+        _animationTimer -= elapsedFrames;
+        _animationFrame = (_animationFrame + elapsedFrames) % animationFrames.Length;
+        SetAnimationFrame(_animationFrame);
+    }
+
     private void OnValidate()
     {
         if (blowDirection.sqrMagnitude < 0.0001f)
@@ -64,7 +92,9 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         else
             blowDirection.Normalize();
 
+        CacheFanRenderer();
         UpdateDirectionVisual();
+        SetAnimationFrame(0);
     }
 
     private void FixedUpdate()
@@ -108,6 +138,21 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         Vector2 direction = LocalDirection;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         directionVisual.localRotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    private void CacheFanRenderer()
+    {
+        if (fanRenderer == null && directionVisual != null)
+            fanRenderer = directionVisual.GetComponent<SpriteRenderer>();
+    }
+
+    private void SetAnimationFrame(int index)
+    {
+        if (fanRenderer == null || animationFrames == null || index < 0 || index >= animationFrames.Length)
+            return;
+
+        if (animationFrames[index] != null)
+            fanRenderer.sprite = animationFrames[index];
     }
 
     private void OnDrawGizmosSelected()

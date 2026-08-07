@@ -232,7 +232,7 @@ See [`evaporator-condenser.md`](evaporator-condenser.md) for the full evaporatio
 | Blow Strength | Acceleration applied to the full soft body; default `30` |
 | Wind Range / Width | Adjustable rectangular area extending from the blower face |
 | Detection | `OverlapBoxAll` on the `SoftBodyPoint` layer; split bodies are handled independently |
-| Artwork | Temporary white arrow; the visual rotates to match Blow Direction |
+| Artwork | `fan.png`, sliced into four 32×32 frames and looped continuously at 8 FPS |
 
 The blower has no pulse, interval, or activation cycle: its wind remains active continuously. Its effect is direction-based acceleration rather than a fixed speed:
 
@@ -241,7 +241,7 @@ The blower has no pulse, interval, or activation cycle: its wind remains active 
 - Wind perpendicular to movement redirects the player by adding velocity along the wind direction.
 - Upward wind around strength `30` begins countering the player's normal gravity. Higher strengths can hold the player aloft or lift them.
 
-`Blow Direction` controls the local direction of the arrow and wind. `Blow Strength` controls how quickly velocity changes, so stronger values accelerate, brake, or lift the player more aggressively.
+The supplied fan artwork faces right. Its four-frame animation loops continuously, and the visual rotates with `Blow Direction` so the fan always faces the direction it blows. `Blow Strength` controls how quickly velocity changes, so stronger values accelerate, brake, or lift the player more aggressively.
 
 `PropTilemapSpawner` respects painted tile rotation. Rotate a blower tile in the Tile Palette to rotate the spawned prefab and its wind direction without creating another prefab.
 
