@@ -1,10 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 // A tilemap-placed prop that launches a soft-body player upward when one of its
 // ring points enters the narrow contact zone above the surface collider.
 [DisallowMultipleComponent]
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Collider2D), typeof(SpriteRenderer))]
 public class Trampoline : MonoBehaviour
 {
     [Header("Bounce")]
@@ -15,6 +16,19 @@ public class Trampoline : MonoBehaviour
     [Tooltip("Height of the detection zone immediately above the surface collider.")]
     [SerializeField, Min(0.01f)] private float contactHeight = 0.15f;
 
+    [Header("Animation")]
+    [Tooltip("Six frames ordered from lowest to highest spring height. For spring.png: 3, 2, 1, 6, 5, 4.")]
+    [SerializeField] private Sprite[] heightFrames;
+
+    [Tooltip("Seconds each compression or extension frame remains visible.")]
+    [SerializeField, Min(0.01f)] private float frameDuration = 0.04f;
+
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
+    // The resting pose is heightFrames[2] (source tile 1). On contact the spring
+    // compresses to its lowest pose, extends to its highest, then settles to rest.
+    private static readonly int[] BounceFrameSequence = { 1, 0, 1, 2, 3, 4, 5, 4, 3, 2 };
+
     private readonly HashSet<SoftBodyPlayer> _playersOnTop = new();
     private readonly HashSet<SoftBodyPlayer> _playersDetectedThisStep = new();
 
@@ -22,10 +36,15 @@ public class Trampoline : MonoBehaviour
     private Vector2 _contactCenter;
     private Vector2 _contactSize;
     private int _softBodyPointMask;
+    private Coroutine _bounceAnimation;
 
     private void Start()
     {
         _surfaceCollider = GetComponent<Collider2D>();
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        SetAnimationFrame(2);
         _softBodyPointMask = LayerMask.GetMask("SoftBodyPoint");
 
         if (_softBodyPointMask == 0)
@@ -57,11 +76,46 @@ public class Trampoline : MonoBehaviour
             bool justTouchedTop = !_playersOnTop.Contains(player);
             bool isFallingOrResting = player.CalculateAverageVelocity().y <= 0f;
             if (justTouchedTop && isFallingOrResting)
+            {
                 player.BounceUpward(bounceStrength);
+                PlayBounceAnimation();
+            }
         }
 
         _playersOnTop.Clear();
         _playersOnTop.UnionWith(_playersDetectedThisStep);
+    }
+
+    private void PlayBounceAnimation()
+    {
+        if (heightFrames == null || heightFrames.Length < 6 || spriteRenderer == null)
+            return;
+
+        if (_bounceAnimation != null)
+            StopCoroutine(_bounceAnimation);
+
+        _bounceAnimation = StartCoroutine(BounceAnimationRoutine());
+    }
+
+    private IEnumerator BounceAnimationRoutine()
+    {
+        foreach (int frameIndex in BounceFrameSequence)
+        {
+            SetAnimationFrame(frameIndex);
+            yield return new WaitForSeconds(frameDuration);
+        }
+
+        SetAnimationFrame(2);
+        _bounceAnimation = null;
+    }
+
+    private void SetAnimationFrame(int index)
+    {
+        if (spriteRenderer == null || heightFrames == null || index < 0 || index >= heightFrames.Length)
+            return;
+
+        if (heightFrames[index] != null)
+            spriteRenderer.sprite = heightFrames[index];
     }
 
     private void CacheContactZone()

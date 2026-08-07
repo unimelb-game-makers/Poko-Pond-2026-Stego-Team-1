@@ -219,22 +219,25 @@ See [`evaporator-condenser.md`](evaporator-condenser.md) for the full evaporatio
 
 ---
 
-### Trampoline (2×1 — 64×32px, art TBA)
+### Trampoline (1×1 — six-frame spring animation)
 
 | Field | Value |
 |-------|-------|
 | Tile asset | `Trampoline_PropTile` |
-| Palette | `2x1` |
-| Anchor cell | Left cell; paint only this one cell |
+| Palette | `1x1` |
+| Footprint | One tile — 32×32px |
 | Prefab | `Trampoline` prefab |
 | Layer | `Ground` |
 | Role | Standalone prop — launches a player upward on top contact |
 | Bounce Strength | Adjustable upward speed on the `Trampoline` component |
 | Detection | Narrow `OverlapBoxAll` zone above the collider on the `SoftBodyPoint` layer |
 | Split support | Each soft-body owner is detected and bounced independently |
-| Artwork | Temporary white placeholder — replace it on both the prefab SpriteRenderer and PropTile Preview Sprite when final art arrives |
+| Artwork | `spring.png`, sliced into six 32×32 sprites |
+| Frame Duration | Adjustable time per compression/extension frame; default `0.04` seconds |
 
-The trampoline does not require a Connection ID. Its solid BoxCollider2D forms the landing surface, and only a new top contact triggers a bounce.
+The source sheet is not arranged by height. From lowest to highest, the frame order is source tile `3, 2, 1, 6, 5, 4`. The prefab stores its `Height Frames` in that sorted order. On a bounce, it animates from the resting pose down to frame 3, extends through frame 4 at maximum height, then settles back to frame 1.
+
+The trampoline does not require a Connection ID. Its solid BoxCollider2D forms the landing surface, and only a new top contact triggers a bounce and starts the spring animation.
 
 ---
 
