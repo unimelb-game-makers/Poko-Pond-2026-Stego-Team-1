@@ -437,6 +437,28 @@ public class SoftBodyPlayer : MonoBehaviour
         foreach (var rb in _rbs) rb.simulated = true;
     }
 
+    // Launches the entire soft body upward at a consistent speed. External launchers
+    // such as trampolines should use this instead of changing individual ring points,
+    // which would create a compression wave through the spring network.
+    public void BounceUpward(float upwardSpeed)
+    {
+        if (_frozen || _rbs == null) return;
+
+        float speed = Mathf.Max(0f, upwardSpeed);
+        _jumpQueued          = false;
+        _currentGravityScale = baseGravityScale;
+        IsGrounded           = false;
+        IsGroundPounding     = false;
+
+        OnJump?.Invoke();
+
+        foreach (var rb in _rbs)
+        {
+            if (rb != null)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, speed);
+        }
+    }
+
     // Repositions the entire ring to newCenter in its natural resting shape and sets velocity.
     // Must be called AFTER Unfreeze() — rb.position writes on a frozen Rigidbody2D are ignored.
     // Three invariants are maintained to prevent artefacts on the first post-teleport frame:

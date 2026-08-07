@@ -219,6 +219,25 @@ See [`evaporator-condenser.md`](evaporator-condenser.md) for the full evaporatio
 
 ---
 
+### Trampoline (2×1 — 64×32px, art TBA)
+
+| Field | Value |
+|-------|-------|
+| Tile asset | `Trampoline_PropTile` |
+| Palette | `2x1` |
+| Anchor cell | Left cell; paint only this one cell |
+| Prefab | `Trampoline` prefab |
+| Layer | `Ground` |
+| Role | Standalone prop — launches a player upward on top contact |
+| Bounce Strength | Adjustable upward speed on the `Trampoline` component |
+| Detection | Narrow `OverlapBoxAll` zone above the collider on the `SoftBodyPoint` layer |
+| Split support | Each soft-body owner is detected and bounced independently |
+| Artwork | Temporary white placeholder — replace it on both the prefab SpriteRenderer and PropTile Preview Sprite when final art arrives |
+
+The trampoline does not require a Connection ID. Its solid BoxCollider2D forms the landing surface, and only a new top contact triggers a bounce.
+
+---
+
 ## Fixing the Pink Tile Bug
 
 Unity leaves behind a pink placeholder cell when a tile asset is deleted from the Project while the Tilemap still references it.

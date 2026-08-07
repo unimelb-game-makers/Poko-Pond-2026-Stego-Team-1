@@ -467,6 +467,10 @@ float LastFaceDir { get; }
 // Fired by the active droplet after a ground pound lands, with the downward impact velocity
 event System.Action<float> OnGroundPoundLand;
 
+// Launch the full ring upward at a fixed speed while preserving horizontal velocity.
+// Use this for trampolines and other external launchers instead of modifying Points directly.
+void BounceUpward(float upwardSpeed);
+
 // Teleport all ring points to center with initialVelocity.
 // Always call Unfreeze() first — rb.position writes on a frozen Rigidbody2D are discarded.
 // Internally: flushes the interpolation buffer (None→Interpolate toggle), writes
