@@ -175,6 +175,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Evaporator
   burstSpeed: 4
-  startsActive: 1
-  togglePlateId: 
   detectionHeight: 0.6
+  PlayerSoftBodyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  valueToChangeTo: 0

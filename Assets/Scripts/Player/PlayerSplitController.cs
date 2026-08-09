@@ -85,13 +85,14 @@ public class PlayerSplitController : MonoBehaviour
     {
         if (mainPlayer == null)
             Debug.LogError("[PlayerSplitController] mainPlayer is not assigned.", this);
+			
     }
 
     private void Update()
     {
         if (mainPlayer == null) return;
 
-        if (!_isSplit && _splitCoroutine == null && !_isMerging)
+        if (!_isSplit && _splitCoroutine == null && !_isMerging && mainPlayer.getBodyState() != PlayerBodyState.Solid)
         {
             if (Input.GetKeyDown(KeyCode.LeftShift) && !mainPlayer.IsGroundPounding)
                 _splitCoroutine = StartCoroutine(SplitCoroutine());

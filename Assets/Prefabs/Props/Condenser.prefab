@@ -185,7 +185,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd4b33403e87941b68cbf9c5da923e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Condenser
-  startsActive: 1
-  togglePlateId: 
   entryZoneWidth: 0.3
   entryZoneHeight: 0.8
+  PlayerSoftBodyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  valueToChangeTo: 1

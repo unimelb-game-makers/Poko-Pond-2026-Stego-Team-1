@@ -204,7 +204,7 @@ MonoBehaviour:
   moveRightInitially: 1
   wallLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
   checkDistance: 0.01
   platformCollider: {fileID: 7447656925310018340}
   Player: {fileID: 0}
@@ -218,7 +218,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 7325454542357447089}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 100
   m_LinearDamping: 0
@@ -233,7 +233,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 6
 --- !u!61 &7447656925310018340
 BoxCollider2D:
@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6b431c3a8b9eb23b892d1482a2e74cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingPlatformTrigger
-  Player: {fileID: 0}
+  Players: []
   PlayerSoftBodyLayer:
     serializedVersion: 2
     m_Bits: 256

@@ -1694,4 +1694,8 @@ public class SoftBodyPlayer : MonoBehaviour
             TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));   
         }
 	}
+
+	public PlayerBodyState getBodyState() {
+		return bodystate;
+	}
 }

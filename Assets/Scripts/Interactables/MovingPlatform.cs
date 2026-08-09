@@ -20,6 +20,13 @@ public class MovingPlatform : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 moveDirection;
+    
+    // Cooldown tracking for collision detection to prevent rapid flipping or oscillation
+    private int collisionCooldownFrames = 0;
+    private const int COOLDOWN_FRAMES = 25;
+
+    // Track the last hit collider to identify unique objects
+    private Collider2D lastHitCollider;
 
     void Start()
     {
@@ -45,14 +52,40 @@ public class MovingPlatform : MonoBehaviour
         // Cast a tiny raycast forward to see if a wall is immediately in front of it
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, moveDirection, checkDistance, wallLayer);
     
-        if (hit.collider != null)
+        // If we hit a different object than last frame, reset cooldown
+        if (hit.collider != null && hit.collider != lastHitCollider)
         {
-            FlipDirection();
+            collisionCooldownFrames = 0;
         }
+
+        if (collisionCooldownFrames > 0)
+        {
+            collisionCooldownFrames--;
+        }
+        else
+        {
+            if (hit.collider != null)
+            {
+                // Ignore collision with self only; allow interaction with other MovingPlatforms
+                if (hit.collider.gameObject == gameObject)
+                {
+                    return;
+                }
+
+				FlipDirection();
+
+                // Start cooldown to prevent immediate re-triggering or oscillation
+                collisionCooldownFrames = COOLDOWN_FRAMES;
+            }
+        }
+        
+        lastHitCollider = hit.collider;
     }
 
     private void FlipDirection()
     {
         moveDirection = -moveDirection;
     }
+
+
 }
