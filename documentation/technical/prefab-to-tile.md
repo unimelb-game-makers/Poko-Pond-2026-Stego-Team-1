@@ -108,6 +108,8 @@ To paint:
 
 For multi-cell props, paint **only the one anchor cell** (left cell for 2×1, bottom-left for 2×2) — the oversized sprite handles the rest visually.
 
+If a directional prop supports rotation (for example, a blower), rotate the painted tile with the Tile Palette rotation tool. `PropTilemapSpawner` applies the cell rotation to the runtime prefab. For a painted blower that needs unique direction or strength values, run **Sync Cell List** and enable **Override Blower Settings** for that cell in `PropTilemapSpawner`.
+
 ---
 
 ## Step 6 — Wire up connections (if applicable)

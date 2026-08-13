@@ -437,6 +437,21 @@ public class SoftBodyPlayer : MonoBehaviour
         foreach (var rb in _rbs) rb.simulated = true;
     }
 
+    // Applies an acceleration to every ring point without creating a velocity gradient
+    // through the soft body. The explicit fixed-step velocity delta keeps continuous
+    // effects such as blower wind steady instead of depending on queued force integration.
+    public void AddExternalAcceleration(Vector2 acceleration)
+    {
+        if (_frozen || _rbs == null) return;
+
+        Vector2 velocityDelta = acceleration * Time.fixedDeltaTime;
+        foreach (var rb in _rbs)
+        {
+            if (rb != null)
+                rb.linearVelocity += velocityDelta;
+        }
+    }
+
     // Repositions the entire ring to newCenter in its natural resting shape and sets velocity.
     // Must be called AFTER Unfreeze() — rb.position writes on a frozen Rigidbody2D are ignored.
     // Three invariants are maintained to prevent artefacts on the first post-teleport frame:

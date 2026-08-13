@@ -219,6 +219,36 @@ See [`evaporator-condenser.md`](evaporator-condenser.md) for the full evaporatio
 
 ---
 
+### Blower (1×1)
+
+| Field | Value |
+|-------|-------|
+| Tile asset | `Blower_PropTile` |
+| Palette | `1x1` |
+| Prefab | `Blower` prefab |
+| Layer | `Ground` |
+| Role | Always-on standalone prop — applies steady acceleration every physics step within an oriented wind zone |
+| Blow Direction | Normalized local vector; default `(1, 0)` points right |
+| Blow Strength | Acceleration applied to the full soft body; default `30` |
+| Wind Range / Width | Adjustable rectangular area extending from the blower face |
+| Detection | `OverlapBoxAll` on the `SoftBodyPoint` layer; split bodies are handled independently |
+| Artwork | `fan.png`, sliced into four 32×32 frames and looped continuously at 8 FPS |
+
+The blower has no pulse, interval, or activation cycle: its wind remains active continuously. Its effect is direction-based acceleration rather than a fixed speed:
+
+- Wind pointing in the same direction as the player's movement speeds the player up.
+- Wind pointing against the player's movement slows the player down. Enough strength can halt the current movement and then push the player back in the wind direction.
+- Wind perpendicular to movement redirects the player by adding velocity along the wind direction.
+- Upward wind around strength `30` begins countering the player's normal gravity. Higher strengths can hold the player aloft or lift them.
+
+The supplied fan artwork faces right. Its four-frame animation loops continuously, and the visual rotates with `Blow Direction` so the fan always faces the direction it blows. `Blow Strength` controls how quickly velocity changes, so stronger values accelerate, brake, or lift the player more aggressively.
+
+`PropTilemapSpawner` respects painted tile rotation. Rotate a blower tile in the Tile Palette to rotate the spawned prefab and its wind direction without creating another prefab.
+
+For different settings per painted cell, select the object containing `PropTilemapSpawner`, run **Sync Cell List**, enable **Override Blower Settings** on that Blower entry, and set its **Blow Direction** and **Blow Strength**. Common direction values are right `(1, 0)`, left `(-1, 0)`, up `(0, 1)`, and down `(0, -1)`. Leave the override disabled to use the prefab defaults.
+
+---
+
 ## Fixing the Pink Tile Bug
 
 Unity leaves behind a pink placeholder cell when a tile asset is deleted from the Project while the Tilemap still references it.

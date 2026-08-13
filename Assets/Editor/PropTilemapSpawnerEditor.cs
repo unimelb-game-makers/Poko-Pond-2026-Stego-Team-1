@@ -32,6 +32,9 @@ public class PropTilemapSpawnerEditor : Editor
                 var propName   = element.FindPropertyRelative("propName").stringValue;
                 var cell       = element.FindPropertyRelative("cell").vector3IntValue;
                 var connIdProp = element.FindPropertyRelative("connectionId");
+                var overrideBlowerProp = element.FindPropertyRelative("overrideBlowerSettings");
+                var blowerDirectionProp = element.FindPropertyRelative("blowerDirection");
+                var blowerStrengthProp = element.FindPropertyRelative("blowerStrength");
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
@@ -45,6 +48,16 @@ public class PropTilemapSpawnerEditor : Editor
                 // Connection ID field
                 EditorGUI.indentLevel++;
                 EditorGUILayout.PropertyField(connIdProp, new GUIContent("Connection ID"));
+
+                if (propName == "Blower")
+                {
+                    EditorGUILayout.PropertyField(overrideBlowerProp, new GUIContent("Override Blower Settings"));
+                    if (overrideBlowerProp.boolValue)
+                    {
+                        EditorGUILayout.PropertyField(blowerDirectionProp, new GUIContent("Blow Direction"));
+                        EditorGUILayout.PropertyField(blowerStrengthProp, new GUIContent("Blow Strength"));
+                    }
+                }
                 EditorGUI.indentLevel--;
 
                 EditorGUILayout.EndVertical();
