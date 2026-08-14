@@ -437,6 +437,28 @@ public class SoftBodyPlayer : MonoBehaviour
         foreach (var rb in _rbs) rb.simulated = true;
     }
 
+    // Launches the entire soft body upward at a consistent speed. External launchers
+    // such as trampolines should use this instead of changing individual ring points,
+    // which would create a compression wave through the spring network.
+    public void BounceUpward(float upwardSpeed)
+    {
+        if (_frozen || _rbs == null) return;
+
+        float speed = Mathf.Max(0f, upwardSpeed);
+        _jumpQueued          = false;
+        _currentGravityScale = baseGravityScale;
+        IsGrounded           = false;
+        IsGroundPounding     = false;
+
+        OnJump?.Invoke();
+
+        foreach (var rb in _rbs)
+        {
+            if (rb != null)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, speed);
+        }
+    }
+
     // Applies an acceleration to every ring point without creating a velocity gradient
     // through the soft body. The explicit fixed-step velocity delta keeps continuous
     // effects such as blower wind steady instead of depending on queued force integration.
