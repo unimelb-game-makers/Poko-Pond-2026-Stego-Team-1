@@ -471,6 +471,10 @@ event System.Action<float> OnGroundPoundLand;
 // Use this for trampolines and other external launchers instead of modifying Points directly.
 void BounceUpward(float upwardSpeed);
 
+// Apply acceleration uniformly to the full ring. Multiple callers accumulate naturally.
+// Use for wind, currents, and other continuous external forces.
+void AddExternalAcceleration(Vector2 acceleration);
+
 // Teleport all ring points to center with initialVelocity.
 // Always call Unfreeze() first — rb.position writes on a frozen Rigidbody2D are discarded.
 // Internally: flushes the interpolation buffer (None→Interpolate toggle), writes
