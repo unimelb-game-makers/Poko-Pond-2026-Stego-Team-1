@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -6,39 +7,47 @@ using UnityEngine;
  */
 public class MovingPlatformTrigger : MonoBehaviour
 {
-    [Header("Player")] public GameObject Player;
+    [Header("Player")] public List<GameObject> Players;
     public LayerMask PlayerSoftBodyLayer;
     private Rigidbody2D rb;
     private bool playerColliding = false;
-    
+	private MovingPlatform parentPlatform;    
+
     void Start()
     {
         rb = this.transform.parent.gameObject.GetComponent<Rigidbody2D>();
-        Player = GameObject.FindWithTag("Player");
+		parentPlatform = transform.parent.gameObject.GetComponent<MovingPlatform>();
     }
     
     void FixedUpdate()
     {
-        if (playerColliding)
-        {
-            Player.GetComponent<SoftBodyPlayer>().SetConstantForce(new Vector3(rb.linearVelocity.x, 0, 0));
-        }
+		foreach (GameObject p in Players) {
+			p.GetComponent<SoftBodyPlayer>().SetConstantForce(new Vector3(rb.linearVelocity.x, 0, 0));
+		}
     }
-    
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if ((1 << collision.gameObject.layer)  == PlayerSoftBodyLayer.value)
+
+	private void OnTriggerEnter2D(Collider2D collision) {
+		if ((1 << collision.gameObject.layer) == PlayerSoftBodyLayer.value)
         {
-            playerColliding = true;
+			if (collision.gameObject.TryGetComponent<SoftBodyPointRef>(out var softBodyPointRef)) {
+				Players.Add(softBodyPointRef.owner.transform.gameObject);
+			} else if(collision.gameObject.TryGetComponent<SoftBodyPlayer>(out var softBodyPlayer)) {
+				Players.Add(collision.gameObject);
+			}
         }
-    }
+	}
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if ((1 << collision.gameObject.layer) == PlayerSoftBodyLayer.value)
         {
-            Player.GetComponent<SoftBodyPlayer>().SetConstantForce(new Vector3(0, 0, 0));
-            playerColliding = false;
+			if (collision.gameObject.TryGetComponent<SoftBodyPointRef>(out var softBodyPointRef)) {
+				int index = Players.FindIndex(obj => obj.GetInstanceID() == softBodyPointRef.owner.transform.gameObject.GetInstanceID());
+				if(index != -1) {
+					Players[index].GetComponent<SoftBodyPlayer>().SetConstantForce(new Vector3(0, 0, 0));
+					Players.RemoveAt(index);
+				}
+			}
         }
     }
 }

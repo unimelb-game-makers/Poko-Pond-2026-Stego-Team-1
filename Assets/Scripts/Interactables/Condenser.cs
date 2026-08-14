@@ -47,6 +47,11 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
     private Vector2          _entryCenter;
     private Vector2          _entrySize;
     private bool             _playerOver;
+    private GameObject       _player;
+    
+    // Public Interface ──────────────────────────────────────────────────
+    public LayerMask PlayerSoftBodyLayer;
+    public PlayerBodyState valueToChangeTo;
 
     private static readonly int CondenseTriggerHash = Animator.StringToHash("Condense");
 
@@ -80,6 +85,8 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
         var b        = col.bounds;
         _entryCenter = new Vector2(b.min.x + entryZoneWidth * 0.5f, b.center.y);
         _entrySize   = new Vector2(entryZoneWidth, entryZoneHeight);
+        
+        _player = GameObject.FindWithTag("Player");
     }
 
     private void OnEnable()
@@ -121,6 +128,7 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
             _playerOver = true;
             Debug.Log($"[Condenser] Player entered (id='{_connectionId}')", this);
             if (_animator != null) _animator.SetTrigger(CondenseTriggerHash);
+            _player.GetComponent<SoftBodyPlayer>().changeBodyState(valueToChangeTo, new Vector2(transform.position.x, transform.position.y+0.5f));
         }
         else if (!present && _playerOver)
         {

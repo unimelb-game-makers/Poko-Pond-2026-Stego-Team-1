@@ -47,7 +47,12 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
     private Vector2          _detectionCenter;
     private Vector2          _detectionSize;
     private bool             _playerOver;     // edge-triggered logging — only fire on enter
+	private GameObject 		 _player;
 
+	// Public Interface ──────────────────────────────────────────────────
+	public LayerMask PlayerSoftBodyLayer;
+    public PlayerBodyState valueToChangeTo;
+	
     private static readonly int IsActiveHash = Animator.StringToHash("IsActive");
 
     // Called by PropTilemapSpawner — sets the trigger id this evaporator listens for.
@@ -71,6 +76,8 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
     {
         // Drive initial animator state — covers the case where SetActivationConfig was not called
         SetAnimatorState(_isActive);
+
+		_player = GameObject.FindWithTag("Player");
 
         var col = GetComponent<Collider2D>();
         if (col == null)
@@ -132,6 +139,7 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
         {
             _playerOver = true;
             Debug.Log($"[Evaporator] Player entered (id='{_connectionId}')", this);
+			_player.GetComponent<SoftBodyPlayer>().changeBodyState(valueToChangeTo, new Vector2(transform.position.x, transform.position.y+0.5f));
         }
         else if (!present && _playerOver)
         {
