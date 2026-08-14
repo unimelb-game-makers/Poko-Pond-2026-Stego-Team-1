@@ -475,8 +475,6 @@ public class SoftBodyPlayer : MonoBehaviour
         IsGrounded           = false;
         IsGroundPounding     = false;
 
-        OnJump?.Invoke();
-
         foreach (var rb in _rbs)
         {
             if (rb != null)
