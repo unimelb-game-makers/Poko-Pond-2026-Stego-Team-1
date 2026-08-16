@@ -73,11 +73,33 @@ public class MovingPlatform : MonoBehaviour
 
     }
 
-    void FixedUpdate()
-    {
+	public Vector2 getUnifiedVelocity() {
 		if (useCircularMotion)
-		{	
-			// Update angle based on fixed timestep
+		{
+			// Calculate angular velocity in radians per second. 
+			// Note: angleIncrementPerFrame is degrees/frame, so we convert to rad/s using Time.fixedDeltaTime.
+            float angularVelocityRadPerSec = (angleIncrementPerFrame * Mathf.Deg2Rad) / Time.fixedDeltaTime;
+
+            // Current total angle including phase offset
+            float totalAngle = currentAngle + phaseOffset;
+            
+            // Tangent vector for counter-clockwise rotation: (-sin, cos)
+            Vector2 tangent = new Vector2(-Mathf.Sin(totalAngle * Mathf.Deg2Rad), Mathf.Cos(totalAngle * Mathf.Deg2Rad));
+
+			// Velocity is angular velocity (rad/s) * radius. Direction is tangent.
+            return tangent * (angularVelocityRadPerSec * radius);
+        }
+		else 
+		{
+			return rb.linearVelocity;
+		}
+    }
+
+    void FixedUpdate()
+    {		
+    	if (useCircularMotion)
+    	{	
+    		// Update angle based on fixed timestep            
             currentAngle += angleIncrementPerFrame * Time.fixedDeltaTime; 
             
             // Calculate total angle including phase offset, then convert to radians
@@ -86,16 +108,19 @@ public class MovingPlatform : MonoBehaviour
           	
             Vector2 offset = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian)) * radius;
             
-            // Update position relative to pivot, ensuring Z-axis remains unchanged
-            transform.position = pivotPoint.position + new Vector3(offset.x, offset.y, 0f);
+            // Calculate target position relative to pivot, ensuring Z-axis remains unchanged
+            Vector3 targetPosition = pivotPoint.position + new Vector3(offset.x, offset.y, 0f);
+            
+            // Move the rigidbody to the target position smoothly within the physics step
+            rb.MovePosition(targetPosition);
 
         } 
-		else 
-		{	
-			if (rb != null)
-			{
-				// Decrement cooldown counter if active
-				if (cooldownCounter > 0)
+    	else 
+    	{	
+    		if (rb != null)
+    		{
+    			// Decrement cooldown counter if active
+    			if (cooldownCounter > 0)
                 {
                     cooldownCounter--; 
                 }
@@ -109,16 +134,16 @@ public class MovingPlatform : MonoBehaviour
                 
                 if (hit.collider != null)
                 {
-                    // Ignore collisions with self; allow interaction with other platforms
-                	if (hit.collider.gameObject != gameObject)
-                	{
-                    	// Reverse direction and reset cooldown to prevent immediate re-collision
-                        moveDirection = -moveDirection;
-                        cooldownCounter = collisionCooldownFrames;
+                    // Ignore collisions with self; allow interaction with other platforms                 
+                	if (hit.collider.gameObject != gameObject)                    
+                        {                    	
+                        	// Reverse direction and reset cooldown to prevent immediate re-collision                        
+                            moveDirection = -moveDirection;                            
+                            cooldownCounter = collisionCooldownFrames;
 
-                    	// Nudge position slightly to prevent sticking into the wall
-                        transform.position += new Vector3(-moveDirection.x * 0.01f, -moveDirection.y * 0.01f, 0);
-                	}
+                            // Nudge position slightly to prevent sticking into the wall
+                            transform.position += new Vector3(-moveDirection.x * 0.01f, -moveDirection.y * 0.01f, 0);                        
+                        }                    
                 }
                 
                 // Apply velocity based on current direction and speed

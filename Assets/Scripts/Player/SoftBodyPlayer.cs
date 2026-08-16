@@ -985,7 +985,7 @@ public class SoftBodyPlayer : MonoBehaviour
         {
             _rbs[i].gameObject.transform.position = new Vector2(
                 _rbs[i].position.x + _constantForce.x*_constantForceMultiplier, 
-                _rbs[i].position.y
+                _rbs[i].position.y + _constantForce.y*_constantForceMultiplier
                 );
         }
     }
@@ -1698,7 +1698,7 @@ public class SoftBodyPlayer : MonoBehaviour
         _constantForce = force;
         _constantForce = _constantForce.normalized;
         _constantForceMultiplier = multiplier;
-        ApplyConstantForce();
+        //ApplyConstantForce();
     }
 
 	public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint)
