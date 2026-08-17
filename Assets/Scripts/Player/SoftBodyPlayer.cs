@@ -316,7 +316,6 @@ public class SoftBodyPlayer : MonoBehaviour
     private bool  _frozen;
 
     private Vector3 _constantForce = new Vector3(0f, 0f, 0f);
-    private float _constantForceMultiplier = 0.06f;
 
     // ── Private — Mesh ───────────────────────────────────────────────────
     private Mesh      _mesh;
@@ -414,7 +413,7 @@ public class SoftBodyPlayer : MonoBehaviour
         _hInput = InputEnabled ? Input.GetAxisRaw("Horizontal") : 0f;
         
         ApplyConstantForce();
-        ResolveCollisions();
+		ResolveCollisions();
         UpdateCenter();
         UpdateGravity();
         DetectGround();
@@ -984,8 +983,8 @@ public class SoftBodyPlayer : MonoBehaviour
         for (int i = 0; i < pointCount; i++)
         {
             _rbs[i].gameObject.transform.position = new Vector2(
-                _rbs[i].position.x + _constantForce.x*_constantForceMultiplier, 
-                _rbs[i].position.y + _constantForce.y*_constantForceMultiplier
+                _rbs[i].position.x + _constantForce.x*Time.fixedDeltaTime, 
+                _rbs[i].position.y + _constantForce.y*Time.fixedDeltaTime
                 );
         }
     }
@@ -1693,12 +1692,9 @@ public class SoftBodyPlayer : MonoBehaviour
         return totalVelocity / _pointGOs.Length;
     }
 
-    public void SetConstantForce(Vector3 force, float multiplier = 0.06f)
+    public void SetConstantForce(Vector3 force)
     {
         _constantForce = force;
-        _constantForce = _constantForce.normalized;
-        _constantForceMultiplier = multiplier;
-        //ApplyConstantForce();
     }
 
 	public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint)

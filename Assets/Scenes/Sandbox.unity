@@ -782,11 +782,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.4
+      value: -13.68
       objectReference: {fileID: 0}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.41
+      value: 5.37
       objectReference: {fileID: 0}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2737,6 +2737,10 @@ PrefabInstance:
       propertyPath: cameraProxy
       value: 
       objectReference: {fileID: 197796189}
+    - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
+      propertyPath: pointMass
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6292073163466076418, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: solidbodyInnerColor.b
       value: 0.8392157
@@ -73899,7 +73903,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2210137344148011485, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: speed
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2210137344148011485, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: Player
@@ -73967,7 +73971,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.41
+      value: 5.33
       objectReference: {fileID: 0}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.z

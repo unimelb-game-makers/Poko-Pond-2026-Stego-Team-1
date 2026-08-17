@@ -57,7 +57,7 @@ public class MovingPlatform : MonoBehaviour
         // Ensure the platform is kinematic so physics doesn't interfere with scripted movement
         rb.isKinematic = true;
         
-        cooldownCounter = 0; 
+        cooldownCounter = 0;
 
         // Validate required fields based on active mode
         if (useCircularMotion && pivotPoint == null)
@@ -78,7 +78,7 @@ public class MovingPlatform : MonoBehaviour
 		{
 			// Calculate angular velocity in radians per second. 
 			// Note: angleIncrementPerFrame is degrees/frame, so we convert to rad/s using Time.fixedDeltaTime.
-            float angularVelocityRadPerSec = (angleIncrementPerFrame * Mathf.Deg2Rad) / Time.fixedDeltaTime;
+            float angularVelocityRadPerSec = (angleIncrementPerFrame * Mathf.Deg2Rad);
 
             // Current total angle including phase offset
             float totalAngle = currentAngle + phaseOffset;
