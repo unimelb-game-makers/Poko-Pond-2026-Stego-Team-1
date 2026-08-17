@@ -290,7 +290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParallaxBackground
   cam: {fileID: 1807380261}
-  parallaxFactor: 0.3
+  parallaxFactor: 0.2
 --- !u!114 &144318618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,8 +767,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1721820581}
-  - {fileID: 1672682071}
   - {fileID: 144318616}
+  - {fileID: 1672682071}
   m_Father: {fileID: 1380275887}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2024,7 +2024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParallaxBackground
   cam: {fileID: 1807380261}
-  parallaxFactor: 0.2
+  parallaxFactor: 0.3
 --- !u!114 &1672682073
 MonoBehaviour:
   m_ObjectHideFlags: 0
