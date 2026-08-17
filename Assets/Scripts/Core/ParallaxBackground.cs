@@ -32,7 +32,7 @@ public class ParallaxBackground : MonoBehaviour
         }
 
         Vector3 delta = cam.position - previousCamPosition;
-        transform.position += new Vector3(delta.x * parallaxFactor, 0f, 0f);
+        transform.position += new Vector3(delta.x * parallaxFactor*-1, 0f, 0f);
         previousCamPosition = cam.position;
     }
 }
