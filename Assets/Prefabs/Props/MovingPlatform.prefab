@@ -200,13 +200,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5586796d164f9ffa163290ea5d525e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingPlatform
-  speed: 3
-  moveRightInitially: 1
+  useCircularMotion: 0
   wallLayer:
     serializedVersion: 2
     m_Bits: 1088
   checkDistance: 0.01
-  platformCollider: {fileID: 7447656925310018340}
+  collisionCooldownFrames: 10
+  moveDirection: {x: 1, y: 0}
+  speed: 3
+  pivotPoint: {fileID: 0}
+  phaseOffset: 0
+  radius: 2
+  angleIncrementPerFrame: 10
   Player: {fileID: 0}
 --- !u!50 &2265284680206022193
 Rigidbody2D:
@@ -234,7 +239,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 6
+  m_Constraints: 4
 --- !u!61 &7447656925310018340
 BoxCollider2D:
   m_ObjectHideFlags: 0
