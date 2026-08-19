@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7031799136ce5b4e7996ec4dab2e31b2
+guid: c56a361e7fcec48f18e758b101eec4dc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5863207229885329850
-    second: Demo(1)_0
+      213: 7781975734595126440
+    second: demo bg parallx_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,12 +37,12 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Demo(1)_0
+      name: demo bg parallx_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 4800
-        height: 2700
+        width: 1994
+        height: 1188
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 64ece2ac614b1aea0800000000000000
-      internalID: -5863207229885329850
+      spriteID: 8a4804f23b12ffb60800000000000000
+      internalID: 7781975734595126440
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Demo(1)_0: -5863207229885329850
+      demo bg parallx_0: 7781975734595126440
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
