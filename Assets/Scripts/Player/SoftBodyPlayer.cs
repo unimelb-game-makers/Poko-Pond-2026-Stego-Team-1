@@ -1733,4 +1733,48 @@ public class SoftBodyPlayer : MonoBehaviour
 	public PlayerBodyState getBodyState() {
 		return bodystate;
 	}
+
+                                                                                    
+    public void vaccumPoints(Vector2 moveTowards)                               
+    {               
+        /*
+         * This is used to 'vaccum' the player towards a specific point, planned to be the water battery
+         */
+        
+        if (_rbs == null || _rbs.Length == 0) return;                           
+                                                                                
+        // Calculate direction from each point to the target                    
+        for (int i = 0; i < _rbs.Length; i++)                                   
+        {                                                                       
+            Vector2 pos = _rbs[i].position;                                     
+            Vector2 dir = (moveTowards - pos).normalized;                       
+                                                                                
+            // Apply force proportional to distance (stronger pull when further away)                                                                           
+            float distance = Vector2.Distance(pos, moveTowards);                
+            Vector2 force = dir * distance * 10f;
+                                                                                
+            _rbs[i].AddForce(force, ForceMode2D.Force);                         
+        }                                                                       
+    }
+
+    public void launchPoints(Vector2 direction)                                 
+    {                                                                           
+        if (_rbs == null || _rbs.Length == 0) return;                           
+                                                                                
+        // Normalize direction to ensure consistent launch strength regardless  
+        of input magnitude                                                              
+        Vector2 launchDir = direction.normalized;                               
+                                                                                
+        // Apply an instantaneous impulse to all points in the specified        
+        direction                                                                       
+        foreach (var rb in _rbs)                                                
+        {                                                                       
+            if (rb != null)                                                     
+            {                                                                   
+                // Use Impulse mode for an immediate change in velocity,        
+                simulating a sudden launch/kick                                                 
+                rb.AddForce(launchDir * 10f, ForceMode2D.Impulse);              
+            }                                                                   
+        }                                                                       
+    }  
 }
