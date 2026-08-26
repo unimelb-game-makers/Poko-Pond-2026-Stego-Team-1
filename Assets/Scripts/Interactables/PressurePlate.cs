@@ -60,7 +60,7 @@ using UnityEngine.Events;
  *   even if the Animator moves or resizes the collider during an animation.
  */
 
-public class PressurePlate : MonoBehaviour, IPropConnectable
+public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateConfigurable
 {
     [Tooltip("Stable, human-readable id used by EventManager listeners. Must match the Trigger Plate Id on any linked CrusherTrap.")]
     [SerializeField] private string plateId;
@@ -70,6 +70,13 @@ public class PressurePlate : MonoBehaviour, IPropConnectable
 
     [Tooltip("Height of the detection zone above the plate. Increase if activation flickers.")]
     [SerializeField] private float detectionHeight = 2f;
+
+    [Header("Player State Requirement")]
+    [Tooltip("When enabled, only a player in the selected body state can activate this plate. Disabled accepts any player state.")]
+    [SerializeField] private bool requirePlayerState;
+
+    [Tooltip("Body state required when Require Player State is enabled.")]
+    [SerializeField] private PlayerBodyState requiredPlayerState = PlayerBodyState.Solid;
 
     [Tooltip("Sprite shown while the plate is pressed. Leave empty to rely solely on animations.")]
     [SerializeField] private Sprite pressedSprite;
@@ -90,12 +97,22 @@ public class PressurePlate : MonoBehaviour, IPropConnectable
     // Detection zone cached at Start so Animator-driven transform/collider changes can't affect it.
     private Vector2 _detectionCenter;
     private Vector2 _detectionSize;
+    private int _playerDetectionMask;
 
     private static readonly int IsPressedHash = Animator.StringToHash("IsPressed");
 
     // Called by PropTilemapSpawner when spawned from a PropTile with a connectionId.
     // Overrides the prefab's default plateId so no separate prefab is needed per connection.
     public void SetConnectionId(string id) => plateId = id;
+
+    // Called by PropTilemapSpawner for a painted cell.  A disabled requirement
+    // deliberately means "accept any state" so existing plates keep their
+    // original behaviour unless a cell opts into filtering.
+    public void SetPlayerStateRequirement(bool requireState, PlayerBodyState state)
+    {
+        requirePlayerState = requireState;
+        requiredPlayerState = state;
+    }
 
     // Assigns a unique id the moment this component is added in the editor
     private void Reset() => plateId = System.Guid.NewGuid().ToString();
@@ -122,22 +139,58 @@ public class PressurePlate : MonoBehaviour, IPropConnectable
         var bounds = col.bounds;
         _detectionCenter = new Vector2(bounds.center.x, bounds.center.y + detectionHeight * 0.5f);
         _detectionSize   = new Vector2(bounds.size.x, detectionHeight);
+        _playerDetectionMask = LayerMask.GetMask("Player", "SoftBodyPoint");
     }
 
     // Polls for player overlap each frame using a fixed box zone cached at Start
     private void Update()
     {
-        bool playerPresent = Physics2D.OverlapBox(
-            _detectionCenter,
-            _detectionSize,
-            0f,
-            LayerMask.GetMask("Player", "SoftBodyPoint")
-        );
+        bool playerPresent = IsAcceptedPlayerPresent();
 
         if (playerPresent && !_playerOver)
             OnPlayerEnter();
         else if (!playerPresent && _playerOver)
             OnPlayerExit();
+    }
+
+    private bool IsAcceptedPlayerPresent()
+    {
+        Collider2D[] hits = Physics2D.OverlapBoxAll(
+            _detectionCenter,
+            _detectionSize,
+            0f,
+            _playerDetectionMask);
+
+        foreach (Collider2D hit in hits)
+        {
+            if (!TryResolvePlayerOwner(hit, out SoftBodyPlayer player))
+                continue;
+
+            if (!requirePlayerState || player.getBodyState() == requiredPlayerState)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryResolvePlayerOwner(Collider2D collider, out SoftBodyPlayer owner)
+    {
+        // Soft-body point objects are not parented to the player root, so the
+        // reference component is the authoritative way to find their owner.
+        SoftBodyPointRef pointRef = collider.GetComponent<SoftBodyPointRef>();
+        if (pointRef != null && pointRef.owner != null)
+        {
+            owner = pointRef.owner;
+            return true;
+        }
+
+        // Fallbacks keep the plate compatible with a root player collider or a
+        // future implementation that places body colliders under the player.
+        owner = collider.GetComponent<SoftBodyPlayer>();
+        if (owner == null)
+            owner = collider.GetComponentInParent<SoftBodyPlayer>();
+
+        return owner != null;
     }
 
     private void OnPlayerEnter()
