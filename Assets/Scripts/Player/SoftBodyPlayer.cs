@@ -173,7 +173,7 @@ public class SoftBodyPlayer : MonoBehaviour
     public Color liquidbodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
     [Tooltip("Colour at the outer edge of the blob.")]
     public Color liquidbodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
-    
+
     [Header("Solid Visuals — Body Gradient")]
     [Tooltip("Colour at the centre of the blob — lighter gives a rounded 3-D look.")]
     public Color solidbodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
@@ -318,6 +318,9 @@ public class SoftBodyPlayer : MonoBehaviour
     private Vector3 _constantForce = new Vector3(0f, 0f, 0f);
     private float _constantForceMultiplier = 0.06f;
 
+    private bool isAffectedByVaccuum = false;
+    private Vector2 vaccuumPosition = new Vector2(0, 0);
+
     // ── Private — Mesh ───────────────────────────────────────────────────
     private Mesh      _mesh;
     private int[]     _triangles;
@@ -370,10 +373,10 @@ public class SoftBodyPlayer : MonoBehaviour
     private float          _pendingFaceDir = 1f;  // direction waiting to be shown after fade
     private float          _faceAlpha      = 1f;
     private int            _faceFadeState  = 0;   // 0 stable, -1 fading out, 1 fading in
-    
+
 	// ── Private — PlayerBodyState ────────────────────────────────────────
     private PlayerBodyState bodystate = PlayerBodyState.Liquid;
-    
+
     // What the current active body colors are, options are/should be publically defined for each state
     public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
     public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
@@ -412,7 +415,9 @@ public class SoftBodyPlayer : MonoBehaviour
         if (_frozen) return;
 
         _hInput = InputEnabled ? Input.GetAxisRaw("Horizontal") : 0f;
-        
+
+        if(isAffectedByVaccuum) vaccumPoints(vaccuumPosition);
+
         ApplyConstantForce();
         ResolveCollisions();
         UpdateCenter();
@@ -688,17 +693,17 @@ public class SoftBodyPlayer : MonoBehaviour
     Vector2 spawnCenter = transform.position;
 
 	if(bodystate == PlayerBodyState.Solid) {
-    
+
     	// Calculate grid dimensions based on total points requested
-    	int pointsPerSide = (pointCount)/4; 
+    	int pointsPerSide = (pointCount)/4;
 
     	float spacingX = bodyRadius *2;
-    	float spacingY = bodyRadius *2; 
+    	float spacingY = bodyRadius *2;
     	int currentPointIndex = 0;
 
     	// Define loop range to cover the square area centered at transform.position
     	// We use pointsPerSide - 1 because that's the offset from center to edge in a grid
-    	int halfSize = (pointsPerSide) / 2; 
+    	int halfSize = (pointsPerSide) / 2;
 
     	for (int y = -halfSize; y <= halfSize; y++) {
         	for (int x = -halfSize; x <= halfSize; x++) {
@@ -706,10 +711,10 @@ public class SoftBodyPlayer : MonoBehaviour
             	// A point is on the border if: abs(x) == max_X OR abs(y) == max_Y.
             	bool isBorder = (Mathf.Abs(x) == halfSize || Mathf.Abs(y) == halfSize);
 
-            	if (!isBorder) continue; 
+            	if (!isBorder) continue;
 
             	Vector2 offset = new Vector2(x * spacingX, y * spacingY);
-            
+
             	// Ensure we don't exceed the requested point count (useful for non-perfect squares)
             	if (currentPointIndex >= pointCount) break;
 
@@ -727,7 +732,7 @@ public class SoftBodyPlayer : MonoBehaviour
             	rb.interpolation = RigidbodyInterpolation2D.Interpolate;
             	rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-            	var col = go.AddComponent<CircleCollider2D>(); 
+            	var col = go.AddComponent<CircleCollider2D>();
             	col.radius = pointRadius;
             	if (pointMaterial != null) col.sharedMaterial = pointMaterial;
 
@@ -736,7 +741,7 @@ public class SoftBodyPlayer : MonoBehaviour
             	_rbs[currentPointIndex] = rb;
             	_cols[currentPointIndex] = col;
             	_pointGOs[currentPointIndex] = go;
-            
+
             	currentPointIndex++;
         	}
     	}
@@ -791,7 +796,7 @@ public class SoftBodyPlayer : MonoBehaviour
 
 	if(bodystate == PlayerBodyState.Solid) {
 		for (int i = 0; i < pointCount; i++) {
-        	if (_rbs[i] != null) 
+        	if (_rbs[i] != null)
             	_prevPositions[i] = _rbs[i].position;
     		}
     } else if (bodystate == PlayerBodyState.Liquid) {
@@ -938,7 +943,7 @@ public class SoftBodyPlayer : MonoBehaviour
     private void AddSpring(int i, int j, float freq, float damp)
     {
 		if(bodystate == PlayerBodyState.Solid) {
-			var joint = _rbs[i].gameObject.AddComponent<DistanceJoint2D>();	
+			var joint = _rbs[i].gameObject.AddComponent<DistanceJoint2D>();
 
 			joint.connectedBody         = _rbs[j];
         	joint.distance              = Vector2.Distance(_offsets[i], _offsets[j]);
@@ -946,7 +951,7 @@ public class SoftBodyPlayer : MonoBehaviour
         	joint.enableCollision       = false;
 		} else {
 			var joint = _rbs[i].gameObject.AddComponent<SpringJoint2D>();
-			
+
 			joint.connectedBody         = _rbs[j];
         	joint.distance              = Vector2.Distance(_offsets[i], _offsets[j]);
         	joint.frequency             = freq;
@@ -984,7 +989,7 @@ public class SoftBodyPlayer : MonoBehaviour
         for (int i = 0; i < pointCount; i++)
         {
             _rbs[i].gameObject.transform.position = new Vector2(
-                _rbs[i].position.x + _constantForce.x*_constantForceMultiplier, 
+                _rbs[i].position.x + _constantForce.x*_constantForceMultiplier,
                 _rbs[i].position.y
                 );
         }
@@ -1381,13 +1386,13 @@ public class SoftBodyPlayer : MonoBehaviour
     }
 
     // ── Mesh ──────────────────────────────────────────────────────────────
-	
+
 	// Used in Solid State
 	private void SortPointsRadially()
 	{
     	// Create an index array to track the original positions
     	int[] indices = new int[pointCount];
-    	for (int i = 0; i < pointCount; i++) 
+    	for (int i = 0; i < pointCount; i++)
     	{
         	indices[i] = i;
     	}
@@ -1407,15 +1412,15 @@ public class SoftBodyPlayer : MonoBehaviour
     	CircleCollider2D[] sortedCols = new CircleCollider2D[pointCount];
     	GameObject[] sortedGOs = new GameObject[pointCount];
 
-    	for (int i = 0; i < pointCount; i++) 
+    	for (int i = 0; i < pointCount; i++)
     	{
         	int sortedIdx = indices[i];
         	sortedRbs[i] = _rbs[sortedIdx];
         	sortedCols[i] = _cols[sortedIdx];
         	sortedGOs[i] = _pointGOs[sortedIdx];
-        
+
         	// Rename the objects so the Unity Hierarchy matches the new logical order
-        	sortedGOs[i].name = $"SoftPoint{i}"; 
+        	sortedGOs[i].name = $"SoftPoint{i}";
     	}
 
     	// Apply the sorted arrays back to the main variables
@@ -1424,10 +1429,10 @@ public class SoftBodyPlayer : MonoBehaviour
     	_pointGOs = sortedGOs;
 
     	// If _prevPositions was already populated in your first snippet, sort it too
-    	if (_prevPositions != null && _prevPositions.Length >= pointCount) 
+    	if (_prevPositions != null && _prevPositions.Length >= pointCount)
     	{
         	Vector2[] sortedPrev = new Vector2[_prevPositions.Length];
-        	for (int i = 0; i < pointCount; i++) 
+        	for (int i = 0; i < pointCount; i++)
         	{
             	sortedPrev[i] = _prevPositions[indices[i]];
         	}
@@ -1435,14 +1440,14 @@ public class SoftBodyPlayer : MonoBehaviour
     	}
 	}
 
-	private void SetupMesh() 
+	private void SetupMesh()
 	{
     	// reorder the row-by-row grid points into a perimeter ring
     	SortPointsRadially();
 
     	// Proceed with mesh generation exactly as before
     	_subdivVerts = pointCount * subdivisionsPerSegment;
-    
+
     	_smoothRing  = new Vector2[_subdivVerts];
     	_meshVerts   = new Vector3[_subdivVerts + 1];
     	_meshUVs     = new Vector2[_subdivVerts + 1];
@@ -1459,7 +1464,7 @@ public class SoftBodyPlayer : MonoBehaviour
     	for (int i = 0; i < _subdivVerts; i++)
     	{
         	int next = (i + 1) % _subdivVerts;
-        
+
         	_triangles[i * 3]     = 0;          // Center vertex
         	_triangles[i * 3 + 1] = i + 1;      // Current perimeter vertex
         	_triangles[i * 3 + 2] = next + 1;   // Next perimeter vertex
@@ -1481,7 +1486,7 @@ public class SoftBodyPlayer : MonoBehaviour
 
     	_bodyRenderer.sortingLayerName = sortingLayerName;
     	_bodyRenderer.sortingOrder     = sortingOrder;
-	}    
+	}
 
     private void SetupHighlight()
     {
@@ -1671,9 +1676,9 @@ public class SoftBodyPlayer : MonoBehaviour
             }
         }
     }
-    
+
     // ── Misc ───────────────────────────────────────────────────────────
-    
+
     public Vector2 CalculateAverageVelocity()
     {
         if (_pointGOs.Length == 0)
@@ -1726,7 +1731,7 @@ public class SoftBodyPlayer : MonoBehaviour
             }
 
             initBody();
-            TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));   
+            TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));
         }
 	}
 
@@ -1734,47 +1739,61 @@ public class SoftBodyPlayer : MonoBehaviour
 		return bodystate;
 	}
 
-                                                                                    
-    public void vaccumPoints(Vector2 moveTowards)                               
-    {               
-        /*
-         * This is used to 'vaccum' the player towards a specific point, planned to be the water battery
-         */
-        
-        if (_rbs == null || _rbs.Length == 0) return;                           
-                                                                                
-        // Calculate direction from each point to the target                    
-        for (int i = 0; i < _rbs.Length; i++)                                   
-        {                                                                       
-            Vector2 pos = _rbs[i].position;                                     
-            Vector2 dir = (moveTowards - pos).normalized;                       
-                                                                                
-            // Apply force proportional to distance (stronger pull when further away)                                                                           
-            float distance = Vector2.Distance(pos, moveTowards);                
-            Vector2 force = dir * distance * 10f;
-                                                                                
-            _rbs[i].AddForce(force, ForceMode2D.Force);                         
-        }                                                                       
+    public void applyVaccum(bool newisAffectedByVaccuum, Vector2 newvaccuumPosition)
+    {
+        isAffectedByVaccuum = newisAffectedByVaccuum;
+        vaccuumPosition = newvaccuumPosition;
     }
 
-    public void launchPoints(Vector2 direction)                                 
-    {                                                                           
-        if (_rbs == null || _rbs.Length == 0) return;                           
-                                                                                
-        // Normalize direction to ensure consistent launch strength regardless  
-        of input magnitude                                                              
-        Vector2 launchDir = direction.normalized;                               
-                                                                                
-        // Apply an instantaneous impulse to all points in the specified        
-        direction                                                                       
-        foreach (var rb in _rbs)                                                
-        {                                                                       
-            if (rb != null)                                                     
-            {                                                                   
-                // Use Impulse mode for an immediate change in velocity,        
-                simulating a sudden launch/kick                                                 
-                rb.AddForce(launchDir * 10f, ForceMode2D.Impulse);              
-            }                                                                   
-        }                                                                       
-    }  
+    public void vaccumPoints(Vector2 moveTowards)
+    {
+        if (_rbs == null || _rbs.Length == 0) return;
+
+        // Calculate the direction of movement/vaccuming
+        Vector2 vacuumDir = (moveTowards - new Vector2(transform.position.x, transform.position.y)).normalized;
+        // Perpendicular vector to create radial squeezing
+        Vector2 perpDir = new Vector2(-vacuumDir.y, vacuumDir.x);
+
+        for (int i = 0; i < _rbs.Length; i++)
+        {
+            Vector2 pos = _rbs[i].position;
+
+            // Vector from target to point
+            Vector2 toPoint = pos - moveTowards;
+
+            // Project point onto the perpendicular axis to find "radial" distance from the tube center
+            float radialDist = Mathf.Abs(Vector2.Dot(toPoint, perpDir));
+
+            // Squeeze force: stronger when further from the center line (tube radius)
+            // We want points to converge towards the line defined by vacuumDir passing through moveTowards
+            Vector2 squeezeForce = -perpDir * Mathf.Sign(Vector2.Dot(toPoint, perpDir)) * radialDist * 75f;
+
+            // Add a pull towards the target center along the vacuum direction
+            float distToTarget = toPoint.magnitude;
+            Vector2 pullForce = -toPoint.normalized * (distToTarget * 25f);
+
+            // Combine forces: strong squeeze + moderate pull
+            Vector2 totalForce = squeezeForce + pullForce;
+
+            _rbs[i].AddForce(totalForce, ForceMode2D.Force);
+        }
+    }
+
+    public void launchPoints(Vector2 direction)
+    {
+        if (_rbs == null || _rbs.Length == 0) return;
+
+        // Normalize direction to ensure consistent launch strength regardless of input magnitude
+        Vector2 launchDir = direction.normalized;
+
+        // Apply an instantaneous impulse to all points in the specified direction
+        foreach (var rb in _rbs)
+        {
+            if (rb != null)
+            {
+                // Use Impulse mode for an immediate change in velocity, simulating a sudden launch/kick
+                rb.AddForce(launchDir * 10f, ForceMode2D.Impulse);
+            }
+        }
+    }
 }
