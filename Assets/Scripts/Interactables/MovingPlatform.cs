@@ -49,6 +49,15 @@ public class MovingPlatform : MonoBehaviour
     // Angular velocity multiplier for circular motion, applied per fixed frame.
     [SerializeField] private float angleIncrementPerFrame = 10f; 
 
+    [Header("Electrifying")]
+    // When true, contact with the electrified zone below kills the player.
+    [SerializeField] private bool isElectrifying = false;
+    public bool IsElectrifying => isElectrifying;
+    // Height of the electrified kill zone, straddling the platform's actual solid top surface
+    // (read from platformCollider.bounds.max.y) rather than a guessed local offset — this
+    // keeps it aligned with the surface players physically stand on regardless of sprite scale.
+    [SerializeField] private float electrifiedZoneHeight = 0.25f;
+
     [Header("Rider Settings (Player)")]
     [Header("Player")] public GameObject Player;
 
@@ -206,6 +215,15 @@ public class MovingPlatform : MonoBehaviour
 
             }
         }
+
+        if (isElectrifying && platformCollider != null)
+        {
+            // Straddle the collider's actual top surface so the zone lines up with where a
+            // rider's feet rest, regardless of the sprite's pivot/scale.
+            Bounds bounds = platformCollider.bounds;
+            Vector2 zoneCenter = new Vector2(bounds.center.x, bounds.max.y);
+            PlayerLife.KillAllInBox(zoneCenter, new Vector2(bounds.size.x, electrifiedZoneHeight));
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -216,6 +234,18 @@ public class MovingPlatform : MonoBehaviour
             Gizmos.DrawLine(waypointA.position, waypointB.position);
             Gizmos.DrawWireSphere(waypointA.position, 0.15f);
             Gizmos.DrawWireSphere(waypointB.position, 0.15f);
+        }
+
+        if (isElectrifying)
+        {
+            var col = GetComponent<Collider2D>();
+            if (col != null)
+            {
+                Bounds bounds = col.bounds;
+                Vector2 zoneCenter = new Vector2(bounds.center.x, bounds.max.y);
+                Gizmos.color = new Color(1f, 0.9f, 0.1f, 0.8f);
+                Gizmos.DrawWireCube(zoneCenter, new Vector2(bounds.size.x, electrifiedZoneHeight));
+            }
         }
     }
 }

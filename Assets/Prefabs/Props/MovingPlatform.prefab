@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 2265284680206022193}
   - component: {fileID: 7447656925310018340}
   - component: {fileID: 5148766182233719901}
+  - component: {fileID: 4562398217590441120}
   m_Layer: 10
   m_Name: MovingPlatform
   m_TagString: Untagged
@@ -216,6 +217,8 @@ MonoBehaviour:
   phaseOffset: 0
   radius: 2
   angleIncrementPerFrame: 10
+  isElectrifying: 0
+  electrifiedZoneHeight: 0.25
   Player: {fileID: 0}
 --- !u!50 &2265284680206022193
 Rigidbody2D:
@@ -309,6 +312,30 @@ MonoBehaviour:
   middleSprite: {fileID: 21300000, guid: c5b9190cf47324e7193954f0c204fbfa, type: 3}
   platformCollider: {fileID: 7447656925310018340}
   riderTriggerCollider: {fileID: 8585197921176354663}
+--- !u!114 &4562398217590441120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7325454542357447089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe1b72776df5422caaf4d2910e49cd1b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ElectrifyingPlatformEffect
+  surfaceWidth: 3
+  surfaceHeightOffset: 0.02
+  sparkCount: 4
+  coreColor: {r: 0.85, g: 0.95, b: 1, a: 1}
+  glowColor: {r: 0.2, g: 0.55, b: 1, a: 0.55}
+  coreWidth: 0.035
+  glowWidth: 0.11
+  pixelSnap: 0.06
+  linkCountRange: {x: 5, y: 8}
+  boltHeightRange: {x: 0.15, y: 0.35}
+  flickerIntervalRange: {x: 0.04, y: 0.14}
+  skipChance: 0.15
 --- !u!1 &7421740939297622949
 GameObject:
   m_ObjectHideFlags: 0
