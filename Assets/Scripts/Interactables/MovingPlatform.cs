@@ -5,15 +5,18 @@ public class MovingPlatform : MonoBehaviour
 {
     [Header("Movement Mode")]
     // Toggle between linear and circular motion modes.
-    [SerializeField] private bool useCircularMotion = false; 
+    [SerializeField] private bool useCircularMotion = false;
+    // When true (and circular motion is off), the platform shuttles between waypointA and waypointB
+    // instead of using wall raycasts to decide when to turn around.
+    [SerializeField] private bool useWaypointMotion = false;
 
     [Header("Linear Collision Detection")]
     // Layer mask defining which layers act as walls for collision detection in linear mode.
-    [SerializeField] private LayerMask wallLayer; 
+    [SerializeField] private LayerMask wallLayer;
     // Distance ahead of the platform to check for collisions in linear mode.
-    [SerializeField] private float checkDistance = 0.5f; 
+    [SerializeField] private float checkDistance = 0.5f;
     // Number of frames to wait after hitting a wall before checking for collisions again in linear mode.
-    [SerializeField] private int collisionCooldownFrames = 10; 
+    [SerializeField] private int collisionCooldownFrames = 10;
     private int cooldownCounter = 0;
 
     [Header("Linear Movement Settings")]
@@ -23,6 +26,13 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private float speed = 2f;
     // Reference to the platform's collider, used for bounds calculation in linear mode.
     private Collider2D platformCollider;
+
+    [Header("Waypoint Movement Settings")]
+    // Empty GameObjects placed in the scene marking the two ends of the platform's path.
+    [SerializeField] private Transform waypointA;
+    [SerializeField] private Transform waypointB;
+    // The waypoint the platform is currently travelling towards.
+    private Transform targetWaypoint;
 
     [Header("Circular Movement Settings")]
     // The center point around which the platform rotates in circular mode.
@@ -66,9 +76,25 @@ public class MovingPlatform : MonoBehaviour
             return; 
         }
 
-        if (!useCircularMotion && moveDirection == Vector2.zero)
+        if (!useCircularMotion && !useWaypointMotion && moveDirection == Vector2.zero)
         {
              Debug.LogWarning("Move Direction not set for linear mode.");
+        }
+
+        if (!useCircularMotion && useWaypointMotion)
+        {
+            if (waypointA == null || waypointB == null)
+            {
+                Debug.LogError("Waypoint A/B not assigned on MovingPlatform");
+                return;
+            }
+
+            // Head towards whichever waypoint is farther away, so a platform spawned
+            // partway between the two still travels the full path.
+            targetWaypoint = Vector2.Distance(transform.position, waypointA.position)
+                <= Vector2.Distance(transform.position, waypointB.position)
+                ? waypointB
+                : waypointA;
         }
 
     }
@@ -114,15 +140,34 @@ public class MovingPlatform : MonoBehaviour
             // Move the rigidbody to the target position smoothly within the physics step
             rb.MovePosition(targetPosition);
 
-        } 
-    	else 
-    	{	
+        }
+    	else if (useWaypointMotion)
+    	{
+    		if (rb != null && targetWaypoint != null)
+    		{
+    			Vector2 toTarget = (Vector2)targetWaypoint.position - rb.position;
+    			float step = speed * Time.fixedDeltaTime;
+
+    			if (toTarget.magnitude <= step)
+    			{
+    				// Snap to the waypoint and turn around for the return trip.
+    				rb.MovePosition(targetWaypoint.position);
+    				targetWaypoint = targetWaypoint == waypointA ? waypointB : waypointA;
+    			}
+    			else
+    			{
+    				rb.linearVelocity = toTarget.normalized * speed;
+    			}
+    		}
+    	}
+    	else
+    	{
     		if (rb != null)
     		{
     			// Decrement cooldown counter if active
     			if (cooldownCounter > 0)
                 {
-                    cooldownCounter--; 
+                    cooldownCounter--;
                 }
 
         		// Determine the edge of the platform based on current direction
@@ -150,6 +195,17 @@ public class MovingPlatform : MonoBehaviour
                 rb.linearVelocity = moveDirection * speed;
 
             }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (useWaypointMotion && waypointA != null && waypointB != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(waypointA.position, waypointB.position);
+            Gizmos.DrawWireSphere(waypointA.position, 0.15f);
+            Gizmos.DrawWireSphere(waypointB.position, 0.15f);
         }
     }
 }
