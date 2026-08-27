@@ -31,8 +31,13 @@ public class MovingPlatform : MonoBehaviour
     // Empty GameObjects placed in the scene marking the two ends of the platform's path.
     [SerializeField] private Transform waypointA;
     [SerializeField] private Transform waypointB;
-    // The waypoint the platform is currently travelling towards.
-    private Transform targetWaypoint;
+    // World-space positions captured at Start so waypoints can be parented under the
+    // platform (for scene tidiness) without being dragged along as it moves.
+    private Vector3 waypointAPosition;
+    private Vector3 waypointBPosition;
+    // The waypoint position the platform is currently travelling towards.
+    private Vector3 targetWaypointPosition;
+    private bool headingToB;
 
     [Header("Circular Movement Settings")]
     // The center point around which the platform rotates in circular mode.
@@ -89,12 +94,16 @@ public class MovingPlatform : MonoBehaviour
                 return;
             }
 
+            // Capture world positions up front; waypoints may be children of the platform
+            // (for scene tidiness) and must not move along with it afterwards.
+            waypointAPosition = waypointA.position;
+            waypointBPosition = waypointB.position;
+
             // Head towards whichever waypoint is farther away, so a platform spawned
             // partway between the two still travels the full path.
-            targetWaypoint = Vector2.Distance(transform.position, waypointA.position)
-                <= Vector2.Distance(transform.position, waypointB.position)
-                ? waypointB
-                : waypointA;
+            headingToB = Vector2.Distance(transform.position, waypointAPosition)
+                <= Vector2.Distance(transform.position, waypointBPosition);
+            targetWaypointPosition = headingToB ? waypointBPosition : waypointAPosition;
         }
 
     }
@@ -143,16 +152,17 @@ public class MovingPlatform : MonoBehaviour
         }
     	else if (useWaypointMotion)
     	{
-    		if (rb != null && targetWaypoint != null)
+    		if (rb != null)
     		{
-    			Vector2 toTarget = (Vector2)targetWaypoint.position - rb.position;
+    			Vector2 toTarget = (Vector2)targetWaypointPosition - rb.position;
     			float step = speed * Time.fixedDeltaTime;
 
     			if (toTarget.magnitude <= step)
     			{
     				// Snap to the waypoint and turn around for the return trip.
-    				rb.MovePosition(targetWaypoint.position);
-    				targetWaypoint = targetWaypoint == waypointA ? waypointB : waypointA;
+    				rb.MovePosition(targetWaypointPosition);
+    				headingToB = !headingToB;
+    				targetWaypointPosition = headingToB ? waypointBPosition : waypointAPosition;
     			}
     			else
     			{
