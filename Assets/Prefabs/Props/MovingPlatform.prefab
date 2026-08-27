@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 4780680630937379888}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.9961128, y: 0.0011768341, z: 0}
+  m_LocalPosition: {x: -1, y: 0.0011768341, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 2210137344148011485}
   - component: {fileID: 2265284680206022193}
   - component: {fileID: 7447656925310018340}
+  - component: {fileID: 5148766182233719901}
   m_Layer: 10
   m_Name: MovingPlatform
   m_TagString: Untagged
@@ -201,6 +202,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingPlatform
   useCircularMotion: 0
+  useWaypointMotion: 0
   wallLayer:
     serializedVersion: 2
     m_Bits: 1088
@@ -208,6 +210,8 @@ MonoBehaviour:
   collisionCooldownFrames: 10
   moveDirection: {x: 1, y: 0}
   speed: 3
+  waypointA: {fileID: 0}
+  waypointB: {fileID: 0}
   pivotPoint: {fileID: 0}
   phaseOffset: 0
   radius: 2
@@ -286,6 +290,25 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3, y: 0.5863774}
   m_EdgeRadius: 0
+--- !u!114 &5148766182233719901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7325454542357447089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a4066fbc68477f8d562d23ea96a7c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovingPlatformLength
+  length: 3
+  tileWidth: 1
+  leftEdge: {fileID: 6620268621779644064}
+  rightEdge: {fileID: 6809503977073227419}
+  middleSprite: {fileID: 21300000, guid: c5b9190cf47324e7193954f0c204fbfa, type: 3}
+  platformCollider: {fileID: 7447656925310018340}
+  riderTriggerCollider: {fileID: 8585197921176354663}
 --- !u!1 &7421740939297622949
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,7 +386,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.967825, y: 0.9539311}
+  m_Size: {x: 3, y: 0.9539311}
   m_EdgeRadius: 0
 --- !u!114 &7427618386262520417
 MonoBehaviour:
@@ -407,7 +430,7 @@ Transform:
   m_GameObject: {fileID: 8902745004192654486}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.99988747, y: -0.0010771751, z: 0}
+  m_LocalPosition: {x: 1, y: -0.0010771751, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
