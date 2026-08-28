@@ -22,7 +22,8 @@ public class MovingPlatformTrigger : MonoBehaviour
     void FixedUpdate()
     {
 		foreach (GameObject p in Players) {
-			p.GetComponent<SoftBodyPlayer>().SetConstantForce(new Vector3(rb.linearVelocity.x, 0, 0));
+			Vector2 parPlatVel = parentPlatform.getUnifiedVelocity();
+			p.GetComponent<SoftBodyPlayer>().SetConstantForce(new Vector3(parPlatVel.x, parPlatVel.y, 0));
 		}
     }
 
