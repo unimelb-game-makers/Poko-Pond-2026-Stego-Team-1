@@ -26,7 +26,6 @@ public class WaterBattery : MonoBehaviour
         if ((1 << collision.gameObject.layer) == PlayerSoftBodyLayer.value)
         {
             SoftBodyPlayer player = null;
-            Debug.Log("Hello");
 
             // Check for direct SoftBodyPlayer component
             if (collision.TryGetComponent<SoftBodyPlayer>(out var softBodyPlayer)) {

@@ -319,6 +319,7 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private bool isAffectedByVaccuum = false;
     private Vector2 vaccuumPosition = new Vector2(0, 0);
+	private Vector2 vaccumLaunchForce = new Vector2(1.0f, 1.0f);
 
     // ── Private — Mesh ───────────────────────────────────────────────────
     private Mesh      _mesh;
@@ -988,7 +989,7 @@ public class SoftBodyPlayer : MonoBehaviour
         for (int i = 0; i < pointCount; i++)
         {
             _rbs[i].gameObject.transform.position = new Vector2(
-                _rbs[i].position.x + _constantForce.x*Time.fixedDeltaTime, 
+                _rbs[i].position.x + _constantForce.x*Time.fixedDeltaTime,
                 _rbs[i].position.y + _constantForce.y*Time.fixedDeltaTime
                 );
         }
@@ -1066,7 +1067,8 @@ public class SoftBodyPlayer : MonoBehaviour
                 bool underLimit = Mathf.Abs(rb.linearVelocity.x) < maxMoveSpeed ||
                                   Mathf.Sign(rb.linearVelocity.x) != Mathf.Sign(_hInput);
                 if (underLimit)
-                    rb.AddForce(new Vector2(_hInput * moveForce * forceMult, 0f), ForceMode2D.Force);
+                    rb.AddForce((new Vector2(_hInput * moveForce * forceMult, 0f)) * vaccumLaunchForce, ForceMode2D.Force);
+					vaccumLaunchForce = new Vector2(1.0f, 1.0f);
             }
             else
             {
@@ -1749,6 +1751,14 @@ public class SoftBodyPlayer : MonoBehaviour
         Vector2 vacuumDir = (moveTowards - new Vector2(transform.position.x, transform.position.y)).normalized;
         // Perpendicular vector to create radial squeezing
         Vector2 perpDir = new Vector2(-vacuumDir.y, vacuumDir.x);
+
+		if(Mathf.Approximately(Mathf.Abs(perpDir.x), 1.0f)) {
+			isAffectedByVaccuum = false;
+			vaccumLaunchForce = new Vector2(4000.0f, 4000.0f);
+			Debug.Log("LAUNCH");
+		} else {
+			vaccumLaunchForce = new Vector2(0.0f, 0.0f);
+		}
 
         for (int i = 0; i < _rbs.Length; i++)
         {
