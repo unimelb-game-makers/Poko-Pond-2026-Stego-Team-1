@@ -1762,11 +1762,11 @@ public class SoftBodyPlayer : MonoBehaviour
 
             // Squeeze force: stronger when further from the center line (tube radius)
             // We want points to converge towards the line defined by vacuumDir passing through moveTowards
-            Vector2 squeezeForce = -perpDir * Mathf.Sign(Vector2.Dot(toPoint, perpDir)) * radialDist * 75f;
+            Vector2 squeezeForce = -perpDir * Mathf.Sign(Vector2.Dot(toPoint, perpDir)) * radialDist * 50f;
 
             // Add a pull towards the target center along the vacuum direction
             float distToTarget = toPoint.magnitude;
-            Vector2 pullForce = -toPoint.normalized * (distToTarget * 25f);
+            Vector2 pullForce = -toPoint.normalized * (distToTarget * 15f);
 
             // Combine forces: strong squeeze + moderate pull
             Vector2 totalForce = squeezeForce + pullForce;
