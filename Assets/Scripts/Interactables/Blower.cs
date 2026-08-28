@@ -8,12 +8,24 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Blower : MonoBehaviour, IPropWindConfigurable
 {
+    private const float MinimumWindDimension = 0.1f;
+
     [Header("Wind")]
     [Tooltip("Local direction the blower pushes. Common values: Right (1,0), Up (0,1), Left (-1,0), Down (0,-1).")]
     [SerializeField] private Vector2 blowDirection = Vector2.right;
 
     [Tooltip("Acceleration applied in the blow direction. Around 30 can counter normal gravity; higher values lift or stop the player faster.")]
     [SerializeField, Min(0f)] private float blowStrength = 30f;
+
+    [Header("Body-State Strength Multipliers")]
+    [Tooltip("Multiplier applied to the base wind strength for Liquid players. Liquid is lifted more strongly by default.")]
+    [SerializeField, Min(0f)] private float liquidStrengthMultiplier = 1.5f;
+
+    [Tooltip("Multiplier applied to the base wind strength for Solid players.")]
+    [SerializeField, Min(0f)] private float solidStrengthMultiplier = 1f;
+
+    [Tooltip("Multiplier applied to the base wind strength for Gas players.")]
+    [SerializeField, Min(0f)] private float gasStrengthMultiplier = 1f;
 
     [Tooltip("How far the wind extends from the front face of the blower.")]
     [SerializeField, Min(0.1f)] private float windRange = 4f;
@@ -46,10 +58,12 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         : Vector2.right;
 
     // Called by PropTilemapSpawner when a painted cell enables its Blower override.
-    public void SetWindConfig(Vector2 direction, float strength)
+    public void SetWindConfig(Vector2 direction, float strength, float range, float width)
     {
         blowDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
         blowStrength = Mathf.Max(0f, strength);
+        windRange = Mathf.Max(MinimumWindDimension, range);
+        windWidth = Mathf.Max(MinimumWindDimension, width);
         UpdateDirectionVisual();
     }
 
@@ -58,6 +72,7 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         _sourceCollider = GetComponent<Collider2D>();
         CacheFanRenderer();
         SetAnimationFrame(0);
+        ClampWindZoneDimensions();
         _softBodyPointMask = LayerMask.GetMask("SoftBodyPoint");
 
         if (_softBodyPointMask == 0)
@@ -92,6 +107,11 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         else
             blowDirection.Normalize();
 
+        liquidStrengthMultiplier = Mathf.Max(0f, liquidStrengthMultiplier);
+        solidStrengthMultiplier = Mathf.Max(0f, solidStrengthMultiplier);
+        gasStrengthMultiplier = Mathf.Max(0f, gasStrengthMultiplier);
+        ClampWindZoneDimensions();
+
         CacheFanRenderer();
         UpdateDirectionVisual();
         SetAnimationFrame(0);
@@ -109,7 +129,24 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
             SoftBodyPointRef pointRef = hit.GetComponent<SoftBodyPointRef>();
             SoftBodyPlayer player = pointRef != null ? pointRef.owner : null;
             if (player != null && _playersInWind.Add(player))
-                player.AddExternalAcceleration(worldDirection * blowStrength);
+            {
+                float stateStrength = blowStrength * GetStrengthMultiplier(player.getBodyState());
+                player.AddExternalAcceleration(worldDirection * stateStrength);
+            }
+        }
+    }
+
+    private float GetStrengthMultiplier(PlayerBodyState state)
+    {
+        switch (state)
+        {
+            case PlayerBodyState.Solid:
+                return solidStrengthMultiplier;
+            case PlayerBodyState.Gas:
+                return gasStrengthMultiplier;
+            case PlayerBodyState.Liquid:
+            default:
+                return liquidStrengthMultiplier;
         }
     }
 
@@ -123,12 +160,20 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
         worldDirection = transform.TransformDirection((Vector3)LocalDirection).normalized;
 
         Bounds bounds = source.bounds;
+        float range = Mathf.Max(MinimumWindDimension, windRange);
+        float width = Mathf.Max(MinimumWindDimension, windWidth);
         float sourceHalfDepth = Mathf.Abs(worldDirection.x) * bounds.extents.x
                               + Mathf.Abs(worldDirection.y) * bounds.extents.y;
 
-        center = (Vector2)bounds.center + worldDirection * (sourceHalfDepth + windRange * 0.5f);
-        size = new Vector2(windRange, windWidth);
+        center = (Vector2)bounds.center + worldDirection * (sourceHalfDepth + range * 0.5f);
+        size = new Vector2(range, width);
         angle = Mathf.Atan2(worldDirection.y, worldDirection.x) * Mathf.Rad2Deg;
+    }
+
+    private void ClampWindZoneDimensions()
+    {
+        windRange = Mathf.Max(MinimumWindDimension, windRange);
+        windWidth = Mathf.Max(MinimumWindDimension, windWidth);
     }
 
     private void UpdateDirectionVisual()

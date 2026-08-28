@@ -32,9 +32,15 @@ public class PropTilemapSpawnerEditor : Editor
                 var propName   = element.FindPropertyRelative("propName").stringValue;
                 var cell       = element.FindPropertyRelative("cell").vector3IntValue;
                 var connIdProp = element.FindPropertyRelative("connectionId");
+                var connectionModeProp = element.FindPropertyRelative("connectionMode");
+                var initialActiveProp = element.FindPropertyRelative("initialActive");
+                var requirePlayerStateProp = element.FindPropertyRelative("requirePlayerState");
+                var requiredPlayerStateProp = element.FindPropertyRelative("requiredPlayerState");
                 var overrideBlowerProp = element.FindPropertyRelative("overrideBlowerSettings");
                 var blowerDirectionProp = element.FindPropertyRelative("blowerDirection");
                 var blowerStrengthProp = element.FindPropertyRelative("blowerStrength");
+                var blowerRangeProp = element.FindPropertyRelative("blowerRange");
+                var blowerWidthProp = element.FindPropertyRelative("blowerWidth");
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
@@ -48,6 +54,21 @@ public class PropTilemapSpawnerEditor : Editor
                 // Connection ID field
                 EditorGUI.indentLevel++;
                 EditorGUILayout.PropertyField(connIdProp, new GUIContent("Connection ID"));
+                EditorGUILayout.PropertyField(connectionModeProp, new GUIContent("Connection Mode"));
+                EditorGUILayout.PropertyField(initialActiveProp, new GUIContent("Initial Active"));
+
+                if (propName == nameof(PressurePlate))
+                {
+                    EditorGUILayout.PropertyField(
+                        requirePlayerStateProp,
+                        new GUIContent("Require Player State"));
+                    if (requirePlayerStateProp.boolValue)
+                    {
+                        EditorGUILayout.PropertyField(
+                            requiredPlayerStateProp,
+                            new GUIContent("Required State"));
+                    }
+                }
 
                 if (propName == "Blower")
                 {
@@ -56,6 +77,8 @@ public class PropTilemapSpawnerEditor : Editor
                     {
                         EditorGUILayout.PropertyField(blowerDirectionProp, new GUIContent("Blow Direction"));
                         EditorGUILayout.PropertyField(blowerStrengthProp, new GUIContent("Blow Strength"));
+                        EditorGUILayout.PropertyField(blowerRangeProp, new GUIContent("Range"));
+                        EditorGUILayout.PropertyField(blowerWidthProp, new GUIContent("Width"));
                     }
                 }
                 EditorGUI.indentLevel--;
