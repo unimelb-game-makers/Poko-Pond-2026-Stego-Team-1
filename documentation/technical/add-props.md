@@ -174,6 +174,37 @@ An activator is a prop the player interacts with that fires an event. Model new 
 
 ---
 
+### Door (1×1 palette anchor, 1×3 runtime footprint)
+
+| Field | Value |
+|-------|-------|
+| Tile asset | `Door_PropTile` |
+| Palette | `1x1` |
+| Prefab | `Door` prefab |
+| Artwork | Green, yellow, and red closed sprites; five-frame green opening sheet; three-frame yellow-to-green sheet |
+| Role | Proximity door and connected activatee |
+| Connection Mode | `Toggle` for a latched yellow door; `Hold` for a red hold-open door |
+| Initial Active | Enabled for an automatic green door; disabled for a locked yellow/red door |
+
+The source door art is 32×32, while the level doorway is three cells high. The prefab scales only its visual to three world units and keeps the PropTile as a single bottom-anchored palette cell.
+
+---
+
+### Splitting Machine (2×2)
+
+| Field | Value |
+|-------|-------|
+| Tile asset | `SplittingMachine_PropTile` |
+| Palette | `2x2` |
+| Prefab | `SplittingMachine` prefab |
+| Artwork | `splitting_machine.png`, imported at 320 PPU to preserve its effective pixel grid |
+| Role | One-shot progression prop — stepping onto it unlocks Left Shift splitting |
+| Collision | Solid top surface on the `Ground` layer |
+
+The machine is documented for the Area 3 introduction, so it is palette-ready but is not painted into the Area 2 scene.
+
+---
+
 ### Evaporator (1×1)
 
 | Field | Value |

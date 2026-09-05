@@ -36,6 +36,8 @@ public class PropTilemapSpawner : MonoBehaviour
         public ConnectionMode connectionMode;
         [Tooltip("Whether this prop starts active (on) or inactive (off) before any trigger fires.")]
         public bool initialActive;
+        [Tooltip("For activator cells, keep the first activation latched and ignore later interactions.")]
+        public bool oneShot;
         [Tooltip("For PressurePlate cells, require the player to be in the selected body state. Disabled accepts any state.")]
         public bool requirePlayerState;
         [Tooltip("Body state required by a PressurePlate cell when requirePlayerState is enabled.")]
@@ -80,6 +82,7 @@ public class PropTilemapSpawner : MonoBehaviour
                 connectionId   = hadEntry ? prev.connectionId   : "",
                 connectionMode = hadEntry ? prev.connectionMode : ConnectionMode.Hold,
                 initialActive  = hadEntry ? prev.initialActive  : true,
+                oneShot        = hadEntry && prev.oneShot,
                 requirePlayerState = hadEntry && prev.requirePlayerState,
                 requiredPlayerState = hadEntry ? prev.requiredPlayerState : PlayerBodyState.Solid,
                 overrideBlowerSettings = hadEntry && prev.overrideBlowerSettings,
@@ -135,6 +138,9 @@ public class PropTilemapSpawner : MonoBehaviour
                 activatable.SetActivationConfig(
                     hasOverride ? ov.connectionMode : ConnectionMode.Hold,
                     hasOverride ? ov.initialActive  : true);
+
+            if (hasOverride && go.TryGetComponent(out IPropOneShotConfigurable oneShotConfigurable))
+                oneShotConfigurable.SetOneShot(ov.oneShot);
 
             // Pass an optional per-cell player-state requirement to pressure
             // plates.  Only synced cell overrides are applied, so an unsynced

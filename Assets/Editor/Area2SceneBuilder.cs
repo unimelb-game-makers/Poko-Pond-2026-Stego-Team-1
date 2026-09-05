@@ -38,43 +38,42 @@ public static class Area2SceneBuilder
     private static readonly Vector3Int IntroFreezerCell = new Vector3Int(14, 1, 0);
     private static readonly Vector3Int IntroHeaterCell = new Vector3Int(20, 1, 0);
     private static readonly Vector3Int IntroPlateCell = new Vector3Int(9, 1, 0);
+    private static readonly Vector3Int IntroEntryDoorCell = new Vector3Int(1, 1, 0);
+    private static readonly Vector3Int IntroExitDoorCell = new Vector3Int(29, 1, 0);
 
-    private static readonly Vector3Int FamiliarityPlateCell = new Vector3Int(59, 1, 0);
-    private static readonly Vector3Int FamiliarityFreezerCell = new Vector3Int(61, 1, 0);
-    private static readonly Vector3Int FamiliarityCrusherOneCell = new Vector3Int(44, 2, 0);
-    private static readonly Vector3Int FamiliarityCrusherTwoCell = new Vector3Int(50, 2, 0);
-    private static readonly Vector3Int FamiliarityCrusherThreeCell = new Vector3Int(56, 2, 0);
+    private static readonly Vector3Int FamiliarityPlateCell = new Vector3Int(56, 1, 0);
+    private static readonly Vector3Int FamiliarityFreezerCell = new Vector3Int(59, 1, 0);
+    private static readonly Vector3Int FamiliarityCrusherOneCell = new Vector3Int(43, 4, 0);
+    private static readonly Vector3Int FamiliarityCrusherTwoCell = new Vector3Int(48, 4, 0);
+    private static readonly Vector3Int FamiliarityCrusherThreeCell = new Vector3Int(53, 4, 0);
+    private static readonly Vector3Int FamiliarityExitDoorCell = new Vector3Int(62, 1, 0);
 
     private static readonly Vector3Int ChallengeHeaterCell = new Vector3Int(89, 1, 0);
     private static readonly Vector3Int ChallengeBlowerCell = new Vector3Int(93, 1, 0);
     private static readonly Vector3Int ChallengeFreezerCell = new Vector3Int(70, 14, 0);
+    private static readonly Vector3Int ChallengeDividerDoorCell = new Vector3Int(86, 1, 0);
+    // The bottom landing occupies cell y=3, with its collision surface at y=4.
+    private static readonly Vector3Int ChallengeSwitchCell = new Vector3Int(82, 4, 0);
+    private static readonly Vector3Int ChallengeExitDoorCell = new Vector3Int(100, 1, 0);
 
     private static readonly string[] IntroductionTodos =
     {
-        "TODO_Door_Entry",
-        "TODO_Door",
         "TODO_Humidifier",
     };
 
     private static readonly string[] FamiliarityTodos =
     {
         "TODO_ConveyorBelt",
-        "TODO_Door_Entry",
-        "TODO_Door",
         "TODO_Humidifier",
     };
 
     private static readonly string[] ChallengeTodos =
     {
-        "TODO_Door_Entry",
-        "TODO_Door_Divider",
         "TODO_ElectrifiedPlatform",
         "TODO_ElectrifiedPlatform_2",
         "TODO_ElectrifiedPlatform_3",
         "TODO_ElectrifiedPlatform_4",
         "TODO_ElectrifiedPlatform_5",
-        "TODO_Switch",
-        "TODO_Door",
         "TODO_Humidifier",
     };
 
@@ -85,6 +84,7 @@ public static class Area2SceneBuilder
         public string ConnectionId;
         public ConnectionMode ConnectionMode;
         public bool InitialActive;
+        public bool OneShot;
         public bool RequirePlayerState;
         public PlayerBodyState RequiredPlayerState;
         public bool OverrideBlowerSettings;
@@ -101,6 +101,7 @@ public static class Area2SceneBuilder
         public string ConnectionId;
         public int ConnectionMode;
         public bool InitialActive;
+        public bool OneShot;
         public bool HasPlayerStateFields;
         public bool RequirePlayerState;
         public int RequiredPlayerState;
@@ -171,9 +172,11 @@ public static class Area2SceneBuilder
         GameObject area2Root = CreateArea2Markers(area2, props);
         ConfigureScaffolding(area2, area2Root);
         BuildGreybox(solidPlatforms, thinPlatforms);
+        MechanicAssetBuilder.EnsureMechanicAssets();
         BuildProps(props, spawner);
         ConfigureTutorialNpc(area2, area2Root.transform.Find("Introduction").gameObject);
         ConfigureTodoMarkers(area2, area2Root);
+        ConfigureFreezerGuidance(area2, area2Root.transform);
 
         AddArea2ToBuildSettings();
 
@@ -282,15 +285,21 @@ public static class Area2SceneBuilder
         NewMarker(scene, introduction.transform, "Freezer_SolidChanger", CellWorld(props, IntroFreezerCell));
         NewMarker(scene, introduction.transform, "Heater_LiquidChanger", CellWorld(props, IntroHeaterCell));
         NewMarker(scene, introduction.transform, "PressurePlate_SolidOnly", CellWorld(props, IntroPlateCell));
+        NewMarker(scene, introduction.transform, "EntryDoor_Automatic", CellWorld(props, IntroEntryDoorCell));
+        NewMarker(scene, introduction.transform, "ExitDoor_SolidPlate", CellWorld(props, IntroExitDoorCell));
         NewMarker(scene, familiarity.transform, "Freezer_SolidChanger", CellWorld(props, FamiliarityFreezerCell));
         NewMarker(scene, familiarity.transform, "ConveyorCorridor_MechanicallyEmpty", new Vector3(49f, 1.2f, 0f));
         NewMarker(scene, familiarity.transform, "AutomaticCrushers_SolidOnlyPlate", CellWorld(props, FamiliarityPlateCell));
         NewMarker(scene, familiarity.transform, "AutomaticCrusher_01", CellWorld(props, FamiliarityCrusherOneCell));
         NewMarker(scene, familiarity.transform, "AutomaticCrusher_02", CellWorld(props, FamiliarityCrusherTwoCell));
         NewMarker(scene, familiarity.transform, "AutomaticCrusher_03", CellWorld(props, FamiliarityCrusherThreeCell));
+        NewMarker(scene, familiarity.transform, "ExitDoor_MechanicsPlate", CellWorld(props, FamiliarityExitDoorCell));
         NewMarker(scene, challenge.transform, "Blower_Upward", CellWorld(props, ChallengeBlowerCell));
         NewMarker(scene, challenge.transform, "RetryHeater_LiquidChanger", CellWorld(props, ChallengeHeaterCell));
         NewMarker(scene, challenge.transform, "UpperLanding_Freezer", CellWorld(props, ChallengeFreezerCell));
+        NewMarker(scene, challenge.transform, "DividerDoor_Automatic", CellWorld(props, ChallengeDividerDoorCell));
+        NewMarker(scene, challenge.transform, "ExitSwitch", CellWorld(props, ChallengeSwitchCell));
+        NewMarker(scene, challenge.transform, "ExitDoor_Switch", CellWorld(props, ChallengeExitDoorCell));
 
         NewMarker(scene, area2.transform, "Area2_Start", new Vector3(4f, 1.5f, 0f));
         NewMarker(scene, area2.transform, "Area2_End", new Vector3(103f, 1.5f, 0f));
@@ -303,30 +312,19 @@ public static class Area2SceneBuilder
         GameObject familiarity = area2.transform.Find("Familiarity").gameObject;
         GameObject challenge = area2.transform.Find("Challenge").gameObject;
 
-        NewVisualTodoMarker(scene, introduction.transform, "TODO_Door_Entry", new Vector3(1f, 2.5f, 0f), "TODO DOOR\nENTRY", new Color(0.8f, 0.35f, 1f));
-        NewVisualTodoMarker(scene, introduction.transform, "TODO_Door", new Vector3(29f, 2.5f, 0f), "TODO DOOR\nEXIT", new Color(0.8f, 0.35f, 1f));
         NewVisualTodoMarker(scene, introduction.transform, "TODO_Humidifier", new Vector3(26f, 5.25f, 0f), "TODO\nHUMIDIFIER", new Color(0.2f, 0.9f, 1f));
 
         Sprite conveyorSprite = LoadRequiredSprite("Assets/Art/Environment/Platforms/Factory/factory_tile.png");
-        NewVisualSpriteStrip(scene, familiarity.transform, "TODO_ConveyorBelt_Visual", 41, 57, 1.08f, conveyorSprite, new Color(0.25f, 0.85f, 1f, 0.8f));
+        NewVisualSpriteStrip(scene, familiarity.transform, "TODO_ConveyorBelt_Visual", 41, 54, 1.08f, conveyorSprite, new Color(0.25f, 0.85f, 1f, 0.8f));
         NewVisualTodoMarker(scene, familiarity.transform, "TODO_ConveyorBelt", new Vector3(49f, 1.45f, 0f), "TODO\nCONVEYOR", new Color(0.25f, 0.95f, 1f));
-        NewCrusherSuspensionVisual(scene, familiarity.transform, 44f, conveyorSprite);
-        NewCrusherSuspensionVisual(scene, familiarity.transform, 50f, conveyorSprite);
-        NewCrusherSuspensionVisual(scene, familiarity.transform, 56f, conveyorSprite);
-        NewVisualTodoMarker(scene, familiarity.transform, "TODO_Door_Entry", new Vector3(30f, 2.5f, 0f), "TODO DOOR\nENTRY", new Color(0.8f, 0.35f, 1f));
-        NewVisualTodoMarker(scene, familiarity.transform, "TODO_Door", new Vector3(62f, 2.5f, 0f), "TODO DOOR\nEXIT", new Color(0.8f, 0.35f, 1f));
         NewVisualTodoMarker(scene, familiarity.transform, "TODO_Humidifier", new Vector3(33f, 5.9f, 0f), "TODO\nHUMIDIFIER", new Color(0.2f, 0.9f, 1f));
 
         Sprite warningSprite = LoadRequiredSprite("Assets/Art/Environment/Platforms/Factory/factory_tile_alter.png");
-        NewVisualTodoMarker(scene, challenge.transform, "TODO_Door_Entry", new Vector3(64f, 2.5f, 0f), "TODO DOOR\nENTRY", new Color(0.8f, 0.35f, 1f));
-        NewVisualTodoMarker(scene, challenge.transform, "TODO_Door_Divider", new Vector3(86f, 2.5f, 0f), "TODO DOOR\nDIVIDER", new Color(0.8f, 0.35f, 1f));
         NewVisualTodoMarker(scene, challenge.transform, "TODO_ElectrifiedPlatform", new Vector3(76f, 11.45f, 0f), "TODO\nELECTRIC", new Color(0.7f, 0.35f, 1f), warningSprite);
         NewVisualTodoMarker(scene, challenge.transform, "TODO_ElectrifiedPlatform_2", new Vector3(77f, 9.45f, 0f), "TODO\nELECTRIC", new Color(1f, 0.95f, 0.15f), warningSprite);
         NewVisualTodoMarker(scene, challenge.transform, "TODO_ElectrifiedPlatform_3", new Vector3(76f, 7.45f, 0f), "TODO\nELECTRIC", new Color(0.7f, 0.35f, 1f), warningSprite);
         NewVisualTodoMarker(scene, challenge.transform, "TODO_ElectrifiedPlatform_4", new Vector3(77f, 5.45f, 0f), "TODO\nELECTRIC", new Color(1f, 0.95f, 0.15f), warningSprite);
         NewVisualTodoMarker(scene, challenge.transform, "TODO_ElectrifiedPlatform_5", new Vector3(76f, 3.45f, 0f), "TODO\nELECTRIC", new Color(0.7f, 0.35f, 1f), warningSprite);
-        NewVisualTodoMarker(scene, challenge.transform, "TODO_Switch", new Vector3(82f, 3.55f, 0f), "TODO\nSWITCH", new Color(1f, 0.75f, 0.2f));
-        NewVisualTodoMarker(scene, challenge.transform, "TODO_Door", new Vector3(100f, 2.5f, 0f), "TODO DOOR\nEXIT", new Color(0.8f, 0.35f, 1f));
         NewVisualTodoMarker(scene, challenge.transform, "TODO_Humidifier", new Vector3(103f, 2f, 0f), "TODO\nHUMIDIFIER", new Color(0.2f, 0.9f, 1f));
     }
 
@@ -523,8 +521,9 @@ public static class Area2SceneBuilder
         solidPlatforms.ClearAllTiles();
         thinPlatforms.ClearAllTiles();
 
-        // Keep the unfinished doors physically open: one continuous floor lets
-        // the player traverse the three room silhouettes in document order.
+        // One continuous floor joins the three room silhouettes in document
+        // order. Adjacent rooms share one boundary gate rather than duplicating
+        // the outgoing and incoming door shown on their separate diagrams.
         for (int x = 0; x <= 104; x++)
         {
             TileBase tile = x == 0 ? solidLeft : (x == 104 ? solidRight : solidCenter);
@@ -543,6 +542,9 @@ public static class Area2SceneBuilder
         PaintSolidRect(solidPlatforms, 30, 7, 33, 1, solidCenter);
         PaintSolidRect(solidPlatforms, 30, 4, 1, 3, solidCenter);
         PaintSolidRect(solidPlatforms, 62, 4, 1, 3, solidCenter);
+        // The animated pistons hang directly from this housing at y=4.
+        // Their retracted heads leave 2.25 units of clearance above the floor.
+        PaintSolidRect(solidPlatforms, 41, 4, 15, 3, solidCenter);
 
         // CHALLENGE (x 64..100): tall shaft from the document. The player walks
         // through the divider's bottom door gap, rides the fan up its right side,
@@ -573,17 +575,142 @@ public static class Area2SceneBuilder
         RecordPrefabOverride(thinPlatforms);
     }
 
+    // A room-specific asset keeps other levels' crusher scale and hit zones intact.
+    private static PropTile EnsureFamiliarityCrusherTile()
+    {
+        const string prefabPath = "Assets/Prefabs/Props/Area2AutoCrusherTrap.prefab";
+        const string tilePath = "Assets/Tiles/Props/Area2AutoCrusherTrap_PropTile.asset";
+        GameObject root = PrefabUtility.LoadPrefabContents(File.Exists(prefabPath)
+            ? prefabPath : "Assets/Prefabs/Props/AutoCrusherTrap.prefab");
+        GameObject prefab;
+        try
+        {
+            root.name = "Area2AutoCrusherTrap";
+            root.transform.position = Vector3.zero;
+            // 64px at 100 PPU: a three-unit stroke from housing y=4 to floor y=1.
+            root.transform.localScale = new Vector3(2f, 3f / 0.64f, 1f);
+            SerializedObject crusher = new SerializedObject(root.GetComponent<AutoCrusherTrap>());
+            // AutoCrusherTrap uses world-unit offsets/sizes, not transform-scaled ones.
+            crusher.FindProperty("crushCenter").vector2Value = new Vector2(0f, -2.5f);
+            crusher.FindProperty("crushSize").vector2Value = new Vector2(1.28f, 1f);
+            crusher.ApplyModifiedPropertiesWithoutUndo();
+            root.GetComponent<SpriteRenderer>().sprite =
+                crusher.FindProperty("frames").GetArrayElementAtIndex(0).objectReferenceValue as Sprite;
+            prefab = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        PropTile tile = AssetDatabase.LoadAssetAtPath<PropTile>(tilePath);
+        if (tile == null)
+        {
+            tile = ScriptableObject.CreateInstance<PropTile>();
+            AssetDatabase.CreateAsset(tile, tilePath);
+        }
+        tile.prefab = prefab;
+        tile.previewSprite = prefab.GetComponent<SpriteRenderer>().sprite;
+        tile.spawnOffset = new Vector3(0f, -0.5f, 0f);
+        EditorUtility.SetDirty(tile);
+        return tile;
+    }
+
+    // Updates the existing scene without resetting its scaffolding from Sandbox.
+    [MenuItem("Tools/Poko Pond/Area 2/Repair Crusher Room Placements")]
+    public static void RepairCrusherRoomBatch()
+    {
+        if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            return;
+        Scene scene = EditorSceneManager.OpenScene(Area2ScenePath, OpenSceneMode.Single);
+        Tilemap props = FindTilemap(scene, PropsTilemapName);
+        Tilemap solid = FindTilemap(scene, SolidTilemapName);
+        Transform root = FindDirectSceneObject(scene, Area2RootName).transform;
+        Transform intro = root.Find("Introduction");
+        Transform familiarity = root.Find("Familiarity");
+        Transform bypass = intro.Find("PressurePlate_DoorApproach");
+        if (bypass != null)
+            UnityEngine.Object.DestroyImmediate(bypass.gameObject);
+        foreach (Transform child in familiarity.Cast<Transform>().ToArray())
+            if (child.name.StartsWith("CrusherMount_Visual_", StringComparison.Ordinal))
+                UnityEngine.Object.DestroyImmediate(child.gameObject);
+        Transform conveyor = familiarity.Find("TODO_ConveyorBelt_Visual");
+        foreach (string name in new[] { "Visual_55", "Visual_56", "Visual_57" })
+        {
+            Transform excess = conveyor != null ? conveyor.Find(name) : null;
+            if (excess != null)
+                UnityEngine.Object.DestroyImmediate(excess.gameObject);
+        }
+
+        BuildProps(props, props.GetComponent<PropTilemapSpawner>());
+        familiarity.Find("Freezer_SolidChanger").position = CellWorld(props, FamiliarityFreezerCell);
+        familiarity.Find("AutomaticCrushers_SolidOnlyPlate").position = CellWorld(props, FamiliarityPlateCell);
+        familiarity.Find("AutomaticCrusher_01").position = CellWorld(props, FamiliarityCrusherOneCell);
+        familiarity.Find("AutomaticCrusher_02").position = CellWorld(props, FamiliarityCrusherTwoCell);
+        familiarity.Find("AutomaticCrusher_03").position = CellWorld(props, FamiliarityCrusherThreeCell);
+        root.Find("Challenge/ExitSwitch").position = CellWorld(props, ChallengeSwitchCell);
+        PaintSolidRect(solid, 41, 4, 15, 3, solid.GetTile(new Vector3Int(45, 7, 0)));
+        RegenerateTilemapColliderGeometry(solid);
+        RecordPrefabOverride(solid);
+        ConfigureFreezerGuidance(scene, root);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        AssetDatabase.SaveAssets();
+        ValidateArea2Batch();
+        Debug.Log("[Area2SceneBuilder] Repaired crusher mount/impact alignment and safe-pocket spacing; removed intro bypass.");
+    }
+
+    private static void ConfigureFreezerGuidance(Scene scene, Transform root)
+    {
+        AddFreezerSign(scene, root.Find("Introduction"), "Freezer_ReturnHint", new Vector3(12.6f, 2.8f, 0f), "< PLATE");
+        AddFreezerSign(scene, root.Find("Familiarity"), "Freezer_ReturnHint", new Vector3(57.4f, 2.8f, 0f), "< PLATE");
+        AddFreezerSign(scene, root.Find("Challenge"), "Freezer_DropHint", new Vector3(73.5f, 15.3f, 0f), "TAP S / DOWN: DROP");
+    }
+
+    private static void AddFreezerSign(Scene scene, Transform parent, string name, Vector3 position, string label)
+    {
+        Transform existing = parent.Find(name);
+        GameObject sign = existing != null ? existing.gameObject : NewMarker(scene, parent, name, position);
+        sign.transform.position = position;
+        TextMesh text = sign.GetComponent<TextMesh>();
+        if (text == null) text = sign.AddComponent<TextMesh>();
+        text.text = label;
+        text.anchor = TextAnchor.MiddleCenter;
+        text.alignment = TextAlignment.Center;
+        text.characterSize = 0.06f;
+        text.fontSize = 32;
+        text.color = new Color(0.65f, 0.95f, 1f);
+        sign.GetComponent<MeshRenderer>().sortingOrder = 41;
+    }
+
     private static void BuildProps(Tilemap props, PropTilemapSpawner spawner)
     {
         PropTile solidChanger = LoadRequiredAsset<PropTile>("Assets/Tiles/Factory/Props/Condenser.asset");
         PropTile liquidChanger = LoadRequiredAsset<PropTile>("Assets/Tiles/Factory/Props/Evaporator.asset");
         PropTile pressurePlate = LoadRequiredAsset<PropTile>("Assets/Tiles/Factory/Props/PressurePlate_PropTile.asset");
-        PropTile autoCrusher = LoadRequiredAsset<PropTile>("Assets/Tiles/Props/AutoCrusherTrap_PropTile.asset");
+        PropTile autoCrusher = EnsureFamiliarityCrusherTile();
         PropTile blower = LoadRequiredAsset<PropTile>("Assets/Tiles/Factory/Props/Blower_PropTile.asset");
+        PropTile door = LoadRequiredAsset<PropTile>(MechanicAssetBuilder.DoorTilePath);
 
         props.ClearAllTiles();
         List<PropPlacement> placements = new List<PropPlacement>
         {
+            new PropPlacement
+            {
+                Cell = IntroEntryDoorCell,
+                Tile = door,
+                ConnectionId = "",
+                ConnectionMode = ConnectionMode.Hold,
+                InitialActive = true,
+            },
+            new PropPlacement
+            {
+                Cell = IntroExitDoorCell,
+                Tile = door,
+                ConnectionId = "intro_door",
+                ConnectionMode = ConnectionMode.Toggle,
+                InitialActive = false,
+            },
             new PropPlacement
             {
                 Cell = IntroFreezerCell,
@@ -607,8 +734,17 @@ public static class Area2SceneBuilder
                 ConnectionId = "intro_door",
                 ConnectionMode = ConnectionMode.Hold,
                 InitialActive = false,
+                OneShot = true,
                 RequirePlayerState = true,
                 RequiredPlayerState = PlayerBodyState.Solid,
+            },
+            new PropPlacement
+            {
+                Cell = FamiliarityExitDoorCell,
+                Tile = door,
+                ConnectionId = "familiarity_crushers",
+                ConnectionMode = ConnectionMode.Toggle,
+                InitialActive = false,
             },
             new PropPlacement
             {
@@ -625,6 +761,7 @@ public static class Area2SceneBuilder
                 ConnectionId = "familiarity_crushers",
                 ConnectionMode = ConnectionMode.Hold,
                 InitialActive = false,
+                OneShot = true,
                 RequirePlayerState = true,
                 RequiredPlayerState = PlayerBodyState.Solid,
             },
@@ -649,6 +786,31 @@ public static class Area2SceneBuilder
                 Cell = FamiliarityCrusherThreeCell,
                 Tile = autoCrusher,
                 ConnectionId = "familiarity_crushers",
+                ConnectionMode = ConnectionMode.Toggle,
+                InitialActive = false,
+            },
+            new PropPlacement
+            {
+                Cell = ChallengeDividerDoorCell,
+                Tile = door,
+                ConnectionId = "",
+                ConnectionMode = ConnectionMode.Hold,
+                InitialActive = true,
+            },
+            new PropPlacement
+            {
+                Cell = ChallengeSwitchCell,
+                Tile = pressurePlate,
+                ConnectionId = "challenge_exit",
+                ConnectionMode = ConnectionMode.Hold,
+                InitialActive = true,
+                OneShot = true,
+            },
+            new PropPlacement
+            {
+                Cell = ChallengeExitDoorCell,
+                Tile = door,
+                ConnectionId = "challenge_exit",
                 ConnectionMode = ConnectionMode.Toggle,
                 InitialActive = false,
             },
@@ -714,6 +876,7 @@ public static class Area2SceneBuilder
                 SetRequiredProperty(element, "connectionId", placement.ConnectionId);
                 SetRequiredProperty(element, "connectionMode", (int)placement.ConnectionMode);
                 SetRequiredProperty(element, "initialActive", placement.InitialActive);
+                SetOptionalProperty(element, "oneShot", placement.OneShot);
                 SetOptionalProperty(element, "overrideBlowerSettings", placement.OverrideBlowerSettings);
                 SetOptionalProperty(element, "blowerDirection", placement.BlowerDirection);
                 SetOptionalProperty(element, "blowerStrength", placement.BlowerStrength);
@@ -760,6 +923,7 @@ public static class Area2SceneBuilder
             SetReflectedField(cellOverrideType, entry, "connectionId", placement.ConnectionId);
             SetReflectedField(cellOverrideType, entry, "connectionMode", placement.ConnectionMode);
             SetReflectedField(cellOverrideType, entry, "initialActive", placement.InitialActive);
+            SetReflectedField(cellOverrideType, entry, "oneShot", placement.OneShot);
             SetReflectedField(cellOverrideType, entry, "overrideBlowerSettings", placement.OverrideBlowerSettings);
             SetReflectedField(cellOverrideType, entry, "blowerDirection", placement.BlowerDirection);
             SetReflectedField(cellOverrideType, entry, "blowerStrength", placement.BlowerStrength);
@@ -801,6 +965,8 @@ public static class Area2SceneBuilder
             RequireChild(errors, introduction.transform, "Freezer_SolidChanger");
             RequireChild(errors, introduction.transform, "Heater_LiquidChanger");
             RequireChild(errors, introduction.transform, "PressurePlate_SolidOnly");
+            RequireChild(errors, introduction.transform, "EntryDoor_Automatic");
+            RequireChild(errors, introduction.transform, "ExitDoor_SolidPlate");
             RequireTodoMarkers(errors, introduction.transform, IntroductionTodos);
             RequireChild(errors, introduction.transform, "Introduction_TutorialNPC");
         }
@@ -814,6 +980,7 @@ public static class Area2SceneBuilder
             RequireChild(errors, familiarity.transform, "AutomaticCrusher_01");
             RequireChild(errors, familiarity.transform, "AutomaticCrusher_02");
             RequireChild(errors, familiarity.transform, "AutomaticCrusher_03");
+            RequireChild(errors, familiarity.transform, "ExitDoor_MechanicsPlate");
             RequireTodoMarkers(errors, familiarity.transform, FamiliarityTodos);
         }
 
@@ -823,6 +990,9 @@ public static class Area2SceneBuilder
             RequireChild(errors, challenge.transform, "Blower_Upward");
             RequireChild(errors, challenge.transform, "RetryHeater_LiquidChanger");
             RequireChild(errors, challenge.transform, "UpperLanding_Freezer");
+            RequireChild(errors, challenge.transform, "DividerDoor_Automatic");
+            RequireChild(errors, challenge.transform, "ExitSwitch");
+            RequireChild(errors, challenge.transform, "ExitDoor_Switch");
             RequireTodoMarkers(errors, challenge.transform, ChallengeTodos);
         }
 
@@ -904,24 +1074,54 @@ public static class Area2SceneBuilder
             RequireProp(errors, props, IntroFreezerCell, "Condenser", "Introduction freezer/solid changer");
             RequireProp(errors, props, IntroHeaterCell, "Evaporator", "Introduction heater/liquid changer");
             RequireProp(errors, props, IntroPlateCell, "PressurePlate", "Introduction solid-only pressure plate");
+            RequireNoTile(errors, props, new Vector3Int(28, 1, 0), "Removed introduction bypass plate");
+            RequireProp(errors, props, IntroEntryDoorCell, "Door", "Introduction automatic entry door");
+            RequireProp(errors, props, IntroExitDoorCell, "Door", "Introduction plate-controlled exit door");
             RequireProp(errors, props, FamiliarityFreezerCell, "Condenser", "Familiarity freezer/solid changer");
             RequireProp(errors, props, FamiliarityPlateCell, "PressurePlate", "Familiarity solid-only plate");
+            RequireProp(errors, props, FamiliarityExitDoorCell, "Door", "Familiarity plate-controlled exit door");
             RequireProp(errors, props, FamiliarityCrusherOneCell, "AutoCrusherTrap", "Familiarity automatic crusher 1");
             RequireProp(errors, props, FamiliarityCrusherTwoCell, "AutoCrusherTrap", "Familiarity automatic crusher 2");
             RequireProp(errors, props, FamiliarityCrusherThreeCell, "AutoCrusherTrap", "Familiarity automatic crusher 3");
+            ValidateCrusherPlacement(errors, props, solid);
             RequireProp(errors, props, ChallengeBlowerCell, "Blower", "Challenge upward blower");
             RequireProp(errors, props, ChallengeHeaterCell, "Evaporator", "Challenge retry heater/liquid changer");
             RequireProp(errors, props, ChallengeFreezerCell, "Condenser", "Challenge upper freezer/solid changer");
+            RequireProp(errors, props, ChallengeDividerDoorCell, "Door", "Challenge automatic divider door");
+            RequireProp(errors, props, ChallengeSwitchCell, "PressurePlate", "Challenge exit pressure plate");
+            RequireProp(errors, props, ChallengeExitDoorCell, "Door", "Challenge switch-controlled exit door");
+            foreach (Vector3Int cell in new[] { IntroFreezerCell, FamiliarityFreezerCell, ChallengeFreezerCell })
+            {
+                PropTile freezer = props.GetTile<PropTile>(cell);
+                Collider2D footprint = freezer?.prefab?.GetComponent<Collider2D>();
+                if (footprint == null || !footprint.isTrigger)
+                    errors.Add("Freezer at " + cell + " blocks the no-jump return/forward route.");
+            }
+            if (player != null && player.GetComponent<PlatformDropThrough>() == null)
+                errors.Add("Challenge ice descent requires PlatformDropThrough on the player.");
         }
 
         if (spawner != null)
         {
             List<CellOverrideSnapshot> snapshots = ReadCellOverrides(spawner, errors);
+            if (snapshots.Count(snapshot => snapshot.ConnectionId == "intro_door" &&
+                    props.GetTile<PropTile>(snapshot.Cell)?.prefab?.GetComponent<PressurePlate>() != null) != 1)
+                errors.Add("The introduction must have exactly one solid-only plate linked to its exit; no bypass activator.");
             ValidateOverride(errors, snapshots, IntroPlateCell, "intro_door", ConnectionMode.Hold, false, true, PlayerBodyState.Solid, requireCompletedMechanicsContract, "Introduction pressure plate");
+            ValidateOverride(errors, snapshots, IntroEntryDoorCell, "", ConnectionMode.Hold, true, false, PlayerBodyState.Liquid, false, "Introduction automatic entry door");
+            ValidateOverride(errors, snapshots, IntroExitDoorCell, "intro_door", ConnectionMode.Toggle, false, false, PlayerBodyState.Liquid, false, "Introduction plate-controlled exit door");
             ValidateOverride(errors, snapshots, FamiliarityPlateCell, "familiarity_crushers", ConnectionMode.Hold, false, true, PlayerBodyState.Solid, requireCompletedMechanicsContract, "Familiarity solid-only plate");
+            ValidateOverride(errors, snapshots, FamiliarityExitDoorCell, "familiarity_crushers", ConnectionMode.Toggle, false, false, PlayerBodyState.Liquid, false, "Familiarity plate-controlled exit door");
             ValidateOverride(errors, snapshots, FamiliarityCrusherOneCell, "familiarity_crushers", ConnectionMode.Toggle, false, false, PlayerBodyState.Liquid, false, "Familiarity automatic crusher 1");
             ValidateOverride(errors, snapshots, FamiliarityCrusherTwoCell, "familiarity_crushers", ConnectionMode.Toggle, false, false, PlayerBodyState.Liquid, false, "Familiarity automatic crusher 2");
             ValidateOverride(errors, snapshots, FamiliarityCrusherThreeCell, "familiarity_crushers", ConnectionMode.Toggle, false, false, PlayerBodyState.Liquid, false, "Familiarity automatic crusher 3");
+            ValidateOverride(errors, snapshots, ChallengeDividerDoorCell, "", ConnectionMode.Hold, true, false, PlayerBodyState.Liquid, false, "Challenge automatic divider door");
+            ValidateOverride(errors, snapshots, ChallengeSwitchCell, "challenge_exit", ConnectionMode.Hold, true, false, PlayerBodyState.Liquid, false, "Challenge exit pressure plate");
+            ValidateOverride(errors, snapshots, ChallengeExitDoorCell, "challenge_exit", ConnectionMode.Toggle, false, false, PlayerBodyState.Liquid, false, "Challenge switch-controlled exit door");
+            RequireOneShot(errors, snapshots, IntroPlateCell, "Introduction pressure plate");
+            RequireOneShot(errors, snapshots, FamiliarityPlateCell, "Familiarity pressure plate");
+            RequireOneShot(errors, snapshots, ChallengeSwitchCell, "Challenge exit pressure plate");
+            ValidateDoorTopology(errors, props, snapshots);
 
             CellOverrideSnapshot blower = snapshots.FirstOrDefault(snapshot => snapshot.Cell == ChallengeBlowerCell);
             if (blower == null)
@@ -941,6 +1141,12 @@ public static class Area2SceneBuilder
                 errors.Add("PropTilemapSpawner.CellOverride is missing exact mechanics fields requirePlayerState and requiredPlayerState.");
             if (!typeof(IPropActivatable).IsAssignableFrom(typeof(AutoCrusherTrap)))
                 errors.Add("AutoCrusherTrap does not implement IPropActivatable in the loaded runtime assembly.");
+            if (!typeof(IPropActivatable).IsAssignableFrom(typeof(Door)))
+                errors.Add("Door does not implement IPropActivatable in the loaded runtime assembly.");
+            if (!typeof(IPropConnectable).IsAssignableFrom(typeof(PressurePlate)))
+                errors.Add("PressurePlate does not implement IPropConnectable in the loaded runtime assembly.");
+            if (!HasOneShotCellOverrideContract())
+                errors.Add("PropTilemapSpawner.CellOverride is missing the oneShot activator field.");
         }
 
         bool inBuildSettings = EditorBuildSettings.scenes.Any(sceneEntry =>
@@ -978,6 +1184,7 @@ public static class Area2SceneBuilder
 
             SerializedProperty stateFlag = element.FindPropertyRelative("requirePlayerState");
             SerializedProperty stateValue = element.FindPropertyRelative("requiredPlayerState");
+            SerializedProperty oneShot = element.FindPropertyRelative("oneShot");
             SerializedProperty blowerFlag = element.FindPropertyRelative("overrideBlowerSettings");
             SerializedProperty blowerDirection = element.FindPropertyRelative("blowerDirection");
             SerializedProperty blowerStrength = element.FindPropertyRelative("blowerStrength");
@@ -991,6 +1198,7 @@ public static class Area2SceneBuilder
                 ConnectionId = connectionId.stringValue,
                 ConnectionMode = connectionMode.intValue,
                 InitialActive = initialActive.boolValue,
+                OneShot = oneShot != null && oneShot.boolValue,
                 HasPlayerStateFields = stateFlag != null && stateValue != null,
                 RequirePlayerState = stateFlag != null && stateFlag.boolValue,
                 RequiredPlayerState = stateValue != null ? stateValue.intValue : -1,
@@ -1050,6 +1258,25 @@ public static class Area2SceneBuilder
             return false;
         return cellOverrideType.GetField("requirePlayerState", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) != null &&
                cellOverrideType.GetField("requiredPlayerState", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) != null;
+    }
+
+    private static bool HasOneShotCellOverrideContract()
+    {
+        Type cellOverrideType = typeof(PropTilemapSpawner).GetNestedType(
+            "CellOverride", BindingFlags.Public | BindingFlags.NonPublic);
+        return cellOverrideType != null &&
+               cellOverrideType.GetField("oneShot", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) != null;
+    }
+
+    private static void RequireOneShot(
+        List<string> errors,
+        List<CellOverrideSnapshot> snapshots,
+        Vector3Int cell,
+        string label)
+    {
+        CellOverrideSnapshot snapshot = snapshots.FirstOrDefault(candidate => candidate.Cell == cell);
+        if (snapshot != null && !snapshot.OneShot)
+            errors.Add(label + " must latch after its first activation.");
     }
 
     private static void AddArea2ToBuildSettings()
@@ -1178,6 +1405,100 @@ public static class Area2SceneBuilder
             errors.Add(label + " is missing at " + cell + "; found " + actual + ".");
     }
 
+    private static void ValidateCrusherPlacement(List<string> errors, Tilemap props, Tilemap solid)
+    {
+        foreach (Vector3Int cell in new[] { FamiliarityCrusherOneCell, FamiliarityCrusherTwoCell, FamiliarityCrusherThreeCell })
+        {
+            PropTile tile = props.GetTile<PropTile>(cell);
+            if (tile == null || tile.prefab == null)
+                continue;
+            AutoCrusherTrap crusher = tile.prefab.GetComponent<AutoCrusherTrap>();
+            if (crusher == null)
+                continue;
+            SerializedObject settings = new SerializedObject(crusher);
+            Sprite impact = settings.FindProperty("frames").GetArrayElementAtIndex(3).objectReferenceValue as Sprite;
+            Vector3 origin = props.GetCellCenterWorld(cell) + tile.spawnOffset;
+            float impactBottom = origin.y - impact.pivot.y / impact.pixelsPerUnit * tile.prefab.transform.localScale.y;
+            if (Mathf.Abs(origin.y - 4f) > 0.01f || Mathf.Abs(impactBottom - 1f) > 0.01f)
+                errors.Add("Crusher at " + cell + " must mount at housing y=4 and strike floor y=1.");
+            Vector2 zone = settings.FindProperty("crushCenter").vector2Value;
+            Vector2 size = settings.FindProperty("crushSize").vector2Value;
+            if (Mathf.Abs(origin.y + zone.y - size.y * 0.5f - 1f) > 0.01f || size.x > 1.3f)
+                errors.Add("Crusher at " + cell + " has a misplaced or over-wide impact zone.");
+            if (solid != null)
+                RequireTile(errors, solid, cell, "Crusher ceiling housing");
+        }
+        if (FamiliarityPlateCell.x <= FamiliarityCrusherThreeCell.x + 2 ||
+            FamiliarityFreezerCell.x <= FamiliarityPlateCell.x + 1 ||
+            FamiliarityExitDoorCell.x <= FamiliarityFreezerCell.x + 2)
+            errors.Add("Familiarity plate/freezer pocket needs clearance from the final crusher and exit.");
+    }
+
+    private static void ValidateDoorTopology(
+        List<string> errors,
+        Tilemap props,
+        List<CellOverrideSnapshot> snapshots)
+    {
+        if (props == null)
+            return;
+
+        List<Vector3Int> doorCells = new List<Vector3Int>();
+        List<Vector3Int> plateCells = new List<Vector3Int>();
+        foreach (Vector3Int cell in props.cellBounds.allPositionsWithin)
+        {
+            PropTile tile = props.GetTile(cell) as PropTile;
+            if (tile == null || tile.prefab == null)
+                continue;
+            if (tile.prefab.GetComponent<Door>() != null)
+                doorCells.Add(cell);
+            if (tile.prefab.GetComponent<PressurePlate>() != null)
+                plateCells.Add(cell);
+        }
+
+        // Separate room diagrams may each draw their own side of a transition,
+        // but the continuous Area2 scene must represent that boundary once.
+        for (int i = 0; i < doorCells.Count; i++)
+        {
+            for (int j = i + 1; j < doorCells.Count; j++)
+            {
+                if (doorCells[i].y != doorCells[j].y)
+                    continue;
+                if (Mathf.Abs(doorCells[i].x - doorCells[j].x) <= 2)
+                    errors.Add("Duplicate room-boundary doors are too close together at " +
+                               doorCells[i] + " and " + doorCells[j] + ".");
+            }
+        }
+
+        foreach (Vector3Int doorCell in doorCells)
+        {
+            CellOverrideSnapshot door = snapshots.FirstOrDefault(candidate => candidate.Cell == doorCell);
+            if (door == null)
+            {
+                errors.Add("Door at " + doorCell + " has no PropTilemapSpawner cell override.");
+                continue;
+            }
+            if (door.InitialActive)
+                continue;
+            if (string.IsNullOrWhiteSpace(door.ConnectionId))
+            {
+                errors.Add("Locked door at " + doorCell + " has no connection ID.");
+                continue;
+            }
+
+            CellOverrideSnapshot plate = plateCells
+                .Select(cell => snapshots.FirstOrDefault(candidate => candidate.Cell == cell))
+                .FirstOrDefault(candidate => candidate != null && candidate.ConnectionId == door.ConnectionId);
+            if (plate == null)
+            {
+                errors.Add("Locked door at " + doorCell + " has no pressure plate connected to '" +
+                           door.ConnectionId + "'.");
+                continue;
+            }
+            if (door.ConnectionMode == (int)ConnectionMode.Toggle && !plate.OneShot)
+                errors.Add("Latched door at " + doorCell + " requires a one-shot pressure plate.");
+        }
+    }
+
     private static void RequireTodoMarkers(List<string> errors, Transform room, IEnumerable<string> names)
     {
         foreach (string name in names)
@@ -1279,16 +1600,6 @@ public static class Area2SceneBuilder
             renderer.sortingOrder = 25;
             SetSpriteWorldSize(renderer, new Vector2(1f, 0.22f));
         }
-    }
-
-    private static void NewCrusherSuspensionVisual(Scene scene, Transform parent, float x, Sprite sprite)
-    {
-        GameObject mount = NewMarker(scene, parent, "CrusherMount_Visual_" + x, new Vector3(x + 0.5f, 4.75f, 0f));
-        SpriteRenderer renderer = mount.AddComponent<SpriteRenderer>();
-        renderer.sprite = sprite;
-        renderer.color = new Color(0.55f, 0.22f, 0.38f, 1f);
-        renderer.sortingOrder = 5;
-        SetSpriteWorldSize(renderer, new Vector2(0.45f, 3.5f));
     }
 
     private static void SetSpriteWorldSize(SpriteRenderer renderer, Vector2 targetSize)

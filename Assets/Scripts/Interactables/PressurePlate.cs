@@ -60,7 +60,7 @@ using UnityEngine.Events;
  *   even if the Animator moves or resizes the collider during an animation.
  */
 
-public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateConfigurable
+public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateConfigurable, IPropOneShotConfigurable
 {
     [Tooltip("Stable, human-readable id used by EventManager listeners. Must match the Trigger Plate Id on any linked CrusherTrap.")]
     [SerializeField] private string plateId;
@@ -104,6 +104,10 @@ public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateCo
     // Called by PropTilemapSpawner when spawned from a PropTile with a connectionId.
     // Overrides the prefab's default plateId so no separate prefab is needed per connection.
     public void SetConnectionId(string id) => plateId = id;
+
+    // Called by PropTilemapSpawner for cells that should stay pressed after
+    // their first activation (for example, a yellow latch door).
+    public void SetOneShot(bool value) => oneShot = value;
 
     // Called by PropTilemapSpawner for a painted cell.  A disabled requirement
     // deliberately means "accept any state" so existing plates keep their

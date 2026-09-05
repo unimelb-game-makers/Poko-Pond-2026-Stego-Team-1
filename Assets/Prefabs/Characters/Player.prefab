@@ -474,6 +474,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSplitController
   mainPlayer: {fileID: 6292073163466076418}
   cameraProxy: {fileID: 0}
+  splittingUnlocked: 0
   splitBurstX: 2.5
   splitBurstY: 1.5
   splitPassiveVelocityScale: 1
