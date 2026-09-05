@@ -1699,6 +1699,11 @@ public class SoftBodyPlayer : MonoBehaviour
 
 	public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint)
     {
+        changeBodyState(newState, respawnPoint, new Vector2(1f, 1f));
+    }
+
+    public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint, Vector2 exitVelocity)
+    {
         if (newState != bodystate)
         {
             bodystate = newState;
@@ -1722,7 +1727,7 @@ public class SoftBodyPlayer : MonoBehaviour
             }
 
             initBody();
-            TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));   
+            TeleportTo(respawnPoint, exitVelocity);
         }
 	}
 
