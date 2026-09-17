@@ -32,6 +32,8 @@ public class PropTilemapSpawner : MonoBehaviour
         public Vector3Int cell;
         [Tooltip("Shared ID linking this prop to a trigger (pressure plate, lever, button). Leave empty for no connection.")]
         public string connectionId;
+        [Tooltip("Door cells only: scene to load after passing the unlocked door. Empty keeps it a normal door.")]
+        public string exitScene;
         [Tooltip("Hold: prop state matches the trigger — active while held, reverts on release. Toggle: each trigger press flips the prop state.")]
         public ConnectionMode connectionMode;
         [Tooltip("Whether this prop starts active (on) or inactive (off) before any trigger fires.")]
@@ -80,6 +82,7 @@ public class PropTilemapSpawner : MonoBehaviour
                 propName       = propTile.prefab != null ? propTile.prefab.name : propTile.name,
                 cell           = cell,
                 connectionId   = hadEntry ? prev.connectionId   : "",
+                exitScene      = hadEntry ? prev.exitScene      : "",
                 connectionMode = hadEntry ? prev.connectionMode : ConnectionMode.Hold,
                 initialActive  = hadEntry ? prev.initialActive  : true,
                 oneShot        = hadEntry && prev.oneShot,
@@ -138,6 +141,9 @@ public class PropTilemapSpawner : MonoBehaviour
                 activatable.SetActivationConfig(
                     hasOverride ? ov.connectionMode : ConnectionMode.Hold,
                     hasOverride ? ov.initialActive  : true);
+
+            if (hasOverride && !string.IsNullOrWhiteSpace(ov.exitScene) && go.GetComponent<Door>() != null)
+                go.AddComponent<SceneDoorExit>().Configure(ov.exitScene);
 
             if (hasOverride && go.TryGetComponent(out IPropOneShotConfigurable oneShotConfigurable))
                 oneShotConfigurable.SetOneShot(ov.oneShot);

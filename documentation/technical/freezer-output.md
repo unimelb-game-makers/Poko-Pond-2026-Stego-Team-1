@@ -1,5 +1,9 @@
 # Freezer output and no-jump routes
 
+Area 2 now uses three playable scenes; see [Area 2 scenes](area2-scenes.md).
+Coordinates below describe the archived combined reference used by this
+regression. The room split preserves these routes at local tile coordinates.
+
 The Condenser prefab is a walk-through station: its footprint collider is a
 trigger, while its left intake still detects the player through an overlap query.
 This lets ice return to a pressure plate and then pass the station again without

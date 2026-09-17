@@ -13,7 +13,8 @@ using UnityEngine.Tilemaps;
 /// <summary>
 /// Deterministic editor-only builder for the Area 2 state tutorial greybox.
 ///
-/// The builder always starts from Sandbox.unity, saves that copy as Area2.unity,
+/// Legacy combined-scene reference builder. Playable rooms are Area2-1/2/3.
+/// The builder starts from Sandbox.unity and saves an editor-only template,
 /// clears Sandbox-specific map content, and then repaints the level through the
 /// existing tilemap/PropTile architecture. Running it repeatedly produces the
 /// same scene structure and cell layout.
@@ -21,7 +22,7 @@ using UnityEngine.Tilemaps;
 public static class Area2SceneBuilder
 {
     private const string SandboxScenePath = "Assets/Scenes/Sandbox.unity";
-    private const string Area2ScenePath = "Assets/Scenes/Area2.unity";
+    private const string Area2ScenePath = Area2RoomSceneBuilder.SourcePath;
     private const string Area2RootName = "Area2";
     private const string Area2DialoguePath = "Assets/Dialogues/Area2TutorialDialogue.asset";
     private const string GridPrefabPath = "Assets/Prefabs/Core/Grid.prefab";
@@ -113,7 +114,7 @@ public static class Area2SceneBuilder
         public float BlowerWidth;
     }
 
-    [MenuItem("Tools/Poko Pond/Area 2/Build From Sandbox")]
+    [MenuItem("Tools/Poko Pond/Area 2/Combined Reference/Build From Sandbox")]
     private static void BuildArea2MenuItem()
     {
         BuildArea2();
@@ -129,7 +130,7 @@ public static class Area2SceneBuilder
     }
 
     /// <summary>
-    /// Builds Assets/Scenes/Area2.unity from the committed Sandbox scene.
+    /// Builds the archived combined reference from the committed Sandbox scene.
     /// </summary>
     public static bool BuildArea2()
     {
@@ -178,8 +179,6 @@ public static class Area2SceneBuilder
         ConfigureTodoMarkers(area2, area2Root);
         ConfigureFreezerGuidance(area2, area2Root.transform);
 
-        AddArea2ToBuildSettings();
-
         EditorSceneManager.MarkSceneDirty(area2);
         if (!EditorSceneManager.SaveScene(area2))
             throw new InvalidOperationException("[Area2SceneBuilder] Could not save " + Area2ScenePath + ".");
@@ -198,7 +197,7 @@ public static class Area2SceneBuilder
         return true;
     }
 
-    [MenuItem("Tools/Poko Pond/Area 2/Validate Scene")]
+    [MenuItem("Tools/Poko Pond/Area 2/Combined Reference/Validate Scene")]
     private static void ValidateArea2MenuItem()
     {
         ValidateArea2Batch();
@@ -617,7 +616,7 @@ public static class Area2SceneBuilder
     }
 
     // Updates the existing scene without resetting its scaffolding from Sandbox.
-    [MenuItem("Tools/Poko Pond/Area 2/Repair Crusher Room Placements")]
+    [MenuItem("Tools/Poko Pond/Area 2/Combined Reference/Repair Crusher Room Placements")]
     public static void RepairCrusherRoomBatch()
     {
         if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
@@ -1149,11 +1148,6 @@ public static class Area2SceneBuilder
                 errors.Add("PropTilemapSpawner.CellOverride is missing the oneShot activator field.");
         }
 
-        bool inBuildSettings = EditorBuildSettings.scenes.Any(sceneEntry =>
-            string.Equals(sceneEntry.path, Area2ScenePath, StringComparison.OrdinalIgnoreCase) && sceneEntry.enabled);
-        if (!inBuildSettings)
-            errors.Add("Area2.unity is not enabled in EditorBuildSettings.");
-
         return errors;
     }
 
@@ -1277,22 +1271,6 @@ public static class Area2SceneBuilder
         CellOverrideSnapshot snapshot = snapshots.FirstOrDefault(candidate => candidate.Cell == cell);
         if (snapshot != null && !snapshot.OneShot)
             errors.Add(label + " must latch after its first activation.");
-    }
-
-    private static void AddArea2ToBuildSettings()
-    {
-        List<EditorBuildSettingsScene> scenes = EditorBuildSettings.scenes.ToList();
-        EditorBuildSettingsScene existing = scenes.FirstOrDefault(scene =>
-            string.Equals(scene.path, Area2ScenePath, StringComparison.OrdinalIgnoreCase));
-        if (existing == null)
-        {
-            scenes.Add(new EditorBuildSettingsScene(Area2ScenePath, true));
-        }
-        else
-        {
-            existing.enabled = true;
-        }
-        EditorBuildSettings.scenes = scenes.ToArray();
     }
 
     private static void PaintSolidRect(Tilemap tilemap, int startX, int startY, int width, int height, TileBase tile)
