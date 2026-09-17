@@ -34,6 +34,8 @@ public class PropTilemapSpawner : MonoBehaviour
         public string connectionId;
         [Tooltip("Door cells only: scene to load after passing the unlocked door. Empty keeps it a normal door.")]
         public string exitScene;
+        [Tooltip("Door exits only: cross to the left to leave this room.")]
+        public bool exitToLeft;
         [Tooltip("Hold: prop state matches the trigger — active while held, reverts on release. Toggle: each trigger press flips the prop state.")]
         public ConnectionMode connectionMode;
         [Tooltip("Whether this prop starts active (on) or inactive (off) before any trigger fires.")]
@@ -83,6 +85,7 @@ public class PropTilemapSpawner : MonoBehaviour
                 cell           = cell,
                 connectionId   = hadEntry ? prev.connectionId   : "",
                 exitScene      = hadEntry ? prev.exitScene      : "",
+                exitToLeft     = hadEntry && prev.exitToLeft,
                 connectionMode = hadEntry ? prev.connectionMode : ConnectionMode.Hold,
                 initialActive  = hadEntry ? prev.initialActive  : true,
                 oneShot        = hadEntry && prev.oneShot,
@@ -143,7 +146,7 @@ public class PropTilemapSpawner : MonoBehaviour
                     hasOverride ? ov.initialActive  : true);
 
             if (hasOverride && !string.IsNullOrWhiteSpace(ov.exitScene) && go.GetComponent<Door>() != null)
-                go.AddComponent<SceneDoorExit>().Configure(ov.exitScene);
+                go.AddComponent<SceneDoorExit>().Configure(ov.exitScene, ov.exitToLeft);
 
             if (hasOverride && go.TryGetComponent(out IPropOneShotConfigurable oneShotConfigurable))
                 oneShotConfigurable.SetOneShot(ov.oneShot);

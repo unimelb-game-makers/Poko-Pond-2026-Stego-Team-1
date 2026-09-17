@@ -16,19 +16,23 @@ branch, including the Area 1 renames, was not merged by this change.
 Each Area 2 scene contains only its own room geometry, props and markers, plus
 the shared player, camera, UI and dialogue scaffolding. Tile coordinates are
 local to each room: the former combined-scene offsets were 0, 30 and 64.
-Each room has its own safe spawn and camera bounds. Existing puzzle layouts,
-plate connections, state requirements, freezer output routes and TODO props
-are retained. This split does not implement the remaining conveyor,
-humidifier artwork or electrified-platform placeholders.
+Each room has its own safe spawn and camera bounds. Area2-2 follows the PDF's
+upper-left entrance and lower-left return exit. The conveyor and crushers are
+off on the outward journey; the ice-only plate activates both and unlocks the
+exit. Area2-3 has electric strips on the first, third and fifth descent ledges,
+with normal ledges between them and a safe freezer landing above. Physical
+humidifiers restore liquid form at all three exits; their artwork remains a
+labelled placeholder. See [Area 2 mechanics](area2-mechanics.md).
 
 ## Door transitions
 
 The Props tilemap's cell overrides now expose **Exit Scene** for Door cells.
 An empty value keeps the existing door behavior. A configured value attaches
 `SceneDoorExit` when the prop spawns. The door must be unlocked and fully open,
-and the active player's body centre must cross to its right-hand side before
+and the active player's body centre must cross to the configured side before
 the next scene loads. Touching the locked door or merely activating its plate
-does not finish the room. The gate keeps its existing one-shot plate behavior.
+does not finish the room. **Exit To Left** is enabled for Area2-2. The gate
+keeps its existing one-shot plate behavior.
 
 Scenes load with a fresh player in liquid form, matching the design document's
 humidifier reset between rooms. Death/retry reloads only the current scene and
@@ -45,7 +49,8 @@ reference. Edit the three playable scenes directly for subsequent level work.
 reference and **overwrites room edits**. Run it only in an isolated Unity project
 copy, with `-batchmode -quit -executeMethod Area2RoomSceneBuilder.BuildBatch`.
 It trims tilemaps and per-cell settings, localises coordinates, moves room
-markers, configures spawns/camera bounds, and registers destinations.
+markers, configures spawns/camera bounds, registers destinations, and applies
+the completed mechanics/return-route pass through `Area2MechanicsBuilder`.
 
 Use **Tools > Poko Pond > Area 2 > Validate Split Scenes** for structural
 validation. For isolated Play Mode checks run Unity with `-batchmode

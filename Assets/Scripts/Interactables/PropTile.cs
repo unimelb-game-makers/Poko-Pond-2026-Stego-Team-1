@@ -11,6 +11,7 @@ public class PropTile : TileBase
 {
     [Tooltip("Sprite shown in the Tile Palette and Scene view for this cell.")]
     public Sprite previewSprite;
+    public Color previewColor = Color.white;
 
     [Tooltip("Prefab instantiated at runtime. Attach CrusherTrap, PressurePlate, etc. to this prefab.")]
     public GameObject prefab;
@@ -26,7 +27,7 @@ public class PropTile : TileBase
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData)
     {
         tileData.sprite = previewSprite;
-        tileData.color = Color.white;
+        tileData.color = previewColor;
         tileData.flags = TileFlags.None;
         tileData.colliderType = Tile.ColliderType.None;
     }

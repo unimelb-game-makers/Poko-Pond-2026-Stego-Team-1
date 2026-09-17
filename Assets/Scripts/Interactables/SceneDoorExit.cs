@@ -8,12 +8,18 @@ using UnityEngine.SceneManagement;
 public class SceneDoorExit : MonoBehaviour
 {
     [SerializeField] private string nextScene;
+    [SerializeField] private bool exitToLeft;
     private Door door;
     private bool loading;
     private bool reportedMissingScene;
 
     public string NextScene => nextScene;
-    public void Configure(string sceneName) => nextScene = sceneName;
+    public bool ExitToLeft => exitToLeft;
+    public void Configure(string sceneName, bool toLeft = false)
+    {
+        nextScene = sceneName;
+        exitToLeft = toLeft;
+    }
 
     private void Awake() => door = GetComponent<Door>();
 
@@ -22,7 +28,7 @@ public class SceneDoorExit : MonoBehaviour
         if (loading || !door.IsUnlocked || !door.IsOpen || Time.timeScale == 0f) return;
         if (GameStateManager.Instance != null && GameStateManager.Instance.State != GameState.Playing) return;
 
-        Vector2 centre = (Vector2)transform.position + new Vector2(1f, 1.5f);
+        Vector2 centre = (Vector2)transform.position + new Vector2(exitToLeft ? -1f : 1f, 1.5f);
         Vector2 size = new Vector2(1.2f, 3f);
         foreach (Collider2D hit in Physics2D.OverlapBoxAll(centre, size, 0f,
                      LayerMask.GetMask("Player", "SoftBodyPoint")))

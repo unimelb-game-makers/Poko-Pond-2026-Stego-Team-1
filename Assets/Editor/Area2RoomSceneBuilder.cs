@@ -23,6 +23,7 @@ public static class Area2RoomSceneBuilder
             throw new InvalidOperationException("Run this migration in an isolated batch project.");
         for (int i = 0; i < Rooms.Length; i++) BuildRoom(i);
         RegisterScenes();
+        Area2MechanicsBuilder.ApplyToRooms();
         ValidateBatch();
         AssetDatabase.SaveAssets();
         Debug.Log("[Area2Rooms] Built and validated all three rooms.");
@@ -164,7 +165,7 @@ public static class Area2RoomSceneBuilder
             Require(Rooms.Where(r => r != Rooms[i]).All(r => area.Find(r) == null), "Foreign room content remains.");
             foreach (Tilemap map in Objects<Tilemap>(scene))
                 foreach (Vector3Int cell in map.cellBounds.allPositionsWithin)
-                    Require(!map.HasTile(cell) || (cell.x >= 0 && cell.x <= Ends[i] - Starts[i] + 3), "Tile outside room.");
+                    Require(!map.HasTile(cell) || (cell.x >= (i == 1 ? -2 : 0) && cell.x <= Ends[i] - Starts[i] + 3), "Tile outside room.");
 
             var so = new SerializedObject(Objects<PropTilemapSpawner>(scene).Single());
             SerializedProperty entries = so.FindProperty("cellOverrides");

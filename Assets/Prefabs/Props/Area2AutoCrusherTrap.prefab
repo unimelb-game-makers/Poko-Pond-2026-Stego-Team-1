@@ -139,7 +139,7 @@ MonoBehaviour:
   - {fileID: -1844207039, guid: d2e693ebe8d10c2418229cea538922e3, type: 3}
   - {fileID: -1896689777, guid: d2e693ebe8d10c2418229cea538922e3, type: 3}
   slamDuration: 0.2
-  retractDuration: 0.1
-  idlePause: 0.1
+  retractDuration: 1.8
+  idlePause: 1
   crushCenter: {x: 0, y: -2.5}
   crushSize: {x: 1.28, y: 1}

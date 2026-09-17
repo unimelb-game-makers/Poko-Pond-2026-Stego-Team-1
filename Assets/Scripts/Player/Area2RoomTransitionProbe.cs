@@ -15,6 +15,7 @@ public class Area2RoomTransitionProbe : MonoBehaviour
 {
     private const string Pending = "Area2Rooms.TransitionProbe";
     private SoftBodyPlayer walkingPlayer;
+    private float walkingDirection = 1f;
     private float deadline;
 
     [InitializeOnLoadMethod]
@@ -57,7 +58,7 @@ public class Area2RoomTransitionProbe : MonoBehaviour
             SceneDoorExit exit = FindObjectsByType<SceneDoorExit>(FindObjectsSortMode.None).Single();
             Door door = exit.GetComponent<Door>();
             Require(!door.IsUnlocked, "Exit starts unlocked.");
-            Capture("room-" + (i + 1) + "-overview.png", new Vector3((door.transform.position.x + 3f) * 0.5f, 7f, -10f), 12f);
+            Capture("room-" + (i + 1) + "-overview.png", new Vector3(i == 0 ? 16f : i == 1 ? 17f : 20f, 7f, -10f), 12f);
 
             if (i == 1)
             {
@@ -74,7 +75,8 @@ public class Area2RoomTransitionProbe : MonoBehaviour
             }
 
             // Even an actor beyond the threshold must not load a locked exit.
-            player.TeleportTo((Vector2)door.transform.position + new Vector2(1f, 0.7f), Vector2.zero);
+            float direction = exit.ExitToLeft ? -1f : 1f;
+            player.TeleportTo((Vector2)door.transform.position + new Vector2(direction, 0.7f), Vector2.zero);
             yield return new WaitForSeconds(0.25f);
             Require(SceneManager.GetActiveScene().name == name && !door.IsUnlocked, "Locked gate allowed progression.");
 
@@ -88,11 +90,18 @@ public class Area2RoomTransitionProbe : MonoBehaviour
             player.TeleportTo((Vector2)plate.transform.position + new Vector2(0f, 0.8f), Vector2.zero);
             yield return WaitUntil(() => door.IsUnlocked, "Solid plate did not unlock " + name);
 
-            player.TeleportTo((Vector2)door.transform.position + new Vector2(-1.1f, 0.7f), Vector2.zero);
+            player.TeleportTo((Vector2)door.transform.position + new Vector2(-direction * 1.1f, 0.7f), Vector2.zero);
+            // Every reset must preserve the joint network's rest geometry.
+            // This catches body arrays being sorted without their rest offsets.
+            foreach (Rigidbody2D point in player.Points)
+                foreach (DistanceJoint2D joint in point.GetComponents<DistanceJoint2D>())
+                    Require(Mathf.Abs(Vector2.Distance(point.position, joint.connectedBody.position) - joint.distance) < 0.001f,
+                        "State change/teleport scrambled the solid body's joint geometry.");
             yield return new WaitForSeconds(1f);
             Require(SceneManager.GetActiveScene().name == name && door.IsOpen, "Approaching the open door loaded too early.");
             Capture("room-" + (i + 1) + "-exit.png", Camera.main.transform.position, Camera.main.orthographicSize);
             walkingPlayer = player;
+            walkingDirection = direction;
             string destination = i == 2 ? "Area3-1" : $"Area2-{i + 2}";
             yield return WaitUntil(() => SceneManager.GetActiveScene().name == destination, "Crossing failed: " + name);
             walkingPlayer = null;
@@ -112,7 +121,7 @@ public class Area2RoomTransitionProbe : MonoBehaviour
     {
         if (walkingPlayer == null) return;
         foreach (Rigidbody2D point in walkingPlayer.Points)
-            point.linearVelocity = new Vector2(3f, point.linearVelocity.y);
+            point.linearVelocity = new Vector2(3f * walkingDirection, point.linearVelocity.y);
     }
 
     private static void Capture(string name, Vector3 position, float size)
@@ -150,7 +159,17 @@ public class Area2RoomTransitionProbe : MonoBehaviour
         float end = Time.realtimeSinceStartup + 10f;
         while (!condition())
         {
-            if (Time.realtimeSinceStartup > end) Fail(error);
+            if (Time.realtimeSinceStartup > end)
+            {
+                foreach (SoftBodyPlayer body in FindObjectsByType<SoftBodyPlayer>(FindObjectsSortMode.None))
+                    Debug.Log("[Area2RoomsQA] Timeout actor: centre=" + body.Center + " state=" + body.getBodyState()
+                        + " input=" + body.InputEnabled + " physics=" + body.Points[0].position);
+                foreach (SceneDoorExit exit in FindObjectsByType<SceneDoorExit>(FindObjectsSortMode.None))
+                    Debug.Log("[Area2RoomsQA] Timeout exit: position=" + exit.transform.position + " left=" + exit.ExitToLeft
+                        + " unlocked=" + exit.GetComponent<Door>().IsUnlocked + " open=" + exit.GetComponent<Door>().IsOpen);
+                Capture("transition-failure.png", Camera.main.transform.position, Camera.main.orthographicSize);
+                Fail(error);
+            }
             yield return null;
         }
     }
