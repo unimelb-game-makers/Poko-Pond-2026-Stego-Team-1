@@ -372,6 +372,7 @@ public class SoftBodyPlayer : MonoBehaviour
     
 	// ── Private — PlayerBodyState ────────────────────────────────────────
     private PlayerBodyState bodystate = PlayerBodyState.Liquid;
+    private Vector2 _surfaceVelocity;
     
     // What the current active body colors are, options are/should be publically defined for each state
     public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
@@ -408,11 +409,17 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Vector2 surfaceStep = _surfaceVelocity * Time.fixedDeltaTime;
+        _surfaceVelocity = Vector2.zero;
         if (_frozen) return;
 
         _hInput = InputEnabled ? Input.GetAxisRaw("Horizontal") : 0f;
         
         ApplyConstantForce();
+        // Apply belt transport before collision resolution, so the normal
+        // swept collision handling prevents transport through walls.
+        if (surfaceStep != Vector2.zero)
+            foreach (Rigidbody2D point in _rbs) point.position += surfaceStep;
 		ResolveCollisions();
         UpdateCenter();
         UpdateGravity();
@@ -507,6 +514,7 @@ public class SoftBodyPlayer : MonoBehaviour
     //      lying between the two positions).
     public void TeleportTo(Vector2 newCenter, Vector2 velocity)
     {
+        _surfaceVelocity = Vector2.zero;
         for (int i = 0; i < pointCount; i++)
         {
             _rbs[i].interpolation            = RigidbodyInterpolation2D.None;
@@ -1405,6 +1413,8 @@ public class SoftBodyPlayer : MonoBehaviour
     	Rigidbody2D[] sortedRbs = new Rigidbody2D[pointCount];
     	CircleCollider2D[] sortedCols = new CircleCollider2D[pointCount];
     	GameObject[] sortedGOs = new GameObject[pointCount];
+        Vector2[] sortedOffsets = new Vector2[pointCount];
+        float[] sortedAngles = new float[pointCount];
 
     	for (int i = 0; i < pointCount; i++) 
     	{
@@ -1412,6 +1422,8 @@ public class SoftBodyPlayer : MonoBehaviour
         	sortedRbs[i] = _rbs[sortedIdx];
         	sortedCols[i] = _cols[sortedIdx];
         	sortedGOs[i] = _pointGOs[sortedIdx];
+            sortedOffsets[i] = _offsets[sortedIdx];
+            sortedAngles[i] = _angles[sortedIdx];
         
         	// Rename the objects so the Unity Hierarchy matches the new logical order
         	sortedGOs[i].name = $"SoftPoint{i}"; 
@@ -1421,6 +1433,15 @@ public class SoftBodyPlayer : MonoBehaviour
     	_rbs = sortedRbs;
     	_cols = sortedCols;
     	_pointGOs = sortedGOs;
+        // Teleports and state changes must retain each point's rest position.
+        // Reordering only the bodies twists the joint network on the next reset.
+        _offsets = sortedOffsets;
+        _angles = sortedAngles;
+        PrecomputeIndices();
+        PrecomputeFaceHalves();
+        if (bodystate == PlayerBodyState.Liquid)
+            for (int i = 0; i < pointCount; i++)
+                _neighborRestDist[i] = Vector2.Distance(_offsets[i], _offsets[(i + 1) % pointCount]);
 
     	// If _prevPositions was already populated in your first snippet, sort it too
     	if (_prevPositions != null && _prevPositions.Length >= pointCount) 
@@ -1699,6 +1720,19 @@ public class SoftBodyPlayer : MonoBehaviour
 
 	public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint)
     {
+        changeBodyState(newState, respawnPoint, new Vector2(1f, 1f));
+    }
+
+    // Surface providers run before this body's FixedUpdate. Multiple adjacent
+    // conveyor tiles must not multiply transport at tile seams.
+    public void OfferSurfaceVelocity(Vector2 velocity)
+    {
+        if (!_frozen && velocity.sqrMagnitude > _surfaceVelocity.sqrMagnitude)
+            _surfaceVelocity = velocity;
+    }
+
+    public void changeBodyState(PlayerBodyState newState, Vector2 respawnPoint, Vector2 exitVelocity)
+    {
         if (newState != bodystate)
         {
             bodystate = newState;
@@ -1722,7 +1756,7 @@ public class SoftBodyPlayer : MonoBehaviour
             }
 
             initBody();
-            TeleportTo(respawnPoint, new Vector2(1.0f, 1.0f));   
+            TeleportTo(respawnPoint, exitVelocity);
         }
 	}
 

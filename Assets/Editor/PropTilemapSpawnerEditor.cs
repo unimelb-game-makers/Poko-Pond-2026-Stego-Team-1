@@ -57,6 +57,13 @@ public class PropTilemapSpawnerEditor : Editor
                 EditorGUILayout.PropertyField(connectionModeProp, new GUIContent("Connection Mode"));
                 EditorGUILayout.PropertyField(initialActiveProp, new GUIContent("Initial Active"));
 
+                if (propName == nameof(Door))
+                {
+                    EditorGUILayout.PropertyField(element.FindPropertyRelative("exitScene"), new GUIContent("Exit Scene"));
+                    if (!string.IsNullOrEmpty(element.FindPropertyRelative("exitScene").stringValue))
+                        EditorGUILayout.PropertyField(element.FindPropertyRelative("exitToLeft"), new GUIContent("Exit To Left"));
+                }
+
                 if (propName == nameof(PressurePlate))
                 {
                     EditorGUILayout.PropertyField(
