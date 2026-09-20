@@ -1,14 +1,13 @@
 using UnityEngine;
 
 // Procedural spark/chain-lightning visual across a platform's top surface while
-// MovingPlatform.IsElectrifying is true. MovingPlatformTrigger handles the actual kill on
-// contact — this is cosmetic only.
+// MovingPlatform or ElectricPlatform is electrified. The platform component
+// handles the actual contact damage; this component is cosmetic only.
 //
 // Needs no art assets: small jagged bolts are drawn with LineRenderers and snapped to a
 // coarse grid so they read as chunky pixel-art sparks rather than smooth vector lines.
 // Bolts flicker in and out at random along the surface width instead of forming one
 // continuous "wire" across the platform.
-[RequireComponent(typeof(MovingPlatform))]
 public class ElectrifyingPlatformEffect : MonoBehaviour
 {
     [Header("Surface")]
@@ -40,6 +39,7 @@ public class ElectrifyingPlatformEffect : MonoBehaviour
     [SerializeField] private float skipChance = 0.15f;
 
     private MovingPlatform platform;
+    private ElectricPlatform stationaryPlatform;
     private LineRenderer[] coreSparks;
     private LineRenderer[] glowSparks;
     private float[] nextFlickerTime;
@@ -47,6 +47,7 @@ public class ElectrifyingPlatformEffect : MonoBehaviour
     private void Awake()
     {
         platform = GetComponent<MovingPlatform>();
+        stationaryPlatform = GetComponent<ElectricPlatform>();
         platformBoxCollider = GetComponent<BoxCollider2D>();
         BuildSparks();
     }
@@ -83,7 +84,8 @@ public class ElectrifyingPlatformEffect : MonoBehaviour
 
     private void Update()
     {
-        bool active = platform.IsElectrifying;
+        bool active = platform != null ? platform.IsElectrifying
+            : stationaryPlatform != null && stationaryPlatform.IsElectrifying;
         for (int i = 0; i < coreSparks.Length; i++)
         {
             if (!active)

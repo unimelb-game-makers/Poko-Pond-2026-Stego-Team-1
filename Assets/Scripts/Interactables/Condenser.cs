@@ -2,13 +2,15 @@ using UnityEngine;
 
 /*
  * OVERVIEW
- *   Condenser prop — currently logs when the player enters/exits the left-side detection zone.
- *   Gas-cloud transformation is not implemented; this is a placeholder for the future mechanic.
+ *   Condenser/freezer transforms the player at its left-side intake.
+ *   Solid output is placed on the floor to the left, clear of the machine,
+ *   with no launch velocity. Its prefab footprint is a trigger so ice can
+ *   return to a plate and subsequently pass the machine without jumping.
  *   Placed via the Props tilemap using a PropTile asset; spawned at runtime by PropTilemapSpawner.
  *
  * ENTRY DIRECTION
  *   The entrance is on the left side of the condenser sprite. The detection zone is
- *   positioned at the left edge of the BoxCollider2D so only a gas cloud approaching
+ *   positioned at the left edge of the Collider2D so a player approaching
  *   from the left triggers condensation. Tune Entry Zone Width and Entry Zone Height
  *   in the Inspector to align with the opening in the sprite art.
  *
@@ -23,9 +25,9 @@ using UnityEngine;
  *   on the Condense clip so it plays once and returns to the idle state.
  *
  * SETUP
- *   1. Add a SpriteRenderer, Animator (optional), and BoxCollider2D to the prefab.
- *   2. Set the GameObject layer to "Props".
- *   3. Size the BoxCollider2D to the full condenser sprite footprint.
+ *   1. Add a SpriteRenderer, Animator (optional), and Collider2D to the prefab.
+ *   2. Keep the footprint out of the Ground/Platform layers.
+ *   3. Size the collider to the footprint and enable Is Trigger for a walk-through station.
  *   4. Tune Entry Zone Width/Height so the blue gizmo aligns with the left-side opening.
  *   5. Assign the prefab to a PropTile asset; paint it on the Props tilemap.
  */
@@ -36,6 +38,25 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
     [SerializeField] private float entryZoneWidth  = 0.8f;
     [Tooltip("Height of the left-side detection zone. Should match the height of the condenser opening.")]
     [SerializeField] private float entryZoneHeight = 1.2f;
+
+    [Header("Solid Output")]
+    [Tooltip("Gap between the released ice body's right edge and the machine's left edge, in world units.")]
+    [SerializeField, Min(0.05f)] private float solidExitClearance = 0.15f;
+
+    // Solid construction in SoftBodyPlayer uses a one-unit square of points.
+    // Include the point collider radius when clearing the machine and floor.
+    public Vector2 GetSolidExitPosition(float pointRadius)
+    {
+        Bounds footprint = GetComponent<Collider2D>().bounds;
+        float halfExtent = 0.5f + pointRadius;
+        float exitX = footprint.min.x - halfExtent - solidExitClearance;
+        // Thin-platform artwork does not fill a complete tile. Use its actual
+        // supporting surface instead of assuming the machine's cell bottom is ground.
+        RaycastHit2D floor = Physics2D.Raycast(new Vector2(exitX, footprint.min.y + 0.25f),
+            Vector2.down, 2f, LayerMask.GetMask("Ground", "Platform"));
+        float floorY = floor.collider != null ? floor.point.y : footprint.min.y;
+        return new Vector2(exitX, floorY + halfExtent + 0.05f);
+    }
 
     // ── Private ─────────────────────────────────────────────────────────────
 
@@ -128,7 +149,12 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
             _playerOver = true;
             Debug.Log($"[Condenser] Player entered (id='{_connectionId}')", this);
             if (_animator != null) _animator.SetTrigger(CondenseTriggerHash);
-            _player.GetComponent<SoftBodyPlayer>().changeBodyState(valueToChangeTo, new Vector2(transform.position.x, transform.position.y+0.5f));
+            SoftBodyPlayer player = _player != null ? _player.GetComponent<SoftBodyPlayer>() : null;
+            if (player == null) return;
+            if (valueToChangeTo == PlayerBodyState.Solid)
+                player.changeBodyState(valueToChangeTo, GetSolidExitPosition(player.pointRadius), Vector2.zero);
+            else
+                player.changeBodyState(valueToChangeTo, new Vector2(transform.position.x, transform.position.y + 0.5f));
         }
         else if (!present && _playerOver)
         {
