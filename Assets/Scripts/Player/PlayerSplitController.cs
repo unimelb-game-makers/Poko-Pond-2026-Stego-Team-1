@@ -47,6 +47,8 @@ public class PlayerSplitController : MonoBehaviour
     public CameraFollowProxy cameraProxy;
 
     [Header("Split")]
+    [Tooltip("Whether Left Shift can split the player. Enable this in test scenes, or unlock it at runtime with a SplittingMachine.")]
+    [SerializeField] private bool splittingUnlocked;
     [Tooltip("Horizontal burst speed given to each droplet on split.")]
     public float splitBurstX        = 1.5f;
     [Tooltip("Upward burst speed given to each droplet on split.")]
@@ -79,6 +81,21 @@ public class PlayerSplitController : MonoBehaviour
     private Vector2 _capturedMergePos; // active droplet position at the moment proximity triggers
     private Vector2 _capturedMergeVel; // average ring-point velocity of both droplets
 
+    public bool SplittingUnlocked => splittingUnlocked;
+    public bool IsSplit => _isSplit;
+
+    // Returns true only when this call changes the progression state.
+    public bool UnlockSplitting()
+    {
+        if (splittingUnlocked) return false;
+        splittingUnlocked = true;
+        EventManager.SplittingUnlocked();
+        return true;
+    }
+
+    // Useful for scene builders and isolated mechanic tests.
+    public void SetSplittingUnlocked(bool unlocked) => splittingUnlocked = unlocked;
+
     // ─────────────────────────────────────────────────────────────────────
 
     private void Awake()
@@ -92,7 +109,7 @@ public class PlayerSplitController : MonoBehaviour
     {
         if (mainPlayer == null) return;
 
-        if (!_isSplit && _splitCoroutine == null && !_isMerging && mainPlayer.getBodyState() != PlayerBodyState.Solid)
+        if (splittingUnlocked && !_isSplit && _splitCoroutine == null && !_isMerging && mainPlayer.getBodyState() != PlayerBodyState.Solid)
         {
             if (Input.GetKeyDown(KeyCode.LeftShift) && !mainPlayer.IsGroundPounding)
                 _splitCoroutine = StartCoroutine(SplitCoroutine());

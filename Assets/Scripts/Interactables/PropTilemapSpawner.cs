@@ -32,16 +32,30 @@ public class PropTilemapSpawner : MonoBehaviour
         public Vector3Int cell;
         [Tooltip("Shared ID linking this prop to a trigger (pressure plate, lever, button). Leave empty for no connection.")]
         public string connectionId;
+        [Tooltip("Door cells only: scene to load after passing the unlocked door. Empty keeps it a normal door.")]
+        public string exitScene;
+        [Tooltip("Door exits only: cross to the left to leave this room.")]
+        public bool exitToLeft;
         [Tooltip("Hold: prop state matches the trigger — active while held, reverts on release. Toggle: each trigger press flips the prop state.")]
         public ConnectionMode connectionMode;
         [Tooltip("Whether this prop starts active (on) or inactive (off) before any trigger fires.")]
         public bool initialActive;
-        [Tooltip("Use per-cell direction and strength instead of the Blower prefab defaults.")]
+        [Tooltip("For activator cells, keep the first activation latched and ignore later interactions.")]
+        public bool oneShot;
+        [Tooltip("For PressurePlate cells, require the player to be in the selected body state. Disabled accepts any state.")]
+        public bool requirePlayerState;
+        [Tooltip("Body state required by a PressurePlate cell when requirePlayerState is enabled.")]
+        public PlayerBodyState requiredPlayerState;
+        [Tooltip("Use per-cell direction, strength, range, and width instead of the Blower prefab defaults.")]
         public bool overrideBlowerSettings;
         [Tooltip("Local direction for this Blower cell. Common values: Right (1,0), Up (0,1), Left (-1,0), Down (0,-1).")]
         public Vector2 blowerDirection;
         [Tooltip("Acceleration applied by this Blower cell.")]
         public float blowerStrength;
+        [Tooltip("How far this Blower cell's wind extends from the front face.")]
+        [Min(0.1f)] public float blowerRange;
+        [Tooltip("Width of this Blower cell's wind zone perpendicular to its direction.")]
+        [Min(0.1f)] public float blowerWidth;
     }
 
     [Tooltip("Per-cell connection IDs. Right-click this component → Sync Cell List after painting to auto-populate.")]
@@ -70,13 +84,20 @@ public class PropTilemapSpawner : MonoBehaviour
                 propName       = propTile.prefab != null ? propTile.prefab.name : propTile.name,
                 cell           = cell,
                 connectionId   = hadEntry ? prev.connectionId   : "",
+                exitScene      = hadEntry ? prev.exitScene      : "",
+                exitToLeft     = hadEntry && prev.exitToLeft,
                 connectionMode = hadEntry ? prev.connectionMode : ConnectionMode.Hold,
                 initialActive  = hadEntry ? prev.initialActive  : true,
+                oneShot        = hadEntry && prev.oneShot,
+                requirePlayerState = hadEntry && prev.requirePlayerState,
+                requiredPlayerState = hadEntry ? prev.requiredPlayerState : PlayerBodyState.Solid,
                 overrideBlowerSettings = hadEntry && prev.overrideBlowerSettings,
                 blowerDirection = hadEntry && prev.blowerDirection.sqrMagnitude > 0.0001f
                     ? prev.blowerDirection
                     : Vector2.right,
                 blowerStrength = hadEntry && prev.blowerStrength > 0f ? prev.blowerStrength : 30f,
+                blowerRange = hadEntry && prev.blowerRange > 0f ? prev.blowerRange : 4f,
+                blowerWidth = hadEntry && prev.blowerWidth > 0f ? prev.blowerWidth : 1.5f,
             });
         }
 
@@ -124,11 +145,29 @@ public class PropTilemapSpawner : MonoBehaviour
                     hasOverride ? ov.connectionMode : ConnectionMode.Hold,
                     hasOverride ? ov.initialActive  : true);
 
+            if (hasOverride && !string.IsNullOrWhiteSpace(ov.exitScene) && go.GetComponent<Door>() != null)
+                go.AddComponent<SceneDoorExit>().Configure(ov.exitScene, ov.exitToLeft);
+
+            if (hasOverride && go.TryGetComponent(out IPropOneShotConfigurable oneShotConfigurable))
+                oneShotConfigurable.SetOneShot(ov.oneShot);
+
+            // Pass an optional per-cell player-state requirement to pressure
+            // plates.  Only synced cell overrides are applied, so an unsynced
+            // prefab keeps any requirement configured directly on the prefab.
+            if (hasOverride && go.TryGetComponent(out IPropPlayerStateConfigurable stateConfigurable))
+                stateConfigurable.SetPlayerStateRequirement(
+                    ov.requirePlayerState,
+                    ov.requiredPlayerState);
+
             // Pass optional per-cell wind settings to directional airflow props
             if (hasOverride && ov.overrideBlowerSettings
                 && go.TryGetComponent(out IPropWindConfigurable windConfigurable))
             {
-                windConfigurable.SetWindConfig(ov.blowerDirection, ov.blowerStrength);
+                windConfigurable.SetWindConfig(
+                    ov.blowerDirection,
+                    ov.blowerStrength,
+                    ov.blowerRange > 0f ? ov.blowerRange : 4f,
+                    ov.blowerWidth > 0f ? ov.blowerWidth : 1.5f);
             }
         }
     }

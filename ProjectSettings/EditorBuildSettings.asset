@@ -14,5 +14,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Sandbox.unity
     guid: 53c9e3bcb37cc416889733078a0a5dcf
+  - enabled: 1
+    path: Assets/Scenes/Area2-1.unity
+    guid: 99361849cc7bedb4fad9e9c39ce2d5f2
+  - enabled: 1
+    path: Assets/Scenes/Area2-2.unity
+    guid: be885f741ea23714e8ea27b4f671ac03
+  - enabled: 1
+    path: Assets/Scenes/Area2-3.unity
+    guid: d5d707e3c8c9bc643af6737d75e10b37
+  - enabled: 1
+    path: Assets/Scenes/Area3-1.unity
+    guid: 6943484706a354b37bbda745df4ff177
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

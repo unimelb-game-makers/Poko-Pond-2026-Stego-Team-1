@@ -34,6 +34,10 @@ public static class EventManager
     internal static void PlayerSplit() => OnPlayerSplit?.Invoke();
     internal static void PlayerMerge() => OnPlayerMerge?.Invoke();
 
+    // Fired once when a SplittingMachine unlocks the split input.
+    public static event Action OnSplittingUnlocked;
+    internal static void SplittingUnlocked() => OnSplittingUnlocked?.Invoke();
+
     // ── Player death ──────────────────────────────────────────────────────
 
     // Fired by PlayerLife.Kill() whenever any player body (main or split droplet) dies.

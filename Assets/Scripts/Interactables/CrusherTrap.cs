@@ -17,7 +17,7 @@ using UnityEngine;
 //
 // BEHAVIOUR
 //   When the linked plate activates, frames 1→4 play over Slam Duration. At the end of the slam a
-//   single overlap check fires — any collider on the Player layer inside the crush zone is crushed.
+//   single overlap check fires — only a Solid player body inside the crush zone is crushed.
 //   Frames 5→26 then play over Retract Duration, during which the crusher is harmless and cannot
 //   be retriggered. When retract finishes the crusher returns to frame 1 and is armed again.
 //
@@ -88,10 +88,11 @@ public class CrusherTrap : MonoBehaviour, IPropConnectable
         }
 
         // Kill check fires the instant frame 4 is on screen — the moment of impact.
-        // KillAllInBox uses a physics overlap on the SoftBodyPoint layer so it finds
-        // any player body (main or split droplet) without needing split-state awareness.
+        // The filtered PlayerLife helper uses a physics overlap on the SoftBodyPoint
+        // layer, so it finds any Solid body (main or split droplet) without needing
+        // split-state awareness.  Liquid is intentionally unharmed.
         Vector2 worldCenter = (Vector2)transform.position + crushCenter;
-        PlayerLife.KillAllInBox(worldCenter, crushSize);
+        PlayerLife.KillAllSolidInBox(worldCenter, crushSize);
 
         // Retract: play frames 5→26 evenly across retractDuration (harmless during this phase)
         int retractFrameCount = Mathf.Max(0, frames.Length - SlamFrameCount);
