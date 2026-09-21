@@ -2473,6 +2473,31 @@ MonoBehaviour:
   PlayerSoftBodyLayer:
     serializedVersion: 2
     m_Bits: 256
+  fanRenderer: {fileID: 1781042843}
+  animationFramesVacuum:
+  - {fileID: 859336924541835594, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
+  - {fileID: -323980274196010203, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
+  - {fileID: 7052950988462217166, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
+  animationFramesProcess:
+  - {fileID: 2001122480914150510, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 3574581659148283073, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 267414938351060633, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 1360953581521873401, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 3294727750208962225, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: -1912146434732319736, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 9075089013351039928, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: -4155576732128234449, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 7469399173025180065, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  - {fileID: 9045148880760284109, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
+  animationFramesIdle:
+  - {fileID: 859336924541835594, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
+  animationFramesEject:
+  - {fileID: -7075084435464655998, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
+  - {fileID: 1733638478748800963, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
+  - {fileID: 2484314659807849498, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
+  - {fileID: -3824106182099785941, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
+  - {fileID: -5006875119204520842, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
+  animationFramesPerSecond: 8
 --- !u!212 &1781042843
 SpriteRenderer:
   serializedVersion: 2
@@ -2522,8 +2547,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.8018868, g: 0.6035308, b: 0.17021184, a: 0.3372549}
+  m_Sprite: {fileID: 859336924541835594, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2541,7 +2566,7 @@ Transform:
   m_GameObject: {fileID: 1781042841}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.29, y: -2.5, z: 0}
+  m_LocalPosition: {x: -16.29, y: -1.54, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2581,11 +2606,11 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 2}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2.3205128, y: 2.9615386}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -2716,7 +2741,7 @@ Transform:
   m_GameObject: {fileID: 1807380257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.022222, y: 0.89993995, z: -10}
+  m_LocalPosition: {x: 6.2222223, y: 0.89993995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3462,6 +3487,10 @@ PrefabInstance:
     - target: {fileID: 8173031210116853265, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: Priority
       value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 8431526453316083615, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

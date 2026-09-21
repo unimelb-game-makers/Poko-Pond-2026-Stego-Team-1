@@ -1072,7 +1072,12 @@ public class SoftBodyPlayer : MonoBehaviour
 				bool underLimit = Mathf.Abs(rb.linearVelocity.x) < maxMoveSpeed ||
                                   Mathf.Sign(rb.linearVelocity.x) != Mathf.Sign(_hInput);
                 if (underLimit)
-                    rb.AddForce((new Vector2(_hInput * moveForce * forceMult, 0f)), ForceMode2D.Force);
+                    rb.AddForce((new Vector2(_hInput * moveForce * forceMult, 0f))* vaccumLaunchForce, ForceMode2D.Force);
+					if(vaccumLaunchForce.x > 1.0f) {
+						SetVisible(true);
+						SetFaceVisible(true);
+					}
+					vaccumLaunchForce = new Vector2(1.0f, 1.0f);
             }
             else
             {
@@ -1745,7 +1750,7 @@ public class SoftBodyPlayer : MonoBehaviour
     {
         isAffectedByVaccuum = newisAffectedByVaccuum;
         vaccuumPosition = newvaccuumPosition;
-    }
+	}
 
     public void vaccumPoints(Vector2 moveTowards)
     {
@@ -1753,16 +1758,23 @@ public class SoftBodyPlayer : MonoBehaviour
 		if (_rbs == null || _rbs.Length == 0) return;
 
         // Calculate the direction of movement/vaccuming
-        Vector2 vacuumDir = (moveTowards - new Vector2(transform.position.x, transform.position.y)).normalized;
+        Vector2 vacuumDir = (moveTowards - new Vector2(transform.position.x, transform.position.y+1)).normalized;
         // Perpendicular vector to create radial squeezing
         Vector2 perpDir = new Vector2(-vacuumDir.y, vacuumDir.x);
 
-		if(Mathf.Approximately(Mathf.Abs(perpDir.x), 1.0f)) {
+		//baseGravityScale = baseGravityScale*-1;
+
+		if(CustomApproximately(Mathf.Abs(perpDir.x), 1.0f, 0.001f)) {
 			isAffectedByVaccuum = false;
-			vaccumLaunchForce = new Vector2(4000.0f, 4000.0f);
+			vaccumLaunchForce = new Vector2(4000.0f, 4500.0f);
 			Debug.Log("LAUNCH");
+			SetVisible(false);
+			SetFaceVisible(false);
+			//baseGravityScale = baseGravityScale*-1;
 		} else {
 			vaccumLaunchForce = new Vector2(0.0f, 0.0f);
+			SetVisible(true);
+			SetFaceVisible(true);
 		}
 
         for (int i = 0; i < _rbs.Length; i++)
@@ -1807,4 +1819,14 @@ public class SoftBodyPlayer : MonoBehaviour
             }
         }
     }
+
+	public static bool CustomApproximately(float a, float b, float tolerance=0.000001f)
+	{
+    	return Mathf.Abs(b - a) < Mathf.Max(tolerance * Mathf.Max(Mathf.Abs(a), Mathf.Abs(b)), Mathf.Epsilon * 8f);
+	}
+
+	public bool getVacuumState() {
+		return isAffectedByVaccuum;
+	}
+
 }
