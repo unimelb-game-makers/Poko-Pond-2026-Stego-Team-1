@@ -206,7 +206,7 @@ public class SoftBodyPlayer : MonoBehaviour
     public float moveBobFrequency = 2f;
 
     // ── Animation — Rise ─────────────────────────────────────────────────
-    [Header("Animation — Rise  (Airborne, moving up)")]
+    [Header("Animation — Rise  (Airborne, `up)")]
     [Tooltip("How much the body stretches vertically while rising.")]
     public float riseStretchAmount = 0.08f;
     [Tooltip("How much the sides squeeze inward while rising.")]
@@ -1793,7 +1793,6 @@ public class SoftBodyPlayer : MonoBehaviour
 
     public void vaccumPoints(Vector2 moveTowards)
     {
-        Debug.Log("Affected");
 		if (_rbs == null || _rbs.Length == 0) return;
 
         // Calculate the direction of movement/vaccuming
@@ -1804,7 +1803,6 @@ public class SoftBodyPlayer : MonoBehaviour
 		if(CustomApproximately(Mathf.Abs(perpDir.x), 1.0f, 0.0001f)) {
 			isAffectedByVaccuum = false;
 			vaccumLaunchForce = new Vector2(4000.0f, 4500.0f);
-			Debug.Log("LAUNCH");
 			SetVisible(false);
 			SetFaceVisible(false);
 		} else {
@@ -1835,6 +1833,7 @@ public class SoftBodyPlayer : MonoBehaviour
             Vector2 totalForce = squeezeForce + pullForce;
 
             _rbs[i].AddForce(totalForce, ForceMode2D.Force);
+			_rbs[i].linearDamping = 15f;
         }
     }
 

@@ -86,10 +86,17 @@ public class PlatformDropThrough : MonoBehaviour
 
     private IEnumerator DisableCoroutine(Rigidbody2D body)
     {
-        _disabledBodies.Add(body);
-        body.simulated = false;
-        yield return new WaitForSeconds(passDuration);
-        if (body != null) body.simulated = true;
-        _disabledBodies.Remove(body);
+        if (body.TryGetComponent(out MovingPlatform rb))
+        {
+            yield return new WaitForSeconds(passDuration); // Do not disable simulation on moving platform, as that stops them from moving
+        }
+        else
+        {
+            _disabledBodies.Add(body);
+            body.simulated = false;
+            yield return new WaitForSeconds(passDuration);
+            if (body != null) body.simulated = true;
+            _disabledBodies.Remove(body);
+        }
     }
 }
