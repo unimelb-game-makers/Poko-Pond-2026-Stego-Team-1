@@ -377,7 +377,7 @@ public class SoftBodyPlayer : MonoBehaviour
 	// ── Private — PlayerBodyState ────────────────────────────────────────
     private PlayerBodyState bodystate = PlayerBodyState.Liquid;
     private Vector2 _surfaceVelocity;
-    
+
     // What the current active body colors are, options are/should be publically defined for each state
     public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
     public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
@@ -1074,7 +1074,11 @@ public class SoftBodyPlayer : MonoBehaviour
             {
                 if(isAffectedByVaccuum) {
 					 rb.linearVelocity = Vector2.zero;
+					 rb.linearDamping = 5f;
+					_hInput = 0f;
 					 continue;
+				} else {
+					rb.linearDamping = 0f;
 				}
 
 				bool underLimit = Mathf.Abs(rb.linearVelocity.x) < maxMoveSpeed ||
@@ -1440,7 +1444,7 @@ public class SoftBodyPlayer : MonoBehaviour
         	sortedGOs[i] = _pointGOs[sortedIdx];
             sortedOffsets[i] = _offsets[sortedIdx];
             sortedAngles[i] = _angles[sortedIdx];
-        
+
         	// Rename the objects so the Unity Hierarchy matches the new logical order
         	sortedGOs[i].name = $"SoftPoint{i}";
     	}
@@ -1797,15 +1801,12 @@ public class SoftBodyPlayer : MonoBehaviour
         // Perpendicular vector to create radial squeezing
         Vector2 perpDir = new Vector2(-vacuumDir.y, vacuumDir.x);
 
-		//baseGravityScale = baseGravityScale*-1;
-
-		if(CustomApproximately(Mathf.Abs(perpDir.x), 1.0f, 0.001f)) {
+		if(CustomApproximately(Mathf.Abs(perpDir.x), 1.0f, 0.0001f)) {
 			isAffectedByVaccuum = false;
 			vaccumLaunchForce = new Vector2(4000.0f, 4500.0f);
 			Debug.Log("LAUNCH");
 			SetVisible(false);
 			SetFaceVisible(false);
-			//baseGravityScale = baseGravityScale*-1;
 		} else {
 			vaccumLaunchForce = new Vector2(0.0f, 0.0f);
 			SetVisible(true);
