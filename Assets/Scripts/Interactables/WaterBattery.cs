@@ -33,7 +33,6 @@ public class WaterBattery : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(_animationState);
         _animationTimer += Time.deltaTime * animationFramesPerSecond;
         if (_animationTimer < 1f)
             return;
@@ -84,6 +83,7 @@ public class WaterBattery : MonoBehaviour
                     if (player.GetComponent<Rigidbody2D>().linearVelocity.x > 1.0f)
                     {
                         _animationState = 3;
+                        Debug.Log("STOP BATTERY");
                     }
                 }
             }

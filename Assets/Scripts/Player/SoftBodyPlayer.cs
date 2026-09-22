@@ -413,7 +413,7 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 surfaceStep = _surfaceVelocity * Time.fixedDeltaTime;
+		Vector2 surfaceStep = _surfaceVelocity * Time.fixedDeltaTime;
         _surfaceVelocity = Vector2.zero;
         if (_frozen) return;
 
@@ -1837,7 +1837,7 @@ public class SoftBodyPlayer : MonoBehaviour
         }
     }
 
-    public void launchPoints(Vector2 direction)
+    /*public void launchPoints(Vector2 direction)
     {
         if (_rbs == null || _rbs.Length == 0) return;
 
@@ -1850,10 +1850,10 @@ public class SoftBodyPlayer : MonoBehaviour
             if (rb != null)
             {
                 // Use Impulse mode for an immediate change in velocity, simulating a sudden launch/kick
-                rb.AddForce(launchDir * 10f, ForceMode2D.Impulse);
+                //rb.AddForce(launchDir * 10f, ForceMode2D.Impulse);
             }
         }
-    }
+    }*/
 
 	public static bool CustomApproximately(float a, float b, float tolerance=0.000001f)
 	{
