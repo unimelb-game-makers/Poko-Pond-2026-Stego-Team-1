@@ -4073,13 +4073,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2075056166}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b811e75b6efbf97c3ad0538d86a6434a, type: 3}
+  m_Script: {fileID: 11500000, guid: b016862b681843119bb4fbbc151981b6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::SceneTransitionTrigger
   targetScene: Area1-1
-  PlayerSoftBodyLayer:
-    serializedVersion: 2
-    m_Bits: 256
   targetSceneAsset: {fileID: 102900000, guid: 500ee69be929344a082642449c40ef18, type: 3}
 --- !u!61 &2075056170
 BoxCollider2D:

@@ -341,6 +341,7 @@ public class SoftBodyPlayer : MonoBehaviour
     private Vector2[]          _preSmoothB;
     private float[]            _neighborRestDist;
     private Vector2[]          _prevPositions;
+    private readonly Collider2D[] _groundHits = new Collider2D[4];
 
     // ── Private — Animation ──────────────────────────────────────────────
     private Vector2[] _animOffsets;   // per-point bias added to rest targets each frame
@@ -426,7 +427,6 @@ public class SoftBodyPlayer : MonoBehaviour
         // swept collision handling prevents transport through walls.
         if (surfaceStep != Vector2.zero)
             foreach (Rigidbody2D point in _rbs) point.position += surfaceStep;
-		ResolveCollisions();
         UpdateCenter();
         UpdateGravity();
         DetectGround();
@@ -436,6 +436,9 @@ public class SoftBodyPlayer : MonoBehaviour
         HandleGroundPound();
         EnforceLevelBounds();
         EnforceNeighborConstraints();
+        // Runs after every direct position write this step, so neither the solver nor
+        // _prevPositions ever receives a point that is still inside ground.
+        ResolveCollisions();
 
 		if(bodystate == PlayerBodyState.Liquid) {
 			ApplyRestoreForces();   // uses _animOffsets and _restoreMultiplier from previous tick
@@ -994,13 +997,11 @@ public class SoftBodyPlayer : MonoBehaviour
     private void ApplyConstantForce()
     {
         if (_constantForce.Equals(Vector2.zero)) return;
+        // Moved via rb.position, not the Transform: a pending Transform write is synced onto
+        // the body at simulation time and would discard ResolveCollisions' corrections.
+        Vector2 step = (Vector2)_constantForce * Time.fixedDeltaTime;
         for (int i = 0; i < pointCount; i++)
-        {
-            _rbs[i].gameObject.transform.position = new Vector2(
-                _rbs[i].position.x + _constantForce.x*Time.fixedDeltaTime,
-                _rbs[i].position.y + _constantForce.y*Time.fixedDeltaTime
-                );
-        }
+            _rbs[i].position += step;
     }
 
     private void ApplyRestoreForces()
@@ -1190,6 +1191,9 @@ public class SoftBodyPlayer : MonoBehaviour
     private void ResolveCollisions()
     {
         float checkR = pointRadius + 0.04f;
+        var groundFilter = new ContactFilter2D();
+        groundFilter.SetLayerMask(groundLayer);
+        groundFilter.useTriggers = Physics2D.queriesHitTriggers;
 
         for (int i = 0; i < pointCount; i++)
         {
@@ -1201,7 +1205,9 @@ public class SoftBodyPlayer : MonoBehaviour
             if (dist >= pointRadius)
             {
                 RaycastHit2D swept = Physics2D.CircleCast(prev, pointRadius, delta / dist, dist, groundLayer);
-                if (swept.collider != null)
+                // A zero-distance hit means prev was already overlapping — its centroid is prev
+                // itself, so snapping to it would pin the point inside. Left to the pass below.
+                if (swept.collider != null && swept.distance > 0f)
                 {
                     curr             = swept.centroid + swept.normal * 0.005f;
                     _rbs[i].position = curr;
@@ -1210,15 +1216,50 @@ public class SoftBodyPlayer : MonoBehaviour
                 }
             }
 
-            Collider2D hit = Physics2D.OverlapCircle(curr, checkR, groundLayer);
-            if (hit == null) continue;
+            int hitCount = Physics2D.OverlapCircle(curr, checkR, groundFilter, _groundHits);
+            if (hitCount == 0) continue;
 
-            ColliderDistance2D cd = _cols[i].Distance(hit);
-            if (cd.distance > -0.01f) continue;
+            // Ground tiles are separate colliders, so one tile's shortest exit can point into
+            // its neighbour across a seam. Take the smallest push that actually ends clear.
+            bool    embedded = false, cleared = false;
+            Vector2 target   = curr, deepPush = Vector2.zero;
+            float   deepest  = 0f;
+            for (int h = 0; h < hitCount; h++)
+            {
+                ColliderDistance2D cd = _cols[i].Distance(_groundHits[h]);
+                if (!cd.isValid || cd.distance > -0.01f) continue;
 
-            _rbs[i].position += cd.normal * cd.distance;
-            float vDot = Vector2.Dot(_rbs[i].linearVelocity, cd.normal);
-            if (vDot > 0f) _rbs[i].linearVelocity -= cd.normal * (vDot * 0.5f);
+                embedded = true;
+                Vector2 push = cd.normal * cd.distance;
+                if (cd.distance < deepest) { deepest = cd.distance; deepPush = push; }
+                if ((!cleared || push.sqrMagnitude < (target - curr).sqrMagnitude)
+                    && Physics2D.OverlapCircle(curr + push, pointRadius * 0.8f, groundLayer) == null)
+                {
+                    target  = curr + push;
+                    cleared = true;
+                }
+            }
+            if (!embedded) continue;
+
+            if (!cleared)
+            {
+                // Wedged at a seam or inner corner. The centroid sits outside the ground, so
+                // casting from it toward the point stops at the outer surface, never a seam.
+                target = curr + deepPush;
+                Vector2 toPoint = curr - _center;
+                float   len     = toPoint.magnitude;
+                if (len > 0.0001f)
+                {
+                    RaycastHit2D back = Physics2D.CircleCast(_center, pointRadius, toPoint / len, len, groundLayer);
+                    if (back.collider != null && back.distance > 0f)
+                        target = back.centroid + back.normal * 0.005f;
+                }
+            }
+
+            _rbs[i].position = target;
+            Vector2 outDir = (target - curr).normalized;
+            float   vIn    = Vector2.Dot(_rbs[i].linearVelocity, outDir);
+            if (vIn < 0f) _rbs[i].linearVelocity -= outDir * vIn;
         }
     }
 
