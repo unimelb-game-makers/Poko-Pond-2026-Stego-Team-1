@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [CustomEditor(typeof(PropTilemapSpawner))]
 public class PropTilemapSpawnerEditor : Editor
@@ -54,10 +55,17 @@ public class PropTilemapSpawnerEditor : Editor
                 // Connection ID field
                 EditorGUI.indentLevel++;
                 EditorGUILayout.PropertyField(connIdProp, new GUIContent("Connection ID"));
-                EditorGUILayout.PropertyField(connectionModeProp, new GUIContent("Connection Mode"));
-                EditorGUILayout.PropertyField(initialActiveProp, new GUIContent("Initial Active"));
+                var tile = ((PropTilemapSpawner)target).GetComponent<Tilemap>().GetTile<PropTile>(cell);
+                var door = tile != null && tile.prefab != null ? tile.prefab.GetComponent<Door>() : null;
+                if (door == null)
+                {
+                    EditorGUILayout.PropertyField(connectionModeProp, new GUIContent("Connection Mode"));
+                    EditorGUILayout.PropertyField(initialActiveProp, new GUIContent("Initial Active"));
+                }
+                else
+                    EditorGUILayout.LabelField("Door Type", door.Type.ToString());
 
-                if (propName == nameof(Door))
+                if (door != null)
                 {
                     EditorGUILayout.PropertyField(element.FindPropertyRelative("exitScene"), new GUIContent("Exit Scene"));
                     if (!string.IsNullOrEmpty(element.FindPropertyRelative("exitScene").stringValue))
