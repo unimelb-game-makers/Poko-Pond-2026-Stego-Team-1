@@ -690,6 +690,7 @@ public static class Area2SceneBuilder
         PropTile autoCrusher = EnsureFamiliarityCrusherTile();
         PropTile blower = LoadRequiredAsset<PropTile>("Assets/Tiles/Factory/Props/Blower_PropTile.asset");
         PropTile door = LoadRequiredAsset<PropTile>(MechanicAssetBuilder.DoorTilePath);
+        PropTile yellowDoor = LoadRequiredAsset<PropTile>(MechanicAssetBuilder.DoorTileFor(DoorType.Yellow));
 
         props.ClearAllTiles();
         List<PropPlacement> placements = new List<PropPlacement>
@@ -705,7 +706,7 @@ public static class Area2SceneBuilder
             new PropPlacement
             {
                 Cell = IntroExitDoorCell,
-                Tile = door,
+                Tile = yellowDoor,
                 ConnectionId = "intro_door",
                 ConnectionMode = ConnectionMode.Toggle,
                 InitialActive = false,
@@ -740,7 +741,7 @@ public static class Area2SceneBuilder
             new PropPlacement
             {
                 Cell = FamiliarityExitDoorCell,
-                Tile = door,
+                Tile = yellowDoor,
                 ConnectionId = "familiarity_crushers",
                 ConnectionMode = ConnectionMode.Toggle,
                 InitialActive = false,
@@ -808,7 +809,7 @@ public static class Area2SceneBuilder
             new PropPlacement
             {
                 Cell = ChallengeExitDoorCell,
-                Tile = door,
+                Tile = yellowDoor,
                 ConnectionId = "challenge_exit",
                 ConnectionMode = ConnectionMode.Toggle,
                 InitialActive = false,
@@ -1140,8 +1141,8 @@ public static class Area2SceneBuilder
                 errors.Add("PropTilemapSpawner.CellOverride is missing exact mechanics fields requirePlayerState and requiredPlayerState.");
             if (!typeof(IPropActivatable).IsAssignableFrom(typeof(AutoCrusherTrap)))
                 errors.Add("AutoCrusherTrap does not implement IPropActivatable in the loaded runtime assembly.");
-            if (!typeof(IPropActivatable).IsAssignableFrom(typeof(Door)))
-                errors.Add("Door does not implement IPropActivatable in the loaded runtime assembly.");
+            if (!typeof(IPropConnectable).IsAssignableFrom(typeof(Door)))
+                errors.Add("Door does not implement IPropConnectable in the loaded runtime assembly.");
             if (!typeof(IPropConnectable).IsAssignableFrom(typeof(PressurePlate)))
                 errors.Add("PressurePlate does not implement IPropConnectable in the loaded runtime assembly.");
             if (!HasOneShotCellOverrideContract())

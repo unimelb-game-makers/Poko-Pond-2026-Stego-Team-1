@@ -82,9 +82,9 @@ public static class SandboxMechanicsDemoBuilder
             originalOverrides[entry.FindPropertyRelative("cell").vector3IntValue] = entry.FindPropertyRelative("connectionId").stringValue;
         }
         Paint(props, overrides, Green, door, "", ConnectionMode.Hold, true, false);
-        Paint(props, overrides, Yellow, door, YellowId, ConnectionMode.Toggle, false, false);
+        Paint(props, overrides, Yellow, AssetDatabase.LoadAssetAtPath<PropTile>(MechanicAssetBuilder.DoorTileFor(DoorType.Yellow)), YellowId, ConnectionMode.Toggle, false, false);
         Paint(props, overrides, YellowPlate, plate, YellowId, ConnectionMode.Hold, true, true);
-        Paint(props, overrides, Red, door, RedId, ConnectionMode.Hold, false, false);
+        Paint(props, overrides, Red, AssetDatabase.LoadAssetAtPath<PropTile>(MechanicAssetBuilder.DoorTileFor(DoorType.Red)), RedId, ConnectionMode.Hold, false, false);
         Paint(props, overrides, RedPlate, plate, RedId, ConnectionMode.Hold, true, false);
         Paint(props, overrides, Splitter, machine, "", ConnectionMode.Hold, true, false);
         var spring = EnsureGallerySpringTile();
