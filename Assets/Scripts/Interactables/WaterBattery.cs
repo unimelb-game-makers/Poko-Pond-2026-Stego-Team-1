@@ -80,10 +80,9 @@ public class WaterBattery : MonoBehaviour
             {
                 if (!player.GetComponent<SoftBodyPlayer>().getVacuumState())
                 {
-                    if (player.GetComponent<Rigidbody2D>().linearVelocity.x > 1.0f)
+                    if (player.TryGetComponent<Rigidbody2D>(out var temprb))
                     {
-                        _animationState = 3;
-                        Debug.Log("STOP BATTERY");
+                        if(temprb.linearVelocity.x > 1.0f) _animationState = 3;
                     }
                 }
             }
