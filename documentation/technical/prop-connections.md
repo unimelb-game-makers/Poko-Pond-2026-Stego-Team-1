@@ -9,7 +9,7 @@ This document covers how triggers (activators: pressure plates, levers, buttons)
 | Term | Examples | Role |
 |------|---------|------|
 | **Activator** | PressurePlate, Lever, Button | Detects player interaction and fires an event |
-| **Activatee** | CrusherTrap, Evaporator, Condenser | Listens for events and reacts |
+| **Activatee** | Door, CrusherTrap, Evaporator, Condenser | Listens for events and reacts |
 | **Connection ID** | `"crusher_a"`, `"evap_01"` | Shared string that links one activator to one or more activatees |
 | **Connection Mode** | Hold, Toggle | How the activatee responds to the trigger |
 | **Initial Active** | true / false | Whether the activatee starts on or off before any trigger fires |
@@ -238,6 +238,9 @@ Give all activatee cells the same Connection ID. Every matching activatee reacts
 ### Multiple activators → one activatee
 Give all activator cells the same Connection ID as the activatee. Any one of them firing triggers it.
 
+### One-shot activator → permanently unlocked door
+Enable **One Shot** on the pressure-plate cell, then configure the door as **Toggle** with **Initial Active** disabled. The plate fires only once, so the yellow locked door becomes permanently green and opens whenever a player approaches.
+
 ### Always-on / always-off prop (no trigger)
 Leave Connection ID empty. Set `Initial Active` to the desired permanent state.
 
@@ -251,6 +254,7 @@ Skip `IPropConnectable`. Call `SetActivationConfig` from your own code or set `_
 | Script | Role | Implements | Connection Mode support |
 |--------|------|-----------|------------------------|
 | `PressurePlate` | Activator | `IPropConnectable` | — (fires events) |
+| `Door` | Activatee | `IPropConnectable`, `IPropActivatable` | Hold + Toggle, plus proximity opening |
 | `CrusherTrap` | Activatee | `IPropConnectable` | Hold only (internal) |
 | `AutoCrusherTrap` | Activatee | `IPropConnectable` | Hold only (internal) |
 | `Evaporator` | Activatee | `IPropConnectable`, `IPropActivatable` | Hold + Toggle |
