@@ -3165,7 +3165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropTilemapSpawner
   cellOverrides:
-  - propName: Door
+  - propName: GreenDoor
     cell: {x: 1, y: 5, z: 0}
     connectionId: 
     exitScene: 
@@ -3240,7 +3240,7 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
-  - propName: Door
+  - propName: YellowDoor
     cell: {x: 1, y: 1, z: 0}
     connectionId: familiarity_crushers
     exitScene: Area2-3
@@ -3773,8 +3773,8 @@ Tilemap:
   - first: {x: 5, y: 1, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 2
-      m_TileSpriteIndex: 2
+      m_TileIndex: 6
+      m_TileSpriteIndex: 6
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -3846,7 +3846,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 18cb21b27cdfd4d0eab49207f9c40c95, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 96e78d138049947d1b6835d2c5e1bb3c, type: 2}
-  - m_RefCount: 2
+  - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: d545b9f479cbdd743a28c832de99eede, type: 2}
   - m_RefCount: 3
     m_Data: {fileID: 11400000, guid: 2857c0e693d6db34bbb90258a07e50db, type: 2}
@@ -3854,12 +3854,14 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: a33180d82e788d645be5fce4ae79bd48, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: d992663b4b8acff4d962becec5b56340, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 0a0f44aadb55e6e40b2d4677d7b6fcc4, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: -6390778582831156625, guid: d00b8b383105b42ec830a8afb90cdf6d, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 4cb1eb4a03736474ebd1d481275eeb4e, type: 3}
-  - m_RefCount: 2
+  - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: f6a36517ae1dbe64c89d87e87696f31f, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: -9076132226850712986, guid: d2e693ebe8d10c2418229cea538922e3, type: 3}
@@ -3867,6 +3869,8 @@ Tilemap:
     m_Data: {fileID: 435880693994817966, guid: 62db529d15f5a3746988f19931446dca, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 8597122924375650967, guid: 37e749b6323f8fa4eb9eb12e1f33384c, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: bf2361d90e43c984cbbcdec4f3627eb9, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 22
     m_Data:

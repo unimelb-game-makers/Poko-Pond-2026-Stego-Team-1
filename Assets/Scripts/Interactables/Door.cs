@@ -3,9 +3,15 @@ using UnityEngine;
 // A colour-coded factory door. Green doors open when the player approaches;
 // yellow doors latch green after a toggle trigger; red doors remain green only
 // while their hold trigger is active.
+public enum DoorType { Green, Yellow, Red }
+
 [RequireComponent(typeof(Collider2D))]
-public class Door : MonoBehaviour, IPropConnectable, IPropActivatable
+public class Door : MonoBehaviour, IPropConnectable
 {
+    // Fixed by the selected door prefab, never by tilemap cell overrides.
+    [SerializeField, HideInInspector] private DoorType doorType;
+    public DoorType Type => doorType;
+
     [Header("Artwork")]
     [SerializeField] private SpriteRenderer doorRenderer;
     [SerializeField] private Sprite greenClosedSprite;
@@ -22,8 +28,6 @@ public class Door : MonoBehaviour, IPropConnectable, IPropActivatable
     [SerializeField, Min(0.01f)] private float frameDuration = 0.08f;
 
     private string _connectionId = "";
-    private ConnectionMode _connectionMode = ConnectionMode.Hold;
-    private bool _initialUnlocked = true;
     private bool _isUnlocked = true;
     private int _doorFrame;
     private int _unlockTransitionFrame = -1;
@@ -35,21 +39,11 @@ public class Door : MonoBehaviour, IPropConnectable, IPropActivatable
 
     public void SetConnectionId(string id) => _connectionId = id ?? "";
 
-    public void SetActivationConfig(ConnectionMode mode, bool initialActive)
-    {
-        _connectionMode = mode;
-        _initialUnlocked = initialActive;
-        _isUnlocked = initialActive;
-        _doorFrame = 0;
-        _unlockTransitionFrame = -1;
-        ApplyRestingSprite();
-        SetBlocked(true);
-    }
-
     private void Awake()
     {
         if (doorRenderer == null) doorRenderer = GetComponentInChildren<SpriteRenderer>();
         if (blockingCollider == null) blockingCollider = GetComponent<Collider2D>();
+        _isUnlocked = doorType == DoorType.Green;
         ApplyRestingSprite();
         SetBlocked(true);
     }
@@ -140,14 +134,14 @@ public class Door : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void OnTriggerActivated(string id)
     {
-        if (string.IsNullOrEmpty(_connectionId) || id != _connectionId) return;
+        if (doorType == DoorType.Green || string.IsNullOrEmpty(_connectionId) || id != _connectionId) return;
 
         bool wasUnlocked = _isUnlocked;
         // A yellow Toggle door is a permanent unlock, not a reversible switch.
         // This also makes multiple one-shot plates on the same connection safe:
         // later activations cannot turn an already-green door yellow again.
-        _isUnlocked = _connectionMode == ConnectionMode.Toggle ? true : !_initialUnlocked;
-        if (!wasUnlocked && _isUnlocked && _connectionMode == ConnectionMode.Toggle
+        _isUnlocked = true;
+        if (!wasUnlocked && _isUnlocked && doorType == DoorType.Yellow
             && yellowToGreenFrames != null && yellowToGreenFrames.Length > 0)
         {
             _unlockTransitionFrame = 0;
@@ -163,9 +157,9 @@ public class Door : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void OnTriggerDeactivated(string id)
     {
-        if (string.IsNullOrEmpty(_connectionId) || id != _connectionId) return;
-        if (_connectionMode == ConnectionMode.Toggle) return;
-        _isUnlocked = _initialUnlocked;
+        if (doorType == DoorType.Green || string.IsNullOrEmpty(_connectionId) || id != _connectionId) return;
+        if (doorType == DoorType.Yellow) return;
+        _isUnlocked = false;
         _unlockTransitionFrame = -1;
         _doorFrame = 0;
         ApplyRestingSprite();
@@ -178,7 +172,7 @@ public class Door : MonoBehaviour, IPropConnectable, IPropActivatable
         if (_isUnlocked)
             doorRenderer.sprite = greenClosedSprite;
         else
-            doorRenderer.sprite = _connectionMode == ConnectionMode.Toggle
+            doorRenderer.sprite = doorType == DoorType.Yellow
                 ? yellowClosedSprite
                 : redClosedSprite;
     }

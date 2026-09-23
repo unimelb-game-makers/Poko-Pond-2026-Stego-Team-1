@@ -3523,7 +3523,7 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
-  - propName: Door
+  - propName: GreenDoor
     cell: {x: 22, y: 1, z: 0}
     connectionId: 
     exitScene: 
@@ -3568,7 +3568,7 @@ MonoBehaviour:
     blowerStrength: 34
     blowerRange: 13
     blowerWidth: 3
-  - propName: Door
+  - propName: YellowDoor
     cell: {x: 36, y: 1, z: 0}
     connectionId: challenge_exit
     exitScene: Area3-1
@@ -3756,8 +3756,8 @@ Tilemap:
   - first: {x: 36, y: 1, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileIndex: 7
+      m_TileSpriteIndex: 7
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -3915,7 +3915,7 @@ Tilemap:
       m_AllTileFlags: 0
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 2
+  - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: d545b9f479cbdd743a28c832de99eede, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 9f7261404bad5474a8759b39b2372613, type: 2}
@@ -3929,8 +3929,10 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: d87650b057799a749a91b6ac07e45e38, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: d992663b4b8acff4d962becec5b56340, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 0a0f44aadb55e6e40b2d4677d7b6fcc4, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 2
+  - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: f6a36517ae1dbe64c89d87e87696f31f, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 1459526307, guid: 1a9b50e16f79841fe8d4cdbb8a38b513, type: 3}
@@ -3944,6 +3946,8 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: d28d3092fde2e4b4e8a3b90b526f7897, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 8597122924375650967, guid: 37e749b6323f8fa4eb9eb12e1f33384c, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: bf2361d90e43c984cbbcdec4f3627eb9, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 19
     m_Data:
