@@ -10,9 +10,9 @@ using UnityEngine.Tilemaps;
 // PropTiles, and keeps the relevant Tile Palette prefabs in sync.
 public static class MechanicAssetBuilder
 {
-    public const string DoorPrefabPath = "Assets/Prefabs/Props/Door.prefab";
+    public const string DoorPrefabPath = "Assets/Prefabs/Props/GreenDoor.prefab";
     public const string SplittingMachinePrefabPath = "Assets/Prefabs/Props/SplittingMachine.prefab";
-    public const string DoorTilePath = "Assets/Tiles/Factory/Props/Door_PropTile.asset";
+    public const string DoorTilePath = "Assets/Tiles/Factory/Props/GreenDoor_PropTile.asset";
     public const string SplittingMachineTilePath = "Assets/Tiles/Factory/Props/SplittingMachine_PropTile.asset";
 
     private const string GreenDoorPath = "Assets/Art/Environment/Props/Door/green_door.png";
@@ -37,23 +37,16 @@ public static class MechanicAssetBuilder
         ConfigureSpriteSheet(YellowToGreenDoorPath, 3, 32, 32, 32f, "yellow_to_green_door");
         ConfigureSingleSprite(SplittingMachineArtPath, 320f, new Vector2(0.5f, 155f / 640f));
 
-        Sprite greenDoor = LoadRequiredSprite(GreenDoorPath);
-        Sprite redDoor = LoadRequiredSprite(RedDoorPath);
-        Sprite yellowDoor = LoadRequiredSprite(YellowDoorPath);
-        Sprite[] openingFrames = LoadRequiredSprites(GreenDoorOpeningPath, 5);
-        Sprite[] unlockFrames = LoadRequiredSprites(YellowToGreenDoorPath, 3);
         Sprite splittingMachineSprite = LoadRequiredSprite(SplittingMachineArtPath);
 
-        GameObject door = BuildDoorPrefab(greenDoor, yellowDoor, redDoor, openingFrames, unlockFrames);
+        EnsureDoorAssets();
         GameObject splittingMachine = BuildSplittingMachinePrefab(splittingMachineSprite);
-        PropTile doorTile = CreateOrUpdatePropTile(DoorTilePath, door, greenDoor, new Vector3(0f, -0.5f, 0f));
         PropTile splittingTile = CreateOrUpdatePropTile(
             SplittingMachineTilePath,
             splittingMachine,
             splittingMachineSprite,
             new Vector3(0f, -0.5f, 0f));
 
-        AddTileToPalette(OneByOnePalettePath, doorTile);
         AddTileToPalette(TwoByTwoPalettePath, splittingTile);
 
         AssetDatabase.SaveAssets();
@@ -78,9 +71,10 @@ public static class MechanicAssetBuilder
         try
         {
             testObject.AddComponent<BoxCollider2D>();
-            Door door = testObject.AddComponent<Door>();
+            Door door = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(DoorPrefabFor(DoorType.Yellow))).GetComponent<Door>();
+            door.transform.SetParent(testObject.transform);
+            door.SendMessage("Awake");
             door.SetConnectionId("door_test");
-            door.SetActivationConfig(ConnectionMode.Toggle, false);
             InvokeDoorTrigger(door, "OnTriggerActivated", "other");
             Require(!door.IsUnlocked, "Door reacted to a non-matching connection ID.");
             InvokeDoorTrigger(door, "OnTriggerActivated", "door_test");
@@ -90,7 +84,11 @@ public static class MechanicAssetBuilder
             InvokeDoorTrigger(door, "OnTriggerDeactivated", "door_test");
             Require(door.IsUnlocked, "Toggle door incorrectly relocked on release.");
 
-            door.SetActivationConfig(ConnectionMode.Hold, false);
+            UnityEngine.Object.DestroyImmediate(door.gameObject);
+            door = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(DoorPrefabFor(DoorType.Red))).GetComponent<Door>();
+            door.transform.SetParent(testObject.transform);
+            door.SendMessage("Awake");
+            door.SetConnectionId("door_test");
             InvokeDoorTrigger(door, "OnTriggerActivated", "door_test");
             Require(door.IsUnlocked, "Hold door did not unlock while its activator was held.");
             InvokeDoorTrigger(door, "OnTriggerDeactivated", "door_test");
@@ -110,14 +108,34 @@ public static class MechanicAssetBuilder
         Debug.Log("[MechanicAssetBuilder] Mechanics validation passed.");
     }
 
+    public static string DoorPrefabFor(DoorType type) => $"Assets/Prefabs/Props/{type}Door.prefab";
+    public static string DoorTileFor(DoorType type) => $"Assets/Tiles/Factory/Props/{type}Door_PropTile.asset";
+
+    public static void EnsureDoorAssets()
+    {
+        foreach (DoorType type in Enum.GetValues(typeof(DoorType)))
+        {
+            Sprite green = LoadRequiredSprite(GreenDoorPath);
+            Sprite yellow = LoadRequiredSprite(YellowDoorPath);
+            Sprite red = LoadRequiredSprite(RedDoorPath);
+            GameObject prefab = BuildDoorPrefab(type, green, yellow, red,
+                LoadRequiredSprites(GreenDoorOpeningPath, 5), LoadRequiredSprites(YellowToGreenDoorPath, 3));
+            Sprite preview = type == DoorType.Green ? green : type == DoorType.Yellow ? yellow : red;
+            PropTile tile = CreateOrUpdatePropTile(DoorTileFor(type), prefab, preview, new Vector3(0f, -0.5f, 0f));
+            AddTileToPalette(OneByOnePalettePath, tile);
+        }
+        AssetDatabase.SaveAssets();
+    }
+
     private static GameObject BuildDoorPrefab(
+        DoorType type,
         Sprite green,
         Sprite yellow,
         Sprite red,
         Sprite[] openingFrames,
         Sprite[] unlockFrames)
     {
-        GameObject root = new GameObject("Door");
+        GameObject root = new GameObject(type + "Door");
         BoxCollider2D collider = root.AddComponent<BoxCollider2D>();
         collider.size = new Vector2(0.82f, 3f);
         collider.offset = new Vector2(0f, 1.5f);
@@ -126,11 +144,12 @@ public static class MechanicAssetBuilder
         visual.transform.SetParent(root.transform, false);
         visual.transform.localScale = new Vector3(3f, 3f, 1f);
         SpriteRenderer renderer = visual.AddComponent<SpriteRenderer>();
-        renderer.sprite = green;
+        renderer.sprite = type == DoorType.Green ? green : type == DoorType.Yellow ? yellow : red;
         renderer.sortingOrder = 40;
 
         Door door = root.AddComponent<Door>();
         SerializedObject serialized = new SerializedObject(door);
+        serialized.FindProperty("doorType").enumValueIndex = (int)type;
         serialized.FindProperty("doorRenderer").objectReferenceValue = renderer;
         serialized.FindProperty("greenClosedSprite").objectReferenceValue = green;
         serialized.FindProperty("yellowClosedSprite").objectReferenceValue = yellow;
@@ -140,7 +159,7 @@ public static class MechanicAssetBuilder
         serialized.FindProperty("blockingCollider").objectReferenceValue = collider;
         serialized.ApplyModifiedPropertiesWithoutUndo();
 
-        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, DoorPrefabPath);
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, DoorPrefabFor(type));
         UnityEngine.Object.DestroyImmediate(root);
         return prefab;
     }
@@ -254,6 +273,7 @@ public static class MechanicAssetBuilder
             AssetDatabase.CreateAsset(tile, path);
         }
 
+        tile.name = Path.GetFileNameWithoutExtension(path);
         tile.previewSprite = previewSprite;
         tile.prefab = prefab;
         tile.spawnOffset = spawnOffset;

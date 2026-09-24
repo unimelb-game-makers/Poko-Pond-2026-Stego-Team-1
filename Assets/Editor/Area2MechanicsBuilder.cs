@@ -243,7 +243,7 @@ public static class Area2MechanicsBuilder
         TileBase floor = AssetDatabase.LoadAssetAtPath<TileBase>("Assets/Tiles/Factory/Platforms/TileCenter.asset");
         PropTile door = AssetDatabase.LoadAssetAtPath<PropTile>(MechanicAssetBuilder.DoorTilePath);
         props.SetTile(new Vector3Int(32, 1), null);
-        props.SetTile(new Vector3Int(1, 1), door);
+        props.SetTile(new Vector3Int(1, 1), AssetDatabase.LoadAssetAtPath<PropTile>(MechanicAssetBuilder.DoorTileFor(DoorType.Yellow)));
         props.SetTile(new Vector3Int(1, 5), door);
         for (int x = -2; x <= 0; x++) solid.SetTile(new Vector3Int(x, 0), floor);
         for (int y = 1; y <= 3; y++)
