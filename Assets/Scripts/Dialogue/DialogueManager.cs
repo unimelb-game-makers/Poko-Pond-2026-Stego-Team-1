@@ -42,25 +42,18 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private KeyCode advanceKey = KeyCode.Z;
 
     [Header("Beep")]
-    [Tooltip("AudioSource on this GameObject used to play beeps.")]
-    [SerializeField] private AudioSource audioSource;
     [Tooltip("Short blip clip (~50 ms sine wave). Can be overridden per DialogueLine.")]
-    [SerializeField] private AudioClip defaultBeepClip;
+    [SerializeField] private string defaultBeepClip;
     [Tooltip("Play a beep every N characters. 1 = every character.")]
     [SerializeField] [Min(1)] private int beepFrequency = 1;
-    [Tooltip("Volume of the beep (0 = silent, 1 = full).")]
-    [SerializeField] [Range(0f, 1f)] private float beepVolume = 0.3f;
-    [Tooltip("Base pitch of the beep (1 = normal, lower = deeper).")]
-    [SerializeField] [Range(0.5f, 2f)] private float basePitch = 0.6f;
-    [Tooltip("Random ± pitch offset per beep for variety.")]
-    [SerializeField] [Range(0f, 0.5f)] private float pitchVariance = 0.1f;
+
 
     private DialogueLine[] _lines;
     private int            _lineIndex;
     private bool           _isTyping;
     private bool           _skipRequested;
     private Coroutine      _typingCoroutine;
-    private AudioClip      _currentBeepClip;
+    private string        _currentBeepClip;
 
     // Matches inline pause tags: {pause=0.5}
     private static readonly Regex PauseTag =
@@ -129,7 +122,7 @@ public class DialogueManager : MonoBehaviour
             portraitImage.gameObject.SetActive(line.portrait != null);
         }
 
-        _currentBeepClip = line.voiceOverride != null ? line.voiceOverride : defaultBeepClip;
+        _currentBeepClip = defaultBeepClip;
         float charDelay  = line.charDelayOverride > 0f ? line.charDelayOverride : defaultCharDelay;
 
         if (continueIndicator != null) continueIndicator.SetActive(false);
@@ -182,9 +175,7 @@ public class DialogueManager : MonoBehaviour
 
     private void PlayBeep()
     {
-        if (audioSource == null || _currentBeepClip == null) return;
-        audioSource.pitch = basePitch + Random.Range(-pitchVariance, pitchVariance);
-        audioSource.PlayOneShot(_currentBeepClip, beepVolume);
+        FMODUnity.RuntimeManager.PlayOneShot(_currentBeepClip);
     }
 
 
