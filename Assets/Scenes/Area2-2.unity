@@ -2466,6 +2466,71 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 4767708089411165913, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
   m_PrefabInstance: {fileID: 4406728791540306881}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1958803456
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.658011
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.1738672
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14.999996
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250540, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742251874388127090, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: m_Name
+      value: SceneTransitionTrigger
+      objectReference: {fileID: 0}
+    - target: {fileID: 8875165753210959790, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: targetScene
+      value: Area3-1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8875165753210959790, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
+      propertyPath: targetSceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 6943484706a354b37bbda745df4ff177, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1bb1478823324ed98d5c866b3939f625, type: 3}
 --- !u!1 &1978453955
 GameObject:
   m_ObjectHideFlags: 0
@@ -3166,7 +3231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PropTilemapSpawner
   cellOverrides:
   - propName: GreenDoor
-    cell: {x: 1, y: 5, z: 0}
+    cell: {x: 5, y: 5, z: 0}
     connectionId: 
     exitScene: 
     exitToLeft: 0
@@ -3226,7 +3291,7 @@ MonoBehaviour:
     blowerRange: 4
     blowerWidth: 1.5
   - propName: Humidifier
-    cell: {x: 0, y: 1, z: 0}
+    cell: {x: 2, y: 1, z: 0}
     connectionId: 
     exitScene: 
     exitToLeft: 0
@@ -3241,12 +3306,12 @@ MonoBehaviour:
     blowerRange: 4
     blowerWidth: 1.5
   - propName: YellowDoor
-    cell: {x: 1, y: 1, z: 0}
+    cell: {x: 5, y: 1, z: 0}
     connectionId: familiarity_crushers
-    exitScene: Area2-3
-    exitToLeft: 1
-    connectionMode: 1
-    initialActive: 0
+    exitScene: 
+    exitToLeft: 0
+    connectionMode: 0
+    initialActive: 1
     oneShot: 0
     requirePlayerState: 0
     requiredPlayerState: 1
@@ -3260,8 +3325,8 @@ MonoBehaviour:
     connectionId: familiarity_crushers
     exitScene: 
     exitToLeft: 0
-    connectionMode: 0
-    initialActive: 0
+    connectionMode: 1
+    initialActive: 1
     oneShot: 1
     requirePlayerState: 1
     requiredPlayerState: 1
@@ -3898,8 +3963,8 @@ Tilemap:
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 30, y: 6, z: 1}
+  m_Origin: {x: 2, y: 0, z: 0}
+  m_Size: {x: 28, y: 6, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -62755,3 +62820,4 @@ SceneRoots:
   - {fileID: 1186219173}
   - {fileID: 779094143}
   - {fileID: 669908008}
+  - {fileID: 1958803456}
