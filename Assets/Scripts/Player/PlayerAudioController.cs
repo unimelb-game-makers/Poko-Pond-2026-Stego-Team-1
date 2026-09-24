@@ -1,19 +1,15 @@
+using FMODUnity;
+using FMODUnityResonance;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerAudioController : MonoBehaviour
 {
-    [Header("Audio Sources")]
-    [Tooltip("Used for one-shot sounds like jumping and landing")]
-    public AudioSource sfxSource;
-    [Tooltip("Used for looping sounds like background music")]
-    public AudioSource loopSource;
+
 
     [Header("Audio Clips")]
-    public AudioClip jumpClip;
-    public AudioClip jumpAltClip;
-    public AudioClip landClip;
-    public AudioClip backgroundClip;
+    public FMODUnity.EventReference jumpClip;
+    public FMODUnity.EventReference landClip;
 
     [Header("Physics Triggers")]
     [Tooltip("Downward velocity required to trigger the falling sound")]
@@ -34,18 +30,6 @@ public class PlayerAudioController : MonoBehaviour
         // Access rigidbody for velocity tracking
         rb = GetComponent<Rigidbody2D>();
         softBodyPlayer = GetComponent<SoftBodyPlayer>();
-        
-        // Ensure the audio sources are properly configured
-        if (loopSource != null)
-        {
-            loopSource.clip = backgroundClip;
-            loopSource.loop = true;
-            loopSource.Play();
-        }
-        if (sfxSource != null)
-        {
-            sfxSource.loop = false;
-        }
     }
 
     void FixedUpdate()
@@ -67,17 +51,9 @@ public class PlayerAudioController : MonoBehaviour
             }
             else
             {
-                // Randomly pick one of two jump clips and apply a slight random pitch change, huge variety
-                if (Random.value > 0.5f) {
-                    sfxSource.pitch = Random.Range(0.9f, 1.1f);
-                    sfxSource.clip = jumpClip;
-                } else {
-                    sfxSource.pitch = Random.Range(0.9f, 1.1f);
-                    sfxSource.clip = jumpAltClip;
-                }
+                FMODUnity.RuntimeManager.PlayOneShot(jumpClip);
             }
-            
-            sfxSource.Play();
+
         }
 
         previousVelocity = velocity;
@@ -104,30 +80,11 @@ public class PlayerAudioController : MonoBehaviour
     // 3. JUMP TRIGGER: To be called when jumping
     public void TriggerJump()
     {
-        if (sfxSource != null && jumpClip != null && jumpAltClip != null)
-        {
-            if (Random.value > 0.5f) {
-            	sfxSource.clip = jumpClip;
-            	sfxSource.PlayOneShot(jumpClip);
-            } else {
-            	sfxSource.clip = jumpAltClip;
-            	sfxSource.PlayOneShot(jumpAltClip);
-            }
-        }
+        FMODUnity.RuntimeManager.PlayOneShot(jumpClip);
     }
 
     private void TriggerLanding()
     {
-        if (sfxSource != null && landClip != null)
-        {
-            if (!sfxSource.isPlaying || sfxSource.clip.name != landClip.name)
-            {
-                // Pitch randomization adds variety so the landing doesn't sound repetitive
-                sfxSource.pitch = Random.Range(0.9f, 1.1f);
-                sfxSource.PlayOneShot(landClip);
-                sfxSource.pitch = 1f; // reset pitch   
-            }
-        }
-        
+        FMODUnity.RuntimeManager.PlayOneShot(landClip);
     }
 }

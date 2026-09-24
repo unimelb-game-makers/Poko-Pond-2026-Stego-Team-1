@@ -1991,16 +1991,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
-  sfxSource: {fileID: 1407174355}
-  loopSource: {fileID: 1930542146}
-  jumpClip: {fileID: 8300000, guid: f04fced4e2be4eaabb646504ed8bc008, type: 3}
-  jumpAltClip: {fileID: 8300000, guid: c586a6aa4ab5a572aa4adc5d58c32e03, type: 3}
-  landClip: {fileID: 8300000, guid: 192ba2b3561d461c9a8af1713c47c332, type: 3}
-  backgroundClip: {fileID: 8300000, guid: df97e89f3d5e0a97f957effe9fe5a4b6, type: 3}
-  fallSpeedThreshold: 1
+  jumpClip:
+    Guid:
+      Data1: -865051838
+      Data2: 1235326095
+      Data3: 344783273
+      Data4: -98600502
+    Path: event:/Player Sounds/SFX_Jump
+  landClip:
+    Guid:
+      Data1: 287156523
+      Data2: 1178529108
+      Data3: -616443462
+      Data4: -1279063620
+    Path: event:/Player Sounds/SFX_Land
+  fallSpeedThreshold: -5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
 --- !u!50 &1321637136
 Rigidbody2D:
   serializedVersion: 5
@@ -2277,11 +2285,6 @@ Transform:
   - {fileID: 585446337}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &1407174355 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 8173031210116853265, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-  m_PrefabInstance: {fileID: 4406728791540306881}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1515548963
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3061,10 +3064,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1807380261}
   - component: {fileID: 1807380260}
-  - component: {fileID: 1807380259}
   - component: {fileID: 1807380258}
   - component: {fileID: 1807380262}
   - component: {fileID: 1807380263}
+  - component: {fileID: 1807380264}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3106,14 +3109,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!81 &1807380259
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1807380257}
-  m_Enabled: 1
 --- !u!20 &1807380260
 Camera:
   m_ObjectHideFlags: 0
@@ -3174,7 +3169,7 @@ Transform:
   m_GameObject: {fileID: 1807380257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.220888, y: 0.89993995, z: -10}
+  m_LocalPosition: {x: 17.69768, y: 0.8999493, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3250,6 +3245,37 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!114 &1807380264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807380257}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1514754520
+      Data2: 1279696546
+      Data3: -242731356
+      Data4: -1352130399
+    Path: event:/Demo Lab Loop
+  Event: 
+  EventPlayTrigger: 1
+  EventStopTrigger: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!114 &1907246147 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2957998122547593901, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
@@ -3261,11 +3287,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!82 &1930542146 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 4767708089411165913, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-  m_PrefabInstance: {fileID: 4406728791540306881}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1942695586
 GameObject:
   m_ObjectHideFlags: 0
@@ -75173,11 +75194,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6095060860373950192, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: m_ChunkCullingBounds.x
-      value: 0.46875
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6095060860373950192, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: m_ChunkCullingBounds.y
-      value: 0
+      value: 1.015625
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.size
