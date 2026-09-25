@@ -28,6 +28,10 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
     [Tooltip("Size of the zone where the player is crushed.")]
     [SerializeField] private Vector2 crushSize = new Vector2(2f, 1f);
 
+    [Header("Effects")]
+    [Tooltip("Played once at the moment of impact.")]
+    [SerializeField] private ParticleSystem impactParticles;
+
     private const int SlamFrameCount = 4;
 
     // Called by PropTilemapSpawner — sets the plate id this crusher listens for.
@@ -116,6 +120,8 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
             // Kill check at impact
             Vector2 worldCenter = (Vector2)transform.position + crushCenter;
             PlayerLife.KillAllSolidInBox(worldCenter, crushSize);
+            if (impactParticles != null)
+                impactParticles.Play();
 
             // Retract: frames 5→26
             int retractFrameCount = Mathf.Max(0, frames.Length - SlamFrameCount);
