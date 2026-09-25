@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
+public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable, IPropPowered
 {
     [Header("Trigger")]
     [Tooltip("Plate Id of the PressurePlate linked to this crusher. Must match exactly.")]
@@ -35,6 +35,7 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private SpriteRenderer _sprite;
     private bool _isActive = true;
+    public bool IsPowered => _isActive;
     private bool _initialActive = true;
     private ConnectionMode _connectionMode = ConnectionMode.Hold;
 
