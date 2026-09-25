@@ -258,6 +258,90 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &6507647302429276789
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5418363710442492007}
+  - component: {fileID: 7265675086216495811}
+  m_Layer: 0
+  m_Name: PlayerGlow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5418363710442492007
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6507647302429276789}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5125889657724887874}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7265675086216495811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6507647302429276789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.Light2D
+  m_ComponentVersion: 2
+  m_LightType: 3
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.6
+  m_Color: {r: 0.6, g: 0.85, b: 1, a: 1}
+  m_Intensity: 0.7
+  m_LightVolumeIntensity: 1
+  m_LightVolumeEnabled: 0
+  m_ApplyToSortingLayers: 1d8ebba400000000
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowsEnabled: 1
+  m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0.3
+  m_ShadowSoftnessFalloffIntensity: 0.5
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 3.5
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &7687343749860754848
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,6 +358,7 @@ GameObject:
   - component: {fileID: 5635439805024734902}
   - component: {fileID: 5289004033044655933}
   - component: {fileID: 1692660458411853611}
+  - component: {fileID: 1142662325528302811}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -296,6 +381,7 @@ Transform:
   m_Children:
   - {fileID: 708282786049390763}
   - {fileID: 8743276310368114453}
+  - {fileID: 5418363710442492007}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7446015006764505718
@@ -384,6 +470,8 @@ MonoBehaviour:
   airControlFraction: 0.4
   passiveDragFraction: 0.15
   jumpForce: 15
+  liquidJumpForce: 13.5
+  solidJumpForce: 0
   baseGravityScale: 3
   maxGravityScale: 7
   gravityRampRate: 4
@@ -405,8 +493,10 @@ MonoBehaviour:
   sortingOrder: 0
   subdivisionsPerSegment: 4
   meshSmoothingPasses: 4
-  bodyInnerColor: {r: 0.52, g: 0.8, b: 1, a: 1}
-  bodyOuterColor: {r: 0.18, g: 0.52, b: 0.88, a: 1}
+  liquidbodyInnerColor: {r: 0.52, g: 0.8, b: 1, a: 1}
+  liquidbodyOuterColor: {r: 0.18, g: 0.52, b: 0.88, a: 1}
+  solidbodyInnerColor: {r: 0.52, g: 0.8, b: 1, a: 1}
+  solidbodyOuterColor: {r: 0.18, g: 0.52, b: 0.88, a: 1}
   highlightColor: {r: 1, g: 1, b: 1, a: 0.55}
   highlightScale: 0.38
   highlightOffset: {x: -0.05, y: 0.1}
@@ -448,6 +538,8 @@ MonoBehaviour:
   PressureSquashBlend: 0
   ActivateSquashBlend: 0
   WiggleBlend: 0
+  bodyInnerColor: {r: 0.52, g: 0.8, b: 1, a: 1}
+  bodyOuterColor: {r: 0.18, g: 0.52, b: 0.88, a: 1}
 --- !u!114 &8263349199459693501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -510,3 +602,16 @@ MonoBehaviour:
   passDuration: 0.3
   passProbeDistance: 0.4
   passUpVelocityThreshold: 3
+--- !u!114 &1142662325528302811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687343749860754848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ff435785a6934358880c02f2d55248c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGlow
+  glow: {fileID: 7265675086216495811}
