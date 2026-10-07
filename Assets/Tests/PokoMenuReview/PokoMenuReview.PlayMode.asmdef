@@ -1,0 +1,8 @@
+{
+  "name": "PokoMenuReview.PlayMode",
+  "references": ["UnityEngine.UI"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "autoReferenced": false
+}
