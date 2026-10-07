@@ -196,6 +196,10 @@ PrefabInstance:
       value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 681401722014526942, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+      propertyPath: m_text
+      value: CASCADE
+      objectReference: {fileID: 0}
+    - target: {fileID: 681401722014526942, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4293446873
       objectReference: {fileID: 0}
