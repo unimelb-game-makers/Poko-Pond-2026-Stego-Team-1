@@ -14,6 +14,25 @@ Design source: *Poko Pond Level Design Layout*, p.9 (Areas 3–4).
 | Before the Splitting Machine | Idle — no suction | Works with a whole droplet |
 | Two halves enter | — | Merged inside, launched out as one whole droplet |
 
+## Design decisions
+
+| Decision | Why |
+|---|---|
+| Reuse the pressure-plate events | Doors, conveyors, crushers and grates work unchanged; a plate and a battery are interchangeable. |
+| Hold or one-shot, per battery | The doc needs both ("must keep running" for fans, a door that stays open). |
+| Exit with Left/Right, angle + speed per cell | Area 3 puzzles depend on launch arcs; designers tune each gap. |
+| Small battery auto-splits a whole droplet; the other half gets control | Doc: "takes half of the player"; Area 3 Intro exits with the other half. |
+| Idle until the Splitting Machine is used | Doc: the battery "won't do anything" before the splitter. |
+| Big battery: whole droplet counts as both halves; halves merge inside | Same amount of water; doc reunites halves inside the battery. |
+| Parked droplets are frozen, hidden, non-colliding | The old "invisible but live" body could be hit or re-sucked. |
+| Parked half can be Tab-selected and never auto-merges | Lets the player eject it without the passing half pulling it out. |
+| Rewrite the battery, keep the suction squeeze | The old code had fragile capture and a 4000× launch hack in movement code. |
+| Sprites at 32 PPU, bottom pivot | Project standard; fits the 2x2 palette. Big battery uses scaled + tinted art until real art exists. |
+| Placed via the Props tile palette | Same workflow as every other prop (`add-props.md`). |
+| Area 3 follows the doc: stand-in plates → batteries | The doc has no plates in these rooms; ids were moved to what the doc says each battery powers. |
+| Blower / MovingPlatform made switchable | Area 3-2 needs batteries to drive fans and the platform. Empty id = old always-on behaviour. |
+| Scene edits through re-runnable builders | Area 3 scenes are also edited on `feat/lighting-ambience`; re-run instead of hand-merging. |
+
 ## Behaviour
 
 ```
