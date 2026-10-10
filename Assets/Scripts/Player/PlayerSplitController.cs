@@ -318,6 +318,8 @@ public class PlayerSplitController : MonoBehaviour
         sp.meshSmoothingPasses    = mainPlayer.meshSmoothingPasses;
         sp.bodyInnerColor         = mainPlayer.bodyInnerColor;
         sp.bodyOuterColor         = mainPlayer.bodyOuterColor;
+        sp.liquidbodyInnerColor   = mainPlayer.liquidbodyInnerColor;
+        sp.liquidbodyOuterColor   = mainPlayer.liquidbodyOuterColor;
         sp.highlightColor         = mainPlayer.highlightColor;
         sp.highlightScale         = mainPlayer.highlightScale;
         sp.highlightOffset        = mainPlayer.highlightOffset;

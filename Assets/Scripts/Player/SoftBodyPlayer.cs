@@ -119,7 +119,6 @@ public class SoftBodyPlayer : MonoBehaviour
     [Tooltip("Upward velocity (m/s) added to every ring point on jump.")]
     public float jumpForce = 13.5f;
 
-    public float liquidJumpForce = 13.5f;
     public float solidJumpForce = 0.0f;
 
     [Header("Gravity")]
@@ -383,10 +382,19 @@ public class SoftBodyPlayer : MonoBehaviour
     public Color bodyInnerColor = new Color(0.52f, 0.80f, 1.00f);
     public Color bodyOuterColor = new Color(0.18f, 0.52f, 0.88f);
 
+    // Liquid shape this body spawned with. Restored on return to liquid, so split
+    // droplets stay half-size and the main player keeps its configured jump.
+    private int   _liquidPointCount;
+    private float _liquidBodyRadius;
+    private float _liquidJumpForce;
+
     // ─────────────────────────────────────────────────────────────────────
 
     private void Awake()
     {
+        _liquidPointCount = pointCount;
+        _liquidBodyRadius = bodyRadius;
+        _liquidJumpForce  = jumpForce;
         initBody();
         SetupFace();
     }
@@ -1809,9 +1817,9 @@ public class SoftBodyPlayer : MonoBehaviour
             }
             else
             {
-                pointCount = 30;
-                bodyRadius = 0.5f;
-                jumpForce = liquidJumpForce;
+                pointCount = _liquidPointCount;
+                bodyRadius = _liquidBodyRadius;
+                jumpForce = _liquidJumpForce;
                 bodyInnerColor = liquidbodyInnerColor;
                 bodyOuterColor = liquidbodyOuterColor;
             }
@@ -1821,6 +1829,25 @@ public class SoftBodyPlayer : MonoBehaviour
             TeleportTo(respawnPoint, exitVelocity);
         }
 	}
+
+    // Converts where the body currently is, keeping its momentum. Used by walk-through
+    // stations (Humidifier, Evaporator) so the change never teleports or launches the player.
+    public void changeBodyStateInPlace(PlayerBodyState newState)
+    {
+        if (newState == bodystate || _rbs == null) return;
+        Vector2 centre   = Vector2.zero;
+        Vector2 velocity = Vector2.zero;
+        int     count    = 0;
+        foreach (Rigidbody2D point in _rbs)
+        {
+            if (point == null || !point.simulated) continue;
+            centre   += point.position;
+            velocity += point.linearVelocity;
+            count++;
+        }
+        if (count == 0) return;
+        changeBodyState(newState, centre / count, velocity / count);
+    }
 
 	public PlayerBodyState getBodyState() {
 		return bodystate;
