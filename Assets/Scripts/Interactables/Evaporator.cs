@@ -1,11 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /*
  * OVERVIEW
- *   Evaporator prop — currently logs when the player enters/exits its detection zone.
- *   Gas-cloud transformation is not implemented; this is a placeholder for the future mechanic.
+ *   Evaporator prop — the level design's Heater. Stand on it as ice to melt back
+ *   into a water drop. Pairs with the Freezer (Condenser) for in-room state puzzles;
+ *   the Humidifier does the same reset unconditionally at room exits.
  *   Placed via the Props tilemap using a PropTile asset; spawned at runtime by PropTilemapSpawner.
- *   Burst velocity is always straight up.
+ *
+ * CONVERSION
+ *   Any body on the evaporator that is not already in valueToChangeTo (Liquid on the
+ *   prefab) converts in place, keeping its momentum. Resolves the body actually
+ *   touching it, so split droplets convert individually.
  *
  * TOGGLE (optional)
  *   Set a Connection ID on the PropTile that matches a PressurePlate's Connection ID.
@@ -19,8 +25,8 @@ using UnityEngine;
  *   The parameter is driven automatically on Start and whenever the toggle state changes.
  *
  * DETECTION
- *   OverlapBoxAll on "Player" and "SoftBodyPoint" layers each frame.
- *   Logging is edge-triggered — fires once on enter and once on exit.
+ *   OverlapBoxAll on "Player" and "SoftBodyPoint" layers each frame, in a zone just
+ *   above the collider's top surface.
  *
  * SETUP
  *   1. Add a SpriteRenderer, Animator, and BoxCollider2D to the prefab.
@@ -29,13 +35,13 @@ using UnityEngine;
  */
 public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 {
-    [Header("Burst")]
-    [Tooltip("Speed of the upward velocity burst applied to the gas cloud at the moment of evaporation.")]
-    [SerializeField] private float burstSpeed = 4f;
-
     [Header("Detection")]
     [Tooltip("Height of the overlap zone above the collider top. Increase if activation flickers on approach.")]
     [SerializeField] private float detectionHeight = 0.6f;
+
+    [Header("Conversion")]
+    [Tooltip("State applied to bodies on the evaporator. Liquid for the Heater.")]
+    public PlayerBodyState valueToChangeTo = PlayerBodyState.Liquid;
 
     // ── Private ─────────────────────────────────────────────────────────────
 
@@ -46,13 +52,8 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
     private Animator         _animator;
     private Vector2          _detectionCenter;
     private Vector2          _detectionSize;
-    private bool             _playerOver;     // edge-triggered logging — only fire on enter
-	private GameObject 		 _player;
+    private readonly HashSet<SoftBodyPlayer> _visitors = new();
 
-	// Public Interface ──────────────────────────────────────────────────
-	public LayerMask PlayerSoftBodyLayer;
-    public PlayerBodyState valueToChangeTo;
-	
     private static readonly int IsActiveHash = Animator.StringToHash("IsActive");
 
     // Called by PropTilemapSpawner — sets the trigger id this evaporator listens for.
@@ -76,8 +77,6 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
     {
         // Drive initial animator state — covers the case where SetActivationConfig was not called
         SetAnimatorState(_isActive);
-
-		_player = GameObject.FindWithTag("Player");
 
         var col = GetComponent<Collider2D>();
         if (col == null)
@@ -129,22 +128,16 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Update()
     {
-        if (!_isActive) { _playerOver = false; return; }
+        if (!_isActive || Time.timeScale == 0f) return;
 
-        bool present = Physics2D.OverlapBox(
-            _detectionCenter, _detectionSize, 0f,
-            LayerMask.GetMask("Player", "SoftBodyPoint")) != null;
-
-        if (present && !_playerOver)
+        _visitors.Clear();
+        foreach (Collider2D hit in Physics2D.OverlapBoxAll(_detectionCenter, _detectionSize, 0f,
+                     LayerMask.GetMask("Player", "SoftBodyPoint")))
         {
-            _playerOver = true;
-            Debug.Log($"[Evaporator] Player entered (id='{_connectionId}')", this);
-			_player.GetComponent<SoftBodyPlayer>().changeBodyState(valueToChangeTo, new Vector2(transform.position.x, transform.position.y+0.5f));
-        }
-        else if (!present && _playerOver)
-        {
-            _playerOver = false;
-            Debug.Log($"[Evaporator] Player exited (id='{_connectionId}')", this);
+            SoftBodyPlayer player = hit.GetComponent<SoftBodyPointRef>()?.owner;
+            if (player == null) player = hit.GetComponentInParent<SoftBodyPlayer>();
+            if (player == null || !_visitors.Add(player)) continue;
+            player.changeBodyStateInPlace(valueToChangeTo);
         }
     }
 
