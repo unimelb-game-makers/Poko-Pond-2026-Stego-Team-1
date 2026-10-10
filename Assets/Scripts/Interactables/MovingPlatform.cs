@@ -1,8 +1,20 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MovingPlatform : MonoBehaviour
+public class MovingPlatform : MonoBehaviour, IPropConnectable, IPropActivatable
 {
+    [Header("Activation")]
+    // Leave Connection Id empty for a platform that always moves. When linked to an
+    // activator (pressure plate / water battery) it only moves while active.
+    [SerializeField] private PropActivation activation = new PropActivation();
+    public bool IsActive => activation.Active;
+
+    public void SetConnectionId(string id) => activation.connectionId = id ?? "";
+    public void SetActivationConfig(ConnectionMode mode, bool initialActive) => activation.Configure(mode, initialActive);
+
+    private void OnEnable() => activation.Bind(null);
+    private void OnDisable() => activation.Unbind();
+
     [Header("Movement Mode")]
     // Toggle between linear and circular motion modes.
     [SerializeField] private bool useCircularMotion = false;
@@ -118,6 +130,7 @@ public class MovingPlatform : MonoBehaviour
     }
 
 	public Vector2 getUnifiedVelocity() {
+		if (!activation.Active) return Vector2.zero;
 		if (useCircularMotion)
 		{
 			// Calculate angular velocity in radians per second. 
@@ -141,7 +154,12 @@ public class MovingPlatform : MonoBehaviour
 
     void FixedUpdate()
     {		
-    	if (useCircularMotion)
+    	if (!activation.Active)
+    	{
+    		// Switched off: hold position. Circular platforms simply stop advancing.
+    		if (rb != null) rb.linearVelocity = Vector2.zero;
+    	}
+    	else if (useCircularMotion)
     	{	
     		// Update angle based on fixed timestep            
             currentAngle += angleIncrementPerFrame * Time.fixedDeltaTime; 

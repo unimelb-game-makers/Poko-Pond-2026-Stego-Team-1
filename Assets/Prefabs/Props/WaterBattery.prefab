@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8662344507862011182}
   - component: {fileID: 7186230122114940486}
   - component: {fileID: 613720306691449309}
-  - component: {fileID: 3509909680394981724}
   m_Layer: 0
   m_Name: WaterBattery
   m_TagString: Untagged
@@ -28,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 4301274408462652597}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.29, y: -1.54, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -81,7 +80,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 859336924541835594, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -105,12 +104,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a071a5d15f0898edb277865cb06425c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  Players: []
-  PlayerSoftBodyLayer:
-    serializedVersion: 2
-    m_Bits: 256
+  batteryId: 
+  oneShot: 0
+  size: 0
+  suctionOffset: {x: 0, y: 0.9}
+  suctionSize: {x: 3.2, y: 2.2}
+  intakeOffset: {x: 0, y: 1.35}
+  captureRadius: 0.35
+  maxSuctionTime: 1.25
+  launchSpeed: 9
+  launchAngle: 30
+  exitOffset: {x: 1.1, y: 0}
+  cooldownDuration: 1
   fanRenderer: {fileID: 7186230122114940486}
-  animationFramesVacuum:
+  animationFramesIdle:
   - {fileID: 859336924541835594, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
   - {fileID: -323980274196010203, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
   - {fileID: 7052950988462217166, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
@@ -125,8 +132,8 @@ MonoBehaviour:
   - {fileID: -4155576732128234449, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
   - {fileID: 7469399173025180065, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
   - {fileID: 9045148880760284109, guid: 65355b6ac382ef6ccb29711f08dbf112, type: 3}
-  animationFramesIdle:
-  - {fileID: 859336924541835594, guid: 9d2d161deaeeff38ca9ce246301b54ac, type: 3}
+  runningLoopStart: 7
+  holdingFrame: 5
   animationFramesEject:
   - {fileID: -7075084435464655998, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
   - {fileID: 1733638478748800963, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
@@ -134,49 +141,4 @@ MonoBehaviour:
   - {fileID: -3824106182099785941, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
   - {fileID: -5006875119204520842, guid: 652a76e880eedb7dc845f26ad44a73bf, type: 3}
   animationFramesPerSecond: 8
---- !u!61 &3509909680394981724
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4301274408462652597}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 1.982441}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.3205128, y: 2.9615386}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 8, y: 7}
-  m_EdgeRadius: 0
+  suctionAnimationSpeedup: 2

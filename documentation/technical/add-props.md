@@ -287,7 +287,7 @@ The trampoline does not require a Connection ID. Its solid BoxCollider2D forms t
 | Detection | `OverlapBoxAll` on the `SoftBodyPoint` layer; split bodies are handled independently |
 | Artwork | `fan.png`, sliced into four 32×32 frames and looped continuously at 8 FPS |
 
-The blower has no pulse, interval, or activation cycle: its wind remains active continuously. Its effect is direction-based acceleration rather than a fixed speed:
+By default the blower has no pulse, interval, or activation cycle: its wind remains active continuously. It can be linked to an activator (pressure plate or water battery) through its **Activation** block or the cell's Connection ID / Mode / Initial Active; while switched off it neither blows nor spins. Its effect is direction-based acceleration rather than a fixed speed:
 
 - Wind pointing in the same direction as the player's movement speeds the player up.
 - Wind pointing against the player's movement slows the player down. Enough strength can halt the current movement and then push the player back in the wind direction.
@@ -299,6 +299,23 @@ The supplied fan artwork faces right. Its four-frame animation loops continuousl
 `PropTilemapSpawner` respects painted tile rotation. Rotate a blower tile in the Tile Palette to rotate the spawned prefab and its wind direction without creating another prefab.
 
 For different settings per painted cell, select the object containing `PropTilemapSpawner`, run **Sync Cell List**, enable **Override Blower Settings** on that Blower entry, and set its **Blow Direction** and **Blow Strength**. Common direction values are right `(1, 0)`, left `(-1, 0)`, up `(0, 1)`, and down `(0, -1)`. Leave the override disabled to use the prefab defaults.
+
+### Water Battery (2x2 palette — small ~1.5×1.8 tiles, big ~2.2×2.8 tiles)
+
+| Field | Value |
+|-------|-------|
+| Tile assets | `WaterBattery_PropTile`, `BigWaterBattery_PropTile` |
+| Palette | `2x2` |
+| Prefabs | `WaterBattery`, `BigWaterBattery` (variant: 1.5× scale, tinted) |
+| Sprite pivot | Bottom centre; Spawn Offset `(0, -0.5, 0)` |
+| Sorting Order | 10 (draws over the droplet being sucked in) |
+| Implements | `IPropConnectable`, `IPropOneShotConfigurable`, `IPropBatteryLaunchConfigurable` |
+| Role | Activator — fires `OnPressurePlateActivated` / `OnPressurePlateDeactivated` with its connection id while running |
+| One Shot | Off: powered only while occupied. On: stays powered after the first run |
+| Per-cell override | **Override Battery Launch** → launch speed and upward angle |
+| Detection | `OverlapBox` suction zone on `"Player"` + `"SoftBodyPoint"`; liquid bodies only |
+
+See [`water-battery.md`](water-battery.md) for the full behaviour (auto-split, merging, cooldown).
 
 ---
 
