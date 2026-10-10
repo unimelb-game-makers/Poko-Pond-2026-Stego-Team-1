@@ -35,3 +35,31 @@ starts the player at the shaft floor and reaches the gallery through three real
 spring contacts, with only horizontal steering supplied by the probe (no vertical
 velocity injection or mid-climb teleports). Subsequent focused mechanic tests
 position actors by teleport. Preview images include the gallery and ascent shaft.
+
+# Sandbox water battery demos
+
+Built by **Tools → Poko Pond → Sandbox → Add Water Battery Demos**
+(`SandboxWaterBatteryDemoBuilder`). It lives in the starting cave right of the
+spawn (floor at y=-7), clear of the WELCOME panel and of the floor blowers at
+(-25,-7)/(-24,-7). The builder also removes the old hand-placed `WaterBattery`
+that used to sit on the grate platform near (-16,-2).
+
+| Prop cell | Demo | Connection |
+| --- | --- | --- |
+| (-32,-6) | Small battery: takes half; a whole droplet is split for you | `sandbox_battery_small` |
+| (-30,-2) | Red door on a thin ledge, open while the small battery runs | `sandbox_battery_small` |
+| (-28,-6) | Big battery: needs both halves or the whole droplet | `sandbox_battery_big` |
+| (-27,-2) | Red door on the same ledge, open while the big battery runs | `sandbox_battery_big` |
+
+The small battery stays idle until the splitter in the top gallery has been used.
+The builder only paints empty cells, refuses to build if a scene-placed collider
+overlaps the demo area, and verifies every existing tile and connection ID is
+unchanged before saving.
+
+To verify in Play Mode, close the editor and run
+`SandboxWaterBatteryDemoBuilder.ValidateBatch` with `-batchmode` (without `-quit`
+or `-nographics`). `WaterBatteryDemoProbe` checks: idle while splitting is locked,
+solid bodies ignored, auto-split with control handed to the expelled half, no
+auto-merge with a parked half, eject launch direction, hold doors relocking,
+big-battery holding/merging, whole droplet counting as both halves, parked bodies
+hidden, and the post-eject cooldown. It writes `sandbox-battery-demo.png`.

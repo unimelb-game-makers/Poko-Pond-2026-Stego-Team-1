@@ -319,7 +319,6 @@ public class SoftBodyPlayer : MonoBehaviour
 
     private bool isAffectedByVaccuum = false;
     private Vector2 vaccuumPosition = new Vector2(0, 0);
-	private Vector2 vaccumLaunchForce = new Vector2(2.0f, 2.0f);
 
     // ── Private — Mesh ───────────────────────────────────────────────────
     private Mesh      _mesh;
@@ -609,7 +608,8 @@ public class SoftBodyPlayer : MonoBehaviour
 
     public void SetFaceVisible(bool visible)
     {
-        if (_faceRenderer != null) _faceRenderer.enabled = visible;
+        // A parked body stays fully hidden even if control is switched to it.
+        if (_faceRenderer != null) _faceRenderer.enabled = visible && !IsParked;
     }
 
     // Intended face direction (+1 right, -1 left). Uses _pendingFaceDir so it reflects
@@ -1085,12 +1085,7 @@ public class SoftBodyPlayer : MonoBehaviour
 				bool underLimit = Mathf.Abs(rb.linearVelocity.x) < maxMoveSpeed ||
                                   Mathf.Sign(rb.linearVelocity.x) != Mathf.Sign(_hInput);
                 if (underLimit)
-                    rb.AddForce((new Vector2(_hInput * moveForce * forceMult, 0f))* vaccumLaunchForce, ForceMode2D.Force);
-					if(vaccumLaunchForce.x > 1.0f) {
-						SetVisible(true);
-						SetFaceVisible(true);
-					}
-					vaccumLaunchForce = new Vector2(1.0f, 1.0f);
+                    rb.AddForce(new Vector2(_hInput * moveForce * forceMult, 0f), ForceMode2D.Force);
             }
             else
             {
@@ -1826,12 +1821,27 @@ public class SoftBodyPlayer : MonoBehaviour
 		return bodystate;
 	}
 
+    // ── Water battery ────────────────────────────────────────────────────
+    // WaterBattery owns the capture/eject timing; the body only exposes the
+    // suction squeeze and a park/release pair so movement code never needs to
+    // know a battery exists.
+
+    // True while a battery holds this body: frozen, hidden and non-colliding.
+    public bool IsParked { get; private set; }
+
     public void applyVaccum(bool newisAffectedByVaccuum, Vector2 newvaccuumPosition)
     {
         isAffectedByVaccuum = newisAffectedByVaccuum;
         vaccuumPosition = newvaccuumPosition;
+
+        // vaccumPoints raises damping on every point; restore it when suction stops
+        // so a cancelled capture does not leave the body sluggish.
+        if (!isAffectedByVaccuum && _rbs != null)
+            foreach (var rb in _rbs) rb.linearDamping = 0f;
 	}
 
+    // Pulls every ring point toward moveTowards while squeezing the ring onto the
+    // line between the body and the target, so the droplet stretches into the funnel.
     public void vaccumPoints(Vector2 moveTowards)
     {
 		if (_rbs == null || _rbs.Length == 0) return;
@@ -1840,17 +1850,6 @@ public class SoftBodyPlayer : MonoBehaviour
         Vector2 vacuumDir = (moveTowards - new Vector2(transform.position.x, transform.position.y+1)).normalized;
         // Perpendicular vector to create radial squeezing
         Vector2 perpDir = new Vector2(-vacuumDir.y, vacuumDir.x);
-
-		if(CustomApproximately(Mathf.Abs(perpDir.x), 1.0f, 0.0001f)) {
-			isAffectedByVaccuum = false;
-			vaccumLaunchForce = new Vector2(4000.0f, 4500.0f);
-			SetVisible(false);
-			SetFaceVisible(false);
-		} else {
-			vaccumLaunchForce = new Vector2(0.0f, 0.0f);
-			SetVisible(true);
-			SetFaceVisible(true);
-		}
 
         for (int i = 0; i < _rbs.Length; i++)
         {
@@ -1878,31 +1877,50 @@ public class SoftBodyPlayer : MonoBehaviour
         }
     }
 
-    /*public void launchPoints(Vector2 direction)
-    {
-        if (_rbs == null || _rbs.Length == 0) return;
-
-        // Normalize direction to ensure consistent launch strength regardless of input magnitude
-        Vector2 launchDir = direction.normalized;
-
-        // Apply an instantaneous impulse to all points in the specified direction
-        foreach (var rb in _rbs)
-        {
-            if (rb != null)
-            {
-                // Use Impulse mode for an immediate change in velocity, simulating a sudden launch/kick
-                //rb.AddForce(launchDir * 10f, ForceMode2D.Impulse);
-            }
-        }
-    }*/
-
-	public static bool CustomApproximately(float a, float b, float tolerance=0.000001f)
-	{
-    	return Mathf.Abs(b - a) < Mathf.Max(tolerance * Mathf.Max(Mathf.Abs(a), Mathf.Abs(b)), Mathf.Epsilon * 8f);
-	}
-
 	public bool getVacuumState() {
 		return isAffectedByVaccuum;
 	}
+
+    // Stores the body inside a battery: snaps it to parkPoint, then freezes and hides
+    // it so it cannot collide, be hit by hazards, or read input while parked.
+    public void Park(Vector2 parkPoint)
+    {
+        if (IsParked || _rbs == null) return;
+
+        applyVaccum(false, Vector2.zero);
+        if (_frozen) Unfreeze(); // TeleportTo writes are ignored on frozen bodies
+        TeleportTo(parkPoint, Vector2.zero);
+        Freeze();
+        IsParked = true;
+        SetVisible(false);
+    }
+
+    // Keeps a parked body at its battery's intake when the battery itself moves
+    // (e.g. riding a moving platform), so camera and release point stay correct.
+    public void MoveParked(Vector2 parkPoint)
+    {
+        if (!IsParked) return;
+        Unfreeze(); // position writes are ignored on frozen bodies
+        TeleportTo(parkPoint, Vector2.zero);
+        Freeze();
+    }
+
+    // Releases a parked body at exitPoint with the given launch velocity. The face
+    // only reappears on the droplet that currently has control.
+    public void ReleaseFromPark(Vector2 exitPoint, Vector2 launchVelocity)
+    {
+        if (!IsParked) return;
+
+        IsParked = false;
+        Unfreeze();
+        TeleportTo(exitPoint, launchVelocity);
+        DepenetrateFromGround(); // exit points near floors or walls must not embed the ring
+        _jumpQueued          = false;
+        _currentGravityScale = baseGravityScale;
+        IsGrounded           = false;
+        IsGroundPounding     = false;
+        SetVisible(true);
+        SetFaceVisible(InputEnabled);
+    }
 
 }

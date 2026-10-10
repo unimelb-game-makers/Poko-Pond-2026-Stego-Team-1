@@ -108,6 +108,8 @@ public class PlayerSplitController : MonoBehaviour
     private void Update()
     {
         if (mainPlayer == null) return;
+        // A whole body parked in a water battery cannot split until it is released.
+        if (mainPlayer.IsParked) return;
 
         if (splittingUnlocked && !_isSplit && _splitCoroutine == null && !_isMerging && mainPlayer.getBodyState() != PlayerBodyState.Solid)
         {
@@ -129,7 +131,9 @@ public class PlayerSplitController : MonoBehaviour
             Vector2 c0 = RenderCenter(_droplets[0]);
             Vector2 c1 = RenderCenter(_droplets[1]);
 
-            if (Vector2.Distance(c0, c1) < mergeProximityRadius)
+            // Parked halves sit inside a water battery; the other half passing
+            // by must not pull them out through an automatic merge.
+            if (Vector2.Distance(c0, c1) < mergeProximityRadius && !AnyDropletParked())
             {
                 _capturedMergePos = (c0 + c1) * 0.5f;
 
@@ -176,6 +180,78 @@ public class PlayerSplitController : MonoBehaviour
         Vector2 sum = Vector2.zero;
         foreach (var rb in pts) sum += (Vector2)rb.transform.position;
         return sum / pts.Length;
+    }
+
+    private bool AnyDropletParked()
+    {
+        foreach (var d in _droplets)
+            if (d != null && d.IsParked) return true;
+        return false;
+    }
+
+    // ── Water battery hooks ───────────────────────────────────────────────
+
+    // True when body is one of the two half-size droplets (not the whole player).
+    public bool IsHalfDroplet(SoftBodyPlayer body)
+    {
+        return _isSplit && body != null && (body == _droplets[0] || body == _droplets[1]);
+    }
+
+    // True when both halves exist and the given body's partner is the other one.
+    public SoftBodyPlayer GetOtherHalf(SoftBodyPlayer half)
+    {
+        if (!IsHalfDroplet(half)) return null;
+        return half == _droplets[0] ? _droplets[1] : _droplets[0];
+    }
+
+    // Instant split used by a small water battery that swallows the whole player.
+    // keptCenter is where the half that stays inside spawns; the other half spawns at
+    // expelledCenter with expelledVelocity and receives control.
+    public bool SplitForBattery(
+        Vector2 keptCenter, Vector2 expelledCenter, Vector2 expelledVelocity,
+        out SoftBodyPlayer kept, out SoftBodyPlayer expelled)
+    {
+        kept = expelled = null;
+        if (mainPlayer == null || !splittingUnlocked || _isSplit || _isMerging || _splitCoroutine != null)
+            return false;
+
+        float faceDir = expelledVelocity.x < 0f ? -1f : 1f;
+        mainPlayer.applyVaccum(false, Vector2.zero);
+        mainPlayer.SplitPinchBlend = 0f;
+        mainPlayer.SetBodyAlpha(1f);
+        mainPlayer.Freeze();
+        mainPlayer.SetVisible(false);
+
+        _droplets[0] = SpawnDroplet(keptCenter, Vector2.zero);
+        _droplets[1] = SpawnDroplet(expelledCenter, expelledVelocity);
+
+        _isSplit       = true;
+        _activeIdx     = 0;
+        _mergeCooldown = mergeCooldownDuration;
+        SetActiveDroplet(1);
+        _droplets[1].InitFaceDirection(faceDir);
+
+        StartCoroutine(DriveSpawnPop(_droplets[1], 0.28f));
+        StartCoroutine(DriveWiggle(_droplets[1], 0.50f));
+
+        kept     = _droplets[0];
+        expelled = _droplets[1];
+        EventManager.PlayerSplit();
+        return true;
+    }
+
+    // Instant merge used by a big water battery once both halves are inside.
+    // Returns the restored whole body (placed at mergeCenter) for the battery to park.
+    public SoftBodyPlayer MergeForBattery(Vector2 mergeCenter)
+    {
+        if (!_isSplit || _isMerging || _droplets[0] == null || _droplets[1] == null)
+            return null;
+
+        _capturedMergePos = mergeCenter;
+        _capturedMergeVel = Vector2.zero;
+        // MergeCoroutine never yields, so StartCoroutine completes it synchronously.
+        StartCoroutine(MergeCoroutine());
+        return mainPlayer;
     }
 
     // ── Split ─────────────────────────────────────────────────────────────
