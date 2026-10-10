@@ -6,4 +6,5 @@
   <Project Path="FMODUnityHaptics.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="FMODUnityResonance.csproj" />
+  <Project Path="PokoMenuReview.PlayMode.csproj" />
 </Solution>

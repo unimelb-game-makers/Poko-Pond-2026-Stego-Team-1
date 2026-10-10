@@ -9,7 +9,7 @@ Area 2 is split at its three existing yellow exit doors:
 | `Area2-3` | Challenge | `challenge_exit` | `Area3-1` |
 
 Open `Assets/Scenes/Area2-1.unity` to play the sequence. All four destination
-scenes are enabled in Build Settings. StartMenu still opens Sandbox.
+scenes are enabled in Build Settings. StartMenu’s New Game opens `Area1-1`.
 `Area3-1` was brought in from `origin/feat/area3` at `ae99ee8`; the rest of that
 branch, including the Area 1 renames, was not merged by this change.
 
