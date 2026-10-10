@@ -5,7 +5,7 @@ using UnityEngine;
 // the whole soft body; SoftBodyPlayer applies it once per physics step.
 [DefaultExecutionOrder(-100)]
 [RequireComponent(typeof(BoxCollider2D), typeof(Animator))]
-public class ConveyorBelt : MonoBehaviour, IPropConnectable, IPropActivatable
+public class ConveyorBelt : MonoBehaviour, IPropConnectable, IPropActivatable, IPropPowered
 {
     [SerializeField] private float surfaceSpeed = -2f;
     [SerializeField, Min(0.02f)] private float contactHeight = 0.16f;
@@ -18,6 +18,7 @@ public class ConveyorBelt : MonoBehaviour, IPropConnectable, IPropActivatable
     private readonly HashSet<SoftBodyPlayer> riders = new();
 
     public bool IsActive => active;
+    public bool IsPowered => active;
     public float SurfaceSpeed => surfaceSpeed;
     public void SetConnectionId(string id) => connectionId = id;
     public void SetActivationConfig(ConnectionMode connectionMode, bool initiallyActive)

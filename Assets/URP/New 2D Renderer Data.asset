@@ -55,4 +55,4 @@ MonoBehaviour:
   m_MaxShadowRenderTextureCount: 1
   m_PostProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_DefaultMaterialType: 0
-  m_DefaultCustomMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_DefaultCustomMaterial: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}

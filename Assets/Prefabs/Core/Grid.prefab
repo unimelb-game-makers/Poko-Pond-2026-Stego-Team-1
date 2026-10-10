@@ -1798,7 +1798,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2170,7 +2170,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2216,38 +2216,108 @@ MonoBehaviour:
   - propName: CrusherTrap
     cell: {x: 8, y: -3, z: 0}
     connectionId: crusher1
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
   - propName: AutoCrusherTrap
     cell: {x: 11, y: -3, z: 0}
     connectionId: autocrusher1
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
   - propName: PressurePlate
     cell: {x: -22, y: -5, z: 0}
     connectionId: 
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
   - propName: Evaporator
     cell: {x: -19, y: -5, z: 0}
     connectionId: 
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
   - propName: Condenser
     cell: {x: -7, y: -5, z: 0}
     connectionId: 
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
   - propName: PressurePlate
     cell: {x: 7, y: -5, z: 0}
     connectionId: crusher1
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
   - propName: PressurePlate
     cell: {x: 10, y: -5, z: 0}
     connectionId: autocrusher1
+    exitScene: 
+    exitToLeft: 0
     connectionMode: 0
     initialActive: 1
+    oneShot: 0
+    requirePlayerState: 0
+    requiredPlayerState: 0
+    overrideBlowerSettings: 0
+    blowerDirection: {x: 0, y: 0}
+    blowerStrength: 0
+    blowerRange: 0
+    blowerWidth: 0
 --- !u!1 &5002332678302167089
 GameObject:
   m_ObjectHideFlags: 0
@@ -2448,7 +2518,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2718,7 +2788,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -3,7 +3,7 @@ using UnityEngine;
 // One-off progression object that enables PlayerSplitController's split input
 // when the player steps onto the machine.
 [RequireComponent(typeof(Collider2D))]
-public class SplittingMachine : MonoBehaviour
+public class SplittingMachine : MonoBehaviour, IPropPowered
 {
     [SerializeField, Min(0.1f)] private float activationWidth = 1.8f;
     [SerializeField, Min(0.1f)] private float activationHeight = 1.5f;
@@ -16,6 +16,7 @@ public class SplittingMachine : MonoBehaviour
     private bool _activated;
 
     public bool IsActivated => _activated;
+    public bool IsPowered => _activated;
 
     private void Start()
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 public enum DoorType { Green, Yellow, Red }
 
 [RequireComponent(typeof(Collider2D))]
-public class Door : MonoBehaviour, IPropConnectable
+public class Door : MonoBehaviour, IPropConnectable, IPropPowered
 {
     // Fixed by the selected door prefab, never by tilemap cell overrides.
     [SerializeField, HideInInspector] private DoorType doorType;
@@ -34,6 +34,7 @@ public class Door : MonoBehaviour, IPropConnectable
     private float _frameTimer;
 
     public bool IsUnlocked => _isUnlocked;
+    public bool IsPowered => _isUnlocked;
     public bool IsOpen => greenOpeningFrames != null && greenOpeningFrames.Length > 0
         && _doorFrame >= greenOpeningFrames.Length - 1;
 

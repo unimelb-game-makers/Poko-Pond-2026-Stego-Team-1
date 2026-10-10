@@ -31,7 +31,7 @@ using UnityEngine;
  *   4. Tune Entry Zone Width/Height so the blue gizmo aligns with the left-side opening.
  *   5. Assign the prefab to a PropTile asset; paint it on the Props tilemap.
  */
-public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
+public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable, IPropPowered
 {
     [Header("Entry Zone")]
     [Tooltip("Width of the left-side detection zone. Should match the width of the condenser opening in the sprite.")]
@@ -73,6 +73,7 @@ public class Condenser : MonoBehaviour, IPropConnectable, IPropActivatable
     // Public Interface ──────────────────────────────────────────────────
     public LayerMask PlayerSoftBodyLayer;
     public PlayerBodyState valueToChangeTo;
+    public bool IsPowered => _isActive;
 
     private static readonly int CondenseTriggerHash = Animator.StringToHash("Condense");
 
