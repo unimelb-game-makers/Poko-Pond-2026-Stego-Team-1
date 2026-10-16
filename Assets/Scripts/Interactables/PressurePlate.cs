@@ -60,7 +60,7 @@ using UnityEngine.Events;
  *   even if the Animator moves or resizes the collider during an animation.
  */
 
-public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateConfigurable, IPropOneShotConfigurable
+public class PressurePlate : MonoBehaviour, IPropPowered, IPropConnectable, IPropPlayerStateConfigurable, IPropOneShotConfigurable
 {
     [Tooltip("Stable, human-readable id used by EventManager listeners. Must match the Trigger Plate Id on any linked CrusherTrap.")]
     [SerializeField] private string plateId;
@@ -93,6 +93,9 @@ public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateCo
     private Sprite _normalSprite;
     private bool _playerOver;
     private bool _lockedPressed; // set on first exit when oneShot=true — plate stays pressed permanently
+    private bool _pressed;
+
+    public bool IsPowered => _pressed;
 
     // Detection zone cached at Start so Animator-driven transform/collider changes can't affect it.
     private Vector2 _detectionCenter;
@@ -228,6 +231,7 @@ public class PressurePlate : MonoBehaviour, IPropConnectable, IPropPlayerStateCo
     // Drives both the Animator bool and the SpriteRenderer sprite so visuals are always correct
     private void SetPressedVisual(bool pressed)
     {
+        _pressed = pressed;
         if (_animator != null)
             _animator.SetBool(IsPressedHash, pressed);
 

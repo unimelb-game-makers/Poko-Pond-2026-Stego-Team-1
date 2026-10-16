@@ -95,10 +95,22 @@ PrefabInstance:
       propertyPath: angleIncrementPerFrame
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 2570235014995997613, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
+    - target: {fileID: 6887027535162274219, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 7325454542357447089, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_Name
       value: MovingPlatform (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7972550138136499338, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -9.679714
@@ -177,10 +189,22 @@ PrefabInstance:
       propertyPath: angleIncrementPerFrame
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 2570235014995997613, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
+    - target: {fileID: 6887027535162274219, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 7325454542357447089, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_Name
       value: MovingPlatform (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7972550138136499338, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.876839
@@ -259,10 +283,22 @@ PrefabInstance:
       propertyPath: angleIncrementPerFrame
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 2570235014995997613, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
+    - target: {fileID: 6887027535162274219, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 7325454542357447089, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_Name
       value: MovingPlatform (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7972550138136499338, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.778277
@@ -337,10 +373,22 @@ PrefabInstance:
       propertyPath: angleIncrementPerFrame
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 2570235014995997613, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
+    - target: {fileID: 6887027535162274219, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 7325454542357447089, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_Name
       value: MovingPlatform
       objectReference: {fileID: 0}
+    - target: {fileID: 7972550138136499338, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 128dd6f86753f4873a6c25018257f363, type: 2}
     - target: {fileID: 9182971053589063997, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.86416
