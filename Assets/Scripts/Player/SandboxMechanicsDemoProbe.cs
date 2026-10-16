@@ -41,7 +41,8 @@ public class SandboxMechanicsDemoProbe : MonoBehaviour
         player = GameObject.FindWithTag("Player").GetComponent<SoftBodyPlayer>();
         var split = player.GetComponent<PlayerSplitController>();
         var machine = FindObjectsByType<SplittingMachine>(FindObjectsSortMode.None).Single();
-        var doors = FindObjectsByType<Door>(FindObjectsSortMode.None).OrderBy(d => d.transform.position.x).ToArray();
+        // Only the top gallery's doors; other Sandbox demos add their own.
+        var doors = FindObjectsByType<Door>(FindObjectsSortMode.None).Where(d => d.transform.position.y > 15f).OrderBy(d => d.transform.position.x).ToArray();
         Require(doors.Length == 3, "Expected exactly three demo doors.");
         var red = doors[0]; var yellow = doors[1]; var green = doors[2];
         Require(!red.IsUnlocked && !yellow.IsUnlocked && green.IsUnlocked, "Initial red/yellow/green states are wrong.");

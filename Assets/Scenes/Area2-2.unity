@@ -3735,7 +3735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PropTilemapSpawner
   cellOverrides:
   - propName: GreenDoor
-    cell: {x: 1, y: 5, z: 0}
+    cell: {x: 5, y: 5, z: 0}
     connectionId: 
     exitScene: 
     exitToLeft: 0
@@ -3749,6 +3749,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: Area2AutoCrusherTrap
     cell: {x: 13, y: 4, z: 0}
     connectionId: familiarity_crushers
@@ -3764,6 +3767,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: Area2AutoCrusherTrap
     cell: {x: 18, y: 4, z: 0}
     connectionId: familiarity_crushers
@@ -3779,6 +3785,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: Area2AutoCrusherTrap
     cell: {x: 23, y: 4, z: 0}
     connectionId: familiarity_crushers
@@ -3794,8 +3803,11 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: Humidifier
-    cell: {x: 0, y: 1, z: 0}
+    cell: {x: 2, y: 1, z: 0}
     connectionId: 
     exitScene: 
     exitToLeft: 0
@@ -3809,8 +3821,11 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: YellowDoor
-    cell: {x: 1, y: 1, z: 0}
+    cell: {x: 5, y: 1, z: 0}
     connectionId: familiarity_crushers
     exitScene: Area2-3
     exitToLeft: 1
@@ -3824,6 +3839,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: PressurePlate
     cell: {x: 26, y: 1, z: 0}
     connectionId: familiarity_crushers
@@ -3839,6 +3857,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: Condenser
     cell: {x: 29, y: 1, z: 0}
     connectionId: 
@@ -3854,6 +3875,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 11, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3869,6 +3893,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 12, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3884,6 +3911,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 13, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3899,6 +3929,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 14, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3914,6 +3947,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 15, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3929,6 +3965,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 16, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3944,6 +3983,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 17, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3959,6 +4001,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 18, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3974,6 +4019,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 19, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -3989,6 +4037,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 20, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -4004,6 +4055,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 21, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -4019,6 +4073,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 22, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -4034,6 +4091,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 23, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -4049,6 +4109,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
   - propName: ConveyorBelt
     cell: {x: 24, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -4064,6 +4127,9 @@ MonoBehaviour:
     blowerStrength: 30
     blowerRange: 4
     blowerWidth: 1.5
+    overrideBatteryLaunch: 0
+    batteryLaunchSpeed: 0
+    batteryLaunchAngle: 0
 --- !u!1001 &1837516808949673031
 PrefabInstance:
   m_ObjectHideFlags: 0
