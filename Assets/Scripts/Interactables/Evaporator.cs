@@ -27,7 +27,7 @@ using UnityEngine;
  *   2. Size the BoxCollider2D to match the evaporator surface footprint.
  *   3. Assign the prefab to a PropTile asset; paint it on the Props tilemap.
  */
-public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
+public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable, IPropPowered
 {
     [Header("Burst")]
     [Tooltip("Speed of the upward velocity burst applied to the gas cloud at the moment of evaporation.")]
@@ -44,6 +44,8 @@ public class Evaporator : MonoBehaviour, IPropConnectable, IPropActivatable
     private ConnectionMode   _connectionMode  = ConnectionMode.Hold;
     private string           _connectionId    = "";
     private Animator         _animator;
+
+    public bool IsPowered => _isActive;
     private Vector2          _detectionCenter;
     private Vector2          _detectionSize;
     private bool             _playerOver;     // edge-triggered logging — only fire on enter
