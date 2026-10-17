@@ -127,7 +127,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.03125}
+  m_Offset: {x: 0, y: -0.23771223}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -137,7 +137,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 0.125}
+  m_Size: {x: 1, y: 0.5379246}
   m_EdgeRadius: 0
 --- !u!114 &7289465312087741104
 MonoBehaviour:
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c16b5a8dbd4782b2d41c772c915da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Trampoline
-  bounceStrength: 16
+  bounceStrength: 21
   contactHeight: 0.15
   heightFrames:
   - {fileID: -1043803572495411551, guid: a5fbb8c6e8abe1b4bad3eb4fae591ebf, type: 3}
