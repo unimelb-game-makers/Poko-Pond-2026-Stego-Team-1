@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections;
 
 public enum GameState
 {
@@ -50,7 +51,18 @@ public class GameStateManager : MonoBehaviour
     {
         if (State == next) return;
         State = next;
-        Time.timeScale = (next == GameState.Playing) ? 1f : 0f;
+
+		if(next == GameState.GameOver) {
+			StartCoroutine(EndRoutine(1.5f));
+		} else {
+			Time.timeScale = (next == GameState.Playing) ? 1f : 0f;
+		}
+
         OnStateChanged?.Invoke(next);
     }
+
+	private IEnumerator EndRoutine(float duration) {
+		yield return new WaitForSeconds(duration);
+		Time.timeScale = 0f;
+	}
 }
