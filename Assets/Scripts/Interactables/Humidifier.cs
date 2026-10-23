@@ -21,19 +21,8 @@ public class Humidifier : MonoBehaviour
         {
             SoftBodyPlayer player = hit.GetComponent<SoftBodyPointRef>()?.owner;
             if (player == null) player = hit.GetComponentInParent<SoftBodyPlayer>();
-            if (player == null || !visitors.Add(player) || player.getBodyState() == PlayerBodyState.Liquid) continue;
-            Vector2 centre = Vector2.zero;
-            Vector2 velocity = Vector2.zero;
-            int count = 0;
-            foreach (Rigidbody2D point in player.Points)
-            {
-                if (point == null || !point.simulated) continue;
-                centre += point.position;
-                velocity += point.linearVelocity;
-                count++;
-            }
-            if (count == 0) continue;
-            player.changeBodyState(PlayerBodyState.Liquid, centre / count, velocity / count);
+            if (player == null || !visitors.Add(player)) continue;
+            player.changeBodyStateInPlace(PlayerBodyState.Liquid);
         }
     }
 }

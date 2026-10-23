@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// An always-on tilemap prop that applies acceleration on every physics step to each
-// soft-body player inside its wind zone. The direction is local to the blower, so
-// rotating a painted tile also rotates its arrow and wind.
+// A tilemap prop that applies acceleration on every physics step to each soft-body
+// player inside its wind zone. The direction is local to the blower, so rotating a
+// painted tile also rotates its arrow and wind. Always on unless linked to an
+// activator (pressure plate / water battery) through Activation.
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
-public class Blower : MonoBehaviour, IPropWindConfigurable
+public class Blower : MonoBehaviour, IPropWindConfigurable, IPropConnectable, IPropActivatable
 {
     private const float MinimumWindDimension = 0.1f;
 
@@ -33,6 +34,10 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
     [Tooltip("Width of the wind zone perpendicular to the blow direction.")]
     [SerializeField, Min(0.1f)] private float windWidth = 1.5f;
 
+    [Header("Activation")]
+    [Tooltip("Leave Connection Id empty for an always-on fan. Tile-spawned blowers get this from PropTilemapSpawner.")]
+    [SerializeField] private PropActivation activation = new PropActivation();
+
     [Header("Visual")]
     [Tooltip("Child transform containing the right-facing fan SpriteRenderer.")]
     [SerializeField] private Transform directionVisual;
@@ -52,6 +57,14 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
     private int _softBodyPointMask;
     private int _animationFrame;
     private float _animationTimer;
+
+    public bool IsActive => activation.Active;
+
+    public void SetConnectionId(string id) => activation.connectionId = id ?? "";
+    public void SetActivationConfig(ConnectionMode mode, bool initialActive) => activation.Configure(mode, initialActive);
+
+    private void OnEnable() => activation.Bind(null);
+    private void OnDisable() => activation.Unbind();
 
     private Vector2 LocalDirection => blowDirection.sqrMagnitude > 0.0001f
         ? blowDirection.normalized
@@ -87,7 +100,8 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
 
     private void Update()
     {
-        if (fanRenderer == null || animationFrames == null || animationFrames.Length == 0)
+        // A switched-off fan stops spinning on its current frame.
+        if (!activation.Active || fanRenderer == null || animationFrames == null || animationFrames.Length == 0)
             return;
 
         _animationTimer += Time.deltaTime * animationFramesPerSecond;
@@ -119,6 +133,8 @@ public class Blower : MonoBehaviour, IPropWindConfigurable
 
     private void FixedUpdate()
     {
+        if (!activation.Active) return;
+
         GetWindZone(out Vector2 center, out Vector2 size, out float angle, out Vector2 worldDirection);
 
         Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, angle, _softBodyPointMask);

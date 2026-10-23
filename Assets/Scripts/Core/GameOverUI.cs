@@ -16,14 +16,18 @@ public class GameOverUI : MonoBehaviour
     private void OnEnable()  => GameStateManager.OnStateChanged += HandleStateChanged;
     private void OnDisable() => GameStateManager.OnStateChanged -= HandleStateChanged;
 
+    private ScreenFade screenFade;
+
     private void Start()
     {
         if (panel != null) panel.SetActive(false);
+        screenFade = panel.GetComponent<ScreenFade>();
     }
 
     private void HandleStateChanged(GameState state)
     {
         if (panel != null) panel.SetActive(state == GameState.GameOver);
+        screenFade.FadeToBlack(1.5f);
     }
 
     public void Restart()
