@@ -167,7 +167,7 @@ public static class SandboxMechanicsDemoBuilder
         return tile;
     }
 
-    private static void Paint(Tilemap map, SerializedProperty entries, Vector3Int cell, PropTile tile,
+    internal static void Paint(Tilemap map, SerializedProperty entries, Vector3Int cell, PropTile tile,
         string id, ConnectionMode mode, bool active, bool oneShot)
     {
         Require(tile != null, "Missing production prop asset.");
@@ -185,7 +185,7 @@ public static class SandboxMechanicsDemoBuilder
         entry.FindPropertyRelative("overrideBlowerSettings").boolValue = false;
     }
 
-    private static SerializedProperty FindOverride(SerializedProperty entries, Vector3Int cell)
+    internal static SerializedProperty FindOverride(SerializedProperty entries, Vector3Int cell)
     {
         for (int i = 0; i < entries.arraySize; i++)
             if (entries.GetArrayElementAtIndex(i).FindPropertyRelative("cell").vector3IntValue == cell)
@@ -193,14 +193,14 @@ public static class SandboxMechanicsDemoBuilder
         return null;
     }
 
-    private static GameObject Child(GameObject root, string name)
+    internal static GameObject Child(GameObject root, string name)
     {
         var child = root.transform.Find(name);
         if (child != null) return child.gameObject;
         var result = new GameObject(name); result.transform.SetParent(root.transform, false); return result;
     }
 
-    private static void Sign(GameObject root, string name, Vector2 position, string label, Color color, float size = .055f)
+    internal static void Sign(GameObject root, string name, Vector2 position, string label, Color color, float size = .055f)
     {
         var go = Child(root, name); go.transform.position = position;
         var text = go.GetComponent<TextMesh>();
@@ -241,7 +241,7 @@ public static class SandboxMechanicsDemoBuilder
         }
     }
 
-    private static void Require(bool value, string message)
+    internal static void Require(bool value, string message)
     {
         if (!value) throw new InvalidOperationException("[SandboxDemos] " + message);
     }

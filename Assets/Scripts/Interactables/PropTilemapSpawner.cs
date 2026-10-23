@@ -56,6 +56,12 @@ public class PropTilemapSpawner : MonoBehaviour
         [Min(0.1f)] public float blowerRange;
         [Tooltip("Width of this Blower cell's wind zone perpendicular to its direction.")]
         [Min(0.1f)] public float blowerWidth;
+        [Tooltip("Use per-cell launch speed and angle instead of the WaterBattery prefab defaults.")]
+        public bool overrideBatteryLaunch;
+        [Tooltip("Speed this WaterBattery cell launches the droplet at when it exits.")]
+        [Min(0f)] public float batteryLaunchSpeed;
+        [Tooltip("Upward launch angle in degrees for this WaterBattery cell. 0 = flat; mirrored for left/right exits.")]
+        [Range(0f, 85f)] public float batteryLaunchAngle;
     }
 
     [Tooltip("Per-cell connection IDs. Right-click this component → Sync Cell List after painting to auto-populate.")]
@@ -98,6 +104,9 @@ public class PropTilemapSpawner : MonoBehaviour
                 blowerStrength = hadEntry && prev.blowerStrength > 0f ? prev.blowerStrength : 30f,
                 blowerRange = hadEntry && prev.blowerRange > 0f ? prev.blowerRange : 4f,
                 blowerWidth = hadEntry && prev.blowerWidth > 0f ? prev.blowerWidth : 1.5f,
+                overrideBatteryLaunch = hadEntry && prev.overrideBatteryLaunch,
+                batteryLaunchSpeed = hadEntry && prev.batteryLaunchSpeed > 0f ? prev.batteryLaunchSpeed : 9f,
+                batteryLaunchAngle = hadEntry && prev.overrideBatteryLaunch ? prev.batteryLaunchAngle : 30f,
             });
         }
 
@@ -168,6 +177,13 @@ public class PropTilemapSpawner : MonoBehaviour
                     ov.blowerStrength,
                     ov.blowerRange > 0f ? ov.blowerRange : 4f,
                     ov.blowerWidth > 0f ? ov.blowerWidth : 1.5f);
+            }
+
+            // Pass optional per-cell launch tuning to water batteries
+            if (hasOverride && ov.overrideBatteryLaunch
+                && go.TryGetComponent(out IPropBatteryLaunchConfigurable launchConfigurable))
+            {
+                launchConfigurable.SetLaunchConfig(ov.batteryLaunchSpeed, ov.batteryLaunchAngle);
             }
         }
     }
