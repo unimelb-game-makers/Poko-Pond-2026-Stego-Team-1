@@ -3091,8 +3091,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7282461348544508605, guid: 76e39efe9647167d2bfc1cb3dac5ee07, type: 3}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
+      propertyPath: m_SortingLayer
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingOrder
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1531212259
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_WasSpriteAssigned
@@ -3203,15 +3211,31 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 9f295e817582c0542a13a8dc494c3118, type: 2}
     - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: interactKeyAlt
+      value: 122
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: interactPrompt
       value: 
       objectReference: {fileID: 1370179762}
     - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 3273652460301204517, guid: 5447f0f795f21425fbd7649e8fc41fa7, type: 3}
+      objectReference: {fileID: 2024207049606238952, guid: 0844e6c80533c9647b4dffa9adf30411, type: 3}
+    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_SortingLayerID
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
@@ -3228,11 +3252,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.34
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.22
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3266,9 +3290,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8786796530190681263, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_Name
       value: Introduction_TutorialNPC
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786796530190681263, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

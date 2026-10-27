@@ -43,6 +43,8 @@ public class PropTilemapSpawner : MonoBehaviour
         [Tooltip("For activator cells, keep the first activation latched and ignore later interactions.")]
         public bool oneShot;
         [Tooltip("For PressurePlate cells, require the player to be in the selected body state. Disabled accepts any state.")]
+        public float beltDirection;
+        [Tooltip("determines the direction and speed of a conveyer belt.")]
         public bool requirePlayerState;
         [Tooltip("Body state required by a PressurePlate cell when requirePlayerState is enabled.")]
         public PlayerBodyState requiredPlayerState;
@@ -104,6 +106,7 @@ public class PropTilemapSpawner : MonoBehaviour
                 blowerStrength = hadEntry && prev.blowerStrength > 0f ? prev.blowerStrength : 30f,
                 blowerRange = hadEntry && prev.blowerRange > 0f ? prev.blowerRange : 4f,
                 blowerWidth = hadEntry && prev.blowerWidth > 0f ? prev.blowerWidth : 1.5f,
+                beltDirection = hadEntry && prev.beltDirection > 0f ? prev.beltDirection : -2f,
                 overrideBatteryLaunch = hadEntry && prev.overrideBatteryLaunch,
                 batteryLaunchSpeed = hadEntry && prev.batteryLaunchSpeed > 0f ? prev.batteryLaunchSpeed : 9f,
                 batteryLaunchAngle = hadEntry && prev.overrideBatteryLaunch ? prev.batteryLaunchAngle : 30f,
