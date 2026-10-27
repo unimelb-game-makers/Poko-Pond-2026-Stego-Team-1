@@ -2970,6 +2970,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
+    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -2988,6 +2989,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 0
     oneShot: 1
+    beltDirection: 0
     requirePlayerState: 1
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -3006,6 +3008,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
+    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -3024,6 +3027,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
+    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -3042,6 +3046,7 @@ MonoBehaviour:
     connectionMode: 1
     initialActive: 0
     oneShot: 0
+    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -3060,6 +3065,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
+    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -3238,17 +3244,21 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_SpriteSortPoint
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3256,7 +3266,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 1.55
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalPosition.z
