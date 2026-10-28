@@ -4663,7 +4663,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4682,7 +4682,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4701,7 +4701,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 1
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4720,7 +4720,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 1
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4739,7 +4739,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4758,7 +4758,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4777,7 +4777,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -4796,7 +4796,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4808,14 +4808,14 @@ MonoBehaviour:
     batteryLaunchSpeed: 9
     batteryLaunchAngle: 30
   - propName: Humidifier
-    cell: {x: 37, y: 1, z: 0}
+    cell: {x: 33, y: 1, z: 0}
     connectionId: 
     exitScene: 
     exitToLeft: 0
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4834,7 +4834,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4853,7 +4853,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4872,7 +4872,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4891,7 +4891,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4910,7 +4910,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4929,7 +4929,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4948,7 +4948,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4967,7 +4967,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -4986,7 +4986,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -5005,7 +5005,7 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -5024,7 +5024,7 @@ MonoBehaviour:
     connectionMode: 1
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 1
@@ -5043,7 +5043,7 @@ MonoBehaviour:
     connectionMode: 1
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 1
@@ -5062,7 +5062,7 @@ MonoBehaviour:
     connectionMode: 1
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
+    beltDirection: -2
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 1
@@ -5517,7 +5517,7 @@ Tilemap:
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: 2, y: 0, z: 0}
-  m_Size: {x: 39, y: 29, z: 1}
+  m_Size: {x: 32, y: 29, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
