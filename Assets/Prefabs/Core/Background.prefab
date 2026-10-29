@@ -215,6 +215,14 @@ PrefabInstance:
       propertyPath: ShapeModule.m_Scale.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5568939086546550052, guid: fbcb74875ef74451ab5abc44d5a45246, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5568939086546550052, guid: fbcb74875ef74451ab5abc44d5a45246, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 9201491801126615547, guid: fbcb74875ef74451ab5abc44d5a45246, type: 3}
       propertyPath: m_Name
       value: Ambience_Atmosphere

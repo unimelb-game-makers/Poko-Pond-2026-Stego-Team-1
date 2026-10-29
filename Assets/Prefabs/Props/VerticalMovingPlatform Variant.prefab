@@ -94,6 +94,14 @@ PrefabInstance:
       propertyPath: useWaypointMotion
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4562398217590441120, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: coreWidth
+      value: 1.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562398217590441120, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
+      propertyPath: glowWidth
+      value: 1.61
+      objectReference: {fileID: 0}
     - target: {fileID: 7325454542357447089, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_Name
       value: VerticalMovingPlatform Variant
