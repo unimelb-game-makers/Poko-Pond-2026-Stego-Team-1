@@ -2389,7 +2389,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 380222895}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
@@ -2506,7 +2506,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 643933239940943556}
-  m_Father: {fileID: 1978453958}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -256104,3 +256104,4 @@ SceneRoots:
   - {fileID: 450565059}
   - {fileID: 220921965}
   - {fileID: 1907928497}
+  - {fileID: 802579554871597389}
