@@ -1809,6 +1809,9 @@ public class SoftBodyPlayer : MonoBehaviour
                 jumpForce = solidJumpForce;
                 bodyInnerColor = solidbodyInnerColor;
                 bodyOuterColor = solidbodyOuterColor;
+                // Play Freeze sound and update FMOD
+                FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Freeze");
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("State", 1);
             }
             else
             {
@@ -1817,6 +1820,9 @@ public class SoftBodyPlayer : MonoBehaviour
                 jumpForce = _liquidJumpForce;
                 bodyInnerColor = liquidbodyInnerColor;
                 bodyOuterColor = liquidbodyOuterColor;
+                // Play Freeze sound and update FMOD
+                FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Sizzle");
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("State", 0);
             }
 
             initBody();

@@ -359,6 +359,8 @@ GameObject:
   - component: {fileID: 5289004033044655933}
   - component: {fileID: 1692660458411853611}
   - component: {fileID: 1142662325528302811}
+  - component: {fileID: 8144572624869520377}
+  - component: {fileID: 3260995048970769800}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -614,3 +616,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGlow
   glow: {fileID: 7265675086216495811}
+--- !u!50 &8144572624869520377
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687343749860754848}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &3260995048970769800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687343749860754848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
+  jumpClip:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  landClip:
+    Guid:
+      Data1: 287156523
+      Data2: 1178529108
+      Data3: -616443462
+      Data4: -1279063620
+    Path: event:/Player Sounds/SFX_Land
+  fallSpeedThreshold: -5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
