@@ -96,11 +96,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4562398217590441120, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: coreWidth
-      value: 1.23
+      value: 0.035
       objectReference: {fileID: 0}
     - target: {fileID: 4562398217590441120, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: glowWidth
-      value: 1.61
+      value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 7325454542357447089, guid: ad9bb50097d296774a8d4c35520c2faf, type: 3}
       propertyPath: m_Name
