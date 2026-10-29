@@ -2561,7 +2561,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 326725630045150868}
-  m_Father: {fileID: 1978453958}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2837,7 +2837,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 380222895}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
@@ -3401,7 +3401,7 @@ MonoBehaviour:
     exitScene: 
     exitToLeft: 0
     connectionMode: 1
-    initialActive: 1
+    initialActive: 0
     oneShot: 0
     requirePlayerState: 0
     requiredPlayerState: 1
@@ -3414,7 +3414,7 @@ MonoBehaviour:
     batteryLaunchSpeed: 9
     batteryLaunchAngle: 30
     overrideBeltDirection: 1
-    beltDirection: 89
+    beltDirection: -2
   - propName: ConveyorBelt
     cell: {x: 12, y: 0, z: 0}
     connectionId: familiarity_crushers
@@ -62956,3 +62956,4 @@ SceneRoots:
   - {fileID: 662068600}
   - {fileID: 1445205134}
   - {fileID: 479712302}
+  - {fileID: 138493055831346291}

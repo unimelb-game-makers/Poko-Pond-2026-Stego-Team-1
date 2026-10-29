@@ -49,7 +49,7 @@ MonoBehaviour:
   m_LightType: 3
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.6
-  m_Color: {r: 0.4, g: 1, b: 0.5, a: 1}
+  m_Color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   m_Intensity: 0.8
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
@@ -69,8 +69,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 1
@@ -97,10 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98aac168b3d44455cb7bd3f8729ad936, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropLight
-  onColor: {r: 0.4, g: 1, b: 0.5, a: 1}
-  onIntensity: 1.1
+  onColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  onIntensity: 1
   offColor: {r: 1, g: 0.8, b: 0.3, a: 1}
-  offIntensity: 1.1
+  offIntensity: 1
   fadeTime: 0.2
   powerUpFlash: 0.6
 --- !u!1 &4045555371561510192
