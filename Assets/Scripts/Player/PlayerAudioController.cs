@@ -1,5 +1,3 @@
-using FMODUnity;
-using FMODUnityResonance;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -51,7 +49,7 @@ public class PlayerAudioController : MonoBehaviour
             }
             else
             {
-                FMODUnity.RuntimeManager.PlayOneShot(jumpClip);
+                
             }
 
         }

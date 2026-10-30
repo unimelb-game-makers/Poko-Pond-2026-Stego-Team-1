@@ -1116,6 +1116,7 @@ public class SoftBodyPlayer : MonoBehaviour
         _jumpQueued          = false;
         _currentGravityScale = baseGravityScale;
 
+
         // Uniform velocity delta across every point — identical Δvy means no
         // differential motion between points so no compression wave can form in the
         // spring network. Any per-point variation (top-only impulse, weighted impulse)

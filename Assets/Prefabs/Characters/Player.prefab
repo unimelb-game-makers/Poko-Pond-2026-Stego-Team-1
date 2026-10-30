@@ -657,11 +657,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
   jumpClip:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -865051838
+      Data2: 1235326095
+      Data3: 344783273
+      Data4: -98600502
+    Path: event:/Player Sounds/SFX_Jump
   landClip:
     Guid:
       Data1: 287156523

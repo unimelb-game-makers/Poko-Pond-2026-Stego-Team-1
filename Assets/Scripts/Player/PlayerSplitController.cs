@@ -237,6 +237,8 @@ public class PlayerSplitController : MonoBehaviour
         kept     = _droplets[0];
         expelled = _droplets[1];
         EventManager.PlayerSplit();
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Drop Split");
+
         return true;
     }
 
@@ -312,6 +314,7 @@ public class PlayerSplitController : MonoBehaviour
         StartCoroutine(DriveWiggle(_droplets[1], 0.50f));
 
         EventManager.PlayerSplit();
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Drop Split");
         yield break;
     }
 
@@ -467,6 +470,8 @@ public class PlayerSplitController : MonoBehaviour
 
         _isMerging = false;
         EventManager.PlayerMerge();
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Drop Merge");
+
         yield break;
     }
 

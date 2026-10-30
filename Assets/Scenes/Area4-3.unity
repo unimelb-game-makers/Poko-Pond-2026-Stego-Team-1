@@ -1314,12 +1314,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
-  sfxSource: {fileID: 1407174355}
-  loopSource: {fileID: 1930542146}
-  jumpClip: {fileID: 8300000, guid: f04fced4e2be4eaabb646504ed8bc008, type: 3}
-  jumpAltClip: {fileID: 8300000, guid: c586a6aa4ab5a572aa4adc5d58c32e03, type: 3}
-  landClip: {fileID: 8300000, guid: 192ba2b3561d461c9a8af1713c47c332, type: 3}
-  backgroundClip: {fileID: 8300000, guid: df97e89f3d5e0a97f957effe9fe5a4b6, type: 3}
+  jumpClip:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  landClip:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   fallSpeedThreshold: 1
   groundLayer:
     serializedVersion: 2
@@ -1581,11 +1589,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db844e096f6ab4d2298224a9121d507b, type: 3}
---- !u!82 &1407174355 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 8173031210116853265, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-  m_PrefabInstance: {fileID: 4406728791540306881}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1618472672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2208,11 +2211,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!82 &1930542146 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 4767708089411165913, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-  m_PrefabInstance: {fileID: 4406728791540306881}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2002443787
 GameObject:
   m_ObjectHideFlags: 0
