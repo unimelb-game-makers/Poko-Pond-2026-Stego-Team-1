@@ -3753,11 +3753,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5125889657724887874, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -38
+      value: -24
       objectReference: {fileID: 0}
     - target: {fileID: 5125889657724887874, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11
+      value: -14
       objectReference: {fileID: 0}
     - target: {fileID: 5125889657724887874, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -150036,7 +150036,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.data[26].blowerStrength
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.data[26].connectionMode
@@ -150044,7 +150044,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.data[27].blowerStrength
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.data[27].connectionMode
@@ -150052,7 +150052,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.data[28].blowerStrength
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6483288868206487663, guid: 316ffcbd6e80445869f6d0256035acd5, type: 3}
       propertyPath: cellOverrides.Array.data[28].connectionMode
