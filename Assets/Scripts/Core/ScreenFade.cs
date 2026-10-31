@@ -16,6 +16,7 @@ public class ScreenFade : MonoBehaviour
     public void FadeToBlack(float duration)
     {
         StartCoroutine(FadeRoutine(1f, duration));
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Death");
     }
 
     // Call this to clear the black screen

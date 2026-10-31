@@ -33,6 +33,9 @@ public class Door : MonoBehaviour, IPropConnectable, IPropPowered
     private int _unlockTransitionFrame = -1;
     private float _frameTimer;
 
+    // track door is ready to play open sound
+    private bool _doorReady = true;
+
     public bool IsUnlocked => _isUnlocked;
     public bool IsPowered => _isUnlocked;
     public bool IsOpen => greenOpeningFrames != null && greenOpeningFrames.Length > 0
@@ -93,11 +96,24 @@ public class Door : MonoBehaviour, IPropConnectable, IPropPowered
         // the player has left the proximity box, and blocks once fully closed.
         if (shouldOpen) SetBlocked(false);
         _frameTimer += Time.deltaTime;
-        if (_frameTimer < frameDuration) return;
+        if (_frameTimer < frameDuration)
+        {
+            if (_doorReady == true)
+            {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Door Open");
+                _doorReady = false;
+            }
+            return;
+        } 
         _frameTimer = 0f;
         _doorFrame += targetFrame > _doorFrame ? 1 : -1;
         doorRenderer.sprite = greenOpeningFrames[_doorFrame];
-        if (_doorFrame == 0) SetBlocked(true);
+        if (_doorFrame == 0) 
+        {
+            SetBlocked(true);
+            FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Door Close");
+            _doorReady = true;
+        }
     }
 
     private void TickUnlockTransition()

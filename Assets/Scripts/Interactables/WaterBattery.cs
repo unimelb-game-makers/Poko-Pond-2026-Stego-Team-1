@@ -214,6 +214,8 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
             entrySide = body.Center.x < IntakePoint.x ? -1f : 1f,
         });
         body.applyVaccum(true, IntakePoint);
+
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Suction");
     }
 
     private void UpdateSuction()
@@ -319,6 +321,8 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         o.body.ReleaseFromPark(ExitPoint(direction), LaunchVelocity(direction));
         _cooldownTimer = cooldownDuration;
         PlayClip(animationFramesEject, -1);
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Jump");
+
     }
 
     // ── State & power ────────────────────────────────────────────────────
