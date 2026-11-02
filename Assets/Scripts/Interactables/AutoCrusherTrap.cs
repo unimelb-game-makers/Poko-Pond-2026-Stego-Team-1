@@ -43,12 +43,8 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
     private bool _initialActive = true;
     private ConnectionMode _connectionMode = ConnectionMode.Hold;
 
-
-    // Variables used by sound
-    private FMODUnity.EventReference crushSoundRef = FMODUnity.RuntimeManager.PathToEventReference("event:/Player Sounds/SFX_Crusher");
     // position of the crusher used by sound
     private Vector2 crusherPosition;
-    private FMOD.Studio.EventInstance crushSoundInstance;
 
     private void PlayCrusherSound()
     {
@@ -58,8 +54,7 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
 
         Debug.Log(attenuationDistance);
 
-        crushSoundInstance.setParameterByName("parameter:/Attenuation", attenuationDistance);
-        crushSoundInstance.start();
+        AudioManager.SFXOneShot("Crusher", "attenuation", attenuationDistance);
     }
 
     // Called by PropTilemapSpawner — sets initial state and how the linked
@@ -74,9 +69,8 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Awake()
     {
-        // establish crusher position and initiate sound
+        // establish crusher position for sound
         crusherPosition = transform.position;
-        crushSoundInstance = FMODUnity.RuntimeManager.CreateInstance(crushSoundRef);
 
         _sprite = GetComponent<SpriteRenderer>();
         if (_sprite != null && frames != null && frames.Length > 0)
@@ -146,6 +140,7 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
             if (impactParticles != null)
                 impactParticles.Play();
 
+            // Play sound
             PlayCrusherSound();
 
             // Retract: frames 5→26

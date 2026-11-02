@@ -100,7 +100,7 @@ public class Door : MonoBehaviour, IPropConnectable, IPropPowered
         {
             if (_doorReady == true)
             {
-                FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Door Open");
+                AudioManager.SFXOneShot("Door_Open");
                 _doorReady = false;
             }
             return;
@@ -111,7 +111,7 @@ public class Door : MonoBehaviour, IPropConnectable, IPropPowered
         if (_doorFrame == 0) 
         {
             SetBlocked(true);
-            FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Door Close");
+            AudioManager.SFXOneShot("Door_Close");
             _doorReady = true;
         }
     }

@@ -35,7 +35,7 @@ public class SplittingMachine : MonoBehaviour, IPropPowered
         _splitController.UnlockSplitting();
         _activated = true;
         ApplyVisual();
-        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Split Machine");
+        AudioManager.SFXOneShot("Split_Machine");
     }
 
     private bool PlayerIsOnMachine()

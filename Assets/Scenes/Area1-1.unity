@@ -829,71 +829,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2002443788}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &815567856
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 815567859}
-  - component: {fileID: 815567858}
-  - component: {fileID: 815567857}
-  m_Layer: 0
-  m_Name: Music Loop
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &815567857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815567856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
-  CollisionTag: 
-  Parameter: Level
-  TriggerEvent: 2
-  Value: 1
---- !u!114 &815567858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815567856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
-  CollisionTag: 
-  Parameter: Level
-  TriggerEvent: 1
-  Value: 0
---- !u!4 &815567859
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815567856}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.84598, y: 0.90925, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &843714859 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7752303226064055642, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
@@ -1166,36 +1101,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
   m_PrefabInstance: {fileID: 4406728791540306881}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1321637135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321637126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
-  jumpClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  landClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  fallSpeedThreshold: 1
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!50 &1321637136
 Rigidbody2D:
   serializedVersion: 5
@@ -1346,8 +1251,51 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1629081843}
+    - targetCorrespondingSourceObject: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1629081842}
   m_SourcePrefab: {fileID: 100100000, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+--- !u!1 &1629081841 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+  m_PrefabInstance: {fileID: 1629081840}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1629081842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629081841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
+  CollisionTag: 
+  Parameter: Level
+  TriggerEvent: 2
+  Value: 1
+--- !u!114 &1629081843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629081841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
+  CollisionTag: 
+  Parameter: Level
+  TriggerEvent: 1
+  Value: 0
 --- !u!1 &1672682070
 GameObject:
   m_ObjectHideFlags: 0
@@ -1897,7 +1845,7 @@ Transform:
   m_GameObject: {fileID: 1807380257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.29156, y: 0.89994, z: -10}
+  m_LocalPosition: {x: 14.327218, y: 0.89994, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2832,9 +2780,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1321637136}
-    - targetCorrespondingSourceObject: {fileID: 7687343749860754848, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1321637135}
   m_SourcePrefab: {fileID: 100100000, guid: 1cf87cc0b3c6441babd7baf365e0885b, type: 3}
 --- !u!1001 &4670084964000279355
 PrefabInstance:
@@ -256104,4 +256049,3 @@ SceneRoots:
   - {fileID: 220921965}
   - {fileID: 802579554871597389}
   - {fileID: 1629081840}
-  - {fileID: 815567859}
