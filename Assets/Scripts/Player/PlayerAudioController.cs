@@ -28,6 +28,9 @@ public class PlayerAudioController : MonoBehaviour
         // Access rigidbody for velocity tracking
         rb = GetComponent<Rigidbody2D>();
         softBodyPlayer = GetComponent<SoftBodyPlayer>();
+
+        // Reset Fmod to liquid state
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("State", 0);
     }
 
     void FixedUpdate()

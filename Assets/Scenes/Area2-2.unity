@@ -2083,7 +2083,6 @@ GameObject:
   - component: {fileID: 1807380258}
   - component: {fileID: 1807380262}
   - component: {fileID: 1807380263}
-  - component: {fileID: 1807380264}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2269,22 +2268,6 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
---- !u!114 &1807380264
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1807380257}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
-  CollisionTag: 
-  Parameter: State
-  TriggerEvent: 1
-  Value: 0
 --- !u!1001 &1817471900
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2358,6 +2341,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1001 &1936371584
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_Name
+      value: Background Music
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.84598
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.90925
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 95424d393061d4597a8d6b520522234c, type: 3}
 --- !u!1 &2002443787
 GameObject:
   m_ObjectHideFlags: 0
@@ -2576,7 +2616,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 326725630045150868}
-  m_Father: {fileID: 1978453958}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2852,7 +2892,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 380222895}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
@@ -62909,3 +62949,5 @@ SceneRoots:
   - {fileID: 662068600}
   - {fileID: 1445205134}
   - {fileID: 479712302}
+  - {fileID: 138493055831346291}
+  - {fileID: 1936371584}
