@@ -56,7 +56,7 @@ public static class AudioManager
         if (currentBackgroundMusic != track) ChangeBackgroundMusic(track);
     }
 
-    public static void ChangeBackgroundMusic(string track)
+    private static void ChangeBackgroundMusic(string track)
     {
         // if there is an existing track, stop it
         if (backgroundMusicInstance.isValid())
@@ -74,6 +74,24 @@ public static class AudioManager
         currentBackgroundMusic = track;
     }
 
+    // Volume controls should be a value between 0-1, 0.8 is the default
+    public static void SetMasterVolume(float state)
+    {
+        StudioSystem.setParameterByName("Volume_Master", state);
+    }
+
+    public static void SetSFXVolume(float state)
+    {
+        StudioSystem.setParameterByName("Volume_SFX", state);
+    }
+
+    public static void SetMusicVolume(float state)
+    {
+        StudioSystem.setParameterByName("Volume_Music", state);
+    }
+
+
+    // Other global parameter controls can be changed here
     public static void SetParameter(string parameterName, float state)
     {
         StudioSystem.setParameterByName(parameterName, state);
@@ -84,6 +102,8 @@ public static class AudioManager
         StudioSystem.setParameterByName(parameterName, state);
     }
 
+
+    // One shot playback has option for parameter setting for instance specific parameters
     public static void SFXOneShot(string sfxName)
     {
         PlayOneShot($"event:/SFX/{sfxName}");
@@ -97,8 +117,10 @@ public static class AudioManager
         sfxInstance.release();
     }
 
-    public static Bus sfxBus = GetBus("bus:/SFXUI/SFX");
 
+
+    private static Bus sfxBus = GetBus("bus:/SFXUI/SFX");
+    
     // Called on unloading of scene to stop any extra sound effects
     public static void StopAllSFX()
     {
