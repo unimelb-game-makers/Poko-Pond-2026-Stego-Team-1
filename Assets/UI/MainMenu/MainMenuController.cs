@@ -170,6 +170,7 @@ namespace PokoPond.UI.MainMenu
         public void OnNewGame()
         {
             if (!isActiveAndEnabled || IsPanelOpen) return;
+            FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_UI_Button");
             LoadSceneSafe(newGameScene, "New Game");
         }
 
