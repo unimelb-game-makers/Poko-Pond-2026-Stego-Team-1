@@ -95,6 +95,7 @@ public class Trampoline : MonoBehaviour
             StopCoroutine(_bounceAnimation);
 
         _bounceAnimation = StartCoroutine(BounceAnimationRoutine());
+        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Jump");
     }
 
     private IEnumerator BounceAnimationRoutine()
