@@ -9,6 +9,11 @@ public class Humidifier : MonoBehaviour
     private readonly HashSet<SoftBodyPlayer> visitors = new();
     private void Awake() => mist = GetComponent<BoxCollider2D>();
 
+    private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
+    private Sprite _normalSprite;
+    private bool _triggered;
+
     private void Update()
     {
         if (Time.timeScale == 0f) return;
