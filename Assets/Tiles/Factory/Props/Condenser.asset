@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcaf8b4cb58f24036b4e48b34535d8ef, type: 3}
   m_Name: Condenser
   m_EditorClassIdentifier: Assembly-CSharp::PropTile
-  previewSprite: {fileID: 21300000, guid: 4cb1eb4a03736474ebd1d481275eeb4e, type: 3}
+  previewSprite: {fileID: 1224836408271899001, guid: 0d2b64aa700456240a4ebacfc15aa898, type: 3}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
   prefab: {fileID: 9077519281397374647, guid: a98f34a57a88341fbae218e3c8390788, type: 3}
   spawnOffset: {x: 0.5, y: 0, z: 0}
   connectionId: 

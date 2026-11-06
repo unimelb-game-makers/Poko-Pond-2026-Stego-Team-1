@@ -340,6 +340,68 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 144318615}
   m_CullTransparentMesh: 1
+--- !u!1001 &155095601
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1565360941}
+    m_Modifications:
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742251874388127082, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_Name
+      value: Humidifier
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+--- !u!4 &155095602 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+  m_PrefabInstance: {fileID: 155095601}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &157968996
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +511,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6169647380426474676, guid: b5bc0c60cb60340f28d6610fcdefa5dd, type: 3}
   m_PrefabInstance: {fileID: 180795698}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &185519527
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1565360941}
+    m_Modifications:
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742251874388127082, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_Name
+      value: Humidifier (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+--- !u!4 &185519528 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+  m_PrefabInstance: {fileID: 185519527}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &197796188
 GameObject:
@@ -3024,6 +3148,40 @@ Transform:
   m_Children: []
   m_Father: {fileID: 157968997}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1565360940
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1565360941}
+  m_Layer: 0
+  m_Name: Humidifiers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1565360941
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565360940}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 155095602}
+  - {fileID: 1873322391}
+  - {fileID: 185519528}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1582220415
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4092,6 +4250,68 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e26cb982e1685f499065396ff3377a9, type: 3}
+--- !u!1001 &1873322390
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1565360941}
+    m_Modifications:
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742251874388127082, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+      propertyPath: m_Name
+      value: Humidifier (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+--- !u!4 &1873322391 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6243846670814250538, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
+  m_PrefabInstance: {fileID: 1873322390}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1875792017 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8682885914147421328, guid: 6e26cb982e1685f499065396ff3377a9, type: 3}
@@ -5165,7 +5385,7 @@ TilemapRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0.46875, y: 0.5, z: 0}
+  m_ChunkCullingBounds: {x: 0, y: 0.5, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -5794,16 +6014,6 @@ Tilemap:
   m_GameObject: {fileID: 9141161636170251741}
   m_Enabled: 1
   m_Tiles:
-  - first: {x: 2, y: 1, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 5
-      m_TileSpriteIndex: 5
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 1
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 0
   - first: {x: 5, y: 1, z: 0}
     second:
       serializedVersion: 2
@@ -5818,7 +6028,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 4
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -5828,7 +6038,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 1
-      m_TileSpriteIndex: 1
+      m_TileSpriteIndex: 4
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -5886,27 +6096,27 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 2857c0e693d6db34bbb90258a07e50db, type: 2}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: d992663b4b8acff4d962becec5b56340, type: 2}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 0a0f44aadb55e6e40b2d4677d7b6fcc4, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 4cb1eb4a03736474ebd1d481275eeb4e, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: f6a36517ae1dbe64c89d87e87696f31f, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: -9076132226850712986, guid: d2e693ebe8d10c2418229cea538922e3, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -6390778582831156625, guid: d00b8b383105b42ec830a8afb90cdf6d, type: 3}
+    m_Data: {fileID: 1224836408271899001, guid: 0d2b64aa700456240a4ebacfc15aa898, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: 8597122924375650967, guid: 37e749b6323f8fa4eb9eb12e1f33384c, type: 3}
+    m_Data: {fileID: -6390778582831156625, guid: d00b8b383105b42ec830a8afb90cdf6d, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: bf2361d90e43c984cbbcdec4f3627eb9, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 8
+  - m_RefCount: 7
     m_Data:
       e00: 1
       e01: 0
@@ -5945,8 +6155,8 @@ Tilemap:
   m_TileColorArray:
   - m_RefCount: 7
     m_Data: {r: 1, g: 1, b: 1, a: 1}
-  - m_RefCount: 1
-    m_Data: {r: 0, g: 1, b: 1, a: 1}
+  - m_RefCount: 0
+    m_Data: {r: 4.9431153e+37, g: 4.9431153e+37, b: 4.9431153e+37, a: 4.9431153e+37}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -64813,3 +65023,4 @@ SceneRoots:
   - {fileID: 479712302}
   - {fileID: 138493055831346291}
   - {fileID: 699415604}
+  - {fileID: 1565360941}

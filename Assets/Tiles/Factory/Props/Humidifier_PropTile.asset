@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcaf8b4cb58f24036b4e48b34535d8ef, type: 3}
   m_Name: Humidifier_PropTile
   m_EditorClassIdentifier: Assembly-CSharp::PropTile
-  previewSprite: {fileID: 8597122924375650967, guid: 37e749b6323f8fa4eb9eb12e1f33384c, type: 3}
-  previewColor: {r: 0, g: 1, b: 1, a: 1}
+  previewSprite: {fileID: 7870280777967954883, guid: f368a7c54474e454b9985b487d6e6918, type: 3}
+  previewColor: {r: 1, g: 1, b: 1, a: 1}
   prefab: {fileID: 8742251874388127082, guid: 3872291aac47c4d4987a5fb588f082b6, type: 3}
-  spawnOffset: {x: 0, y: -0.5, z: 0}
+  spawnOffset: {x: 0, y: 0, z: 0}
   connectionId: 
