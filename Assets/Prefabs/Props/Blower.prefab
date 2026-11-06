@@ -106,10 +106,10 @@ MonoBehaviour:
   directionVisual: {fileID: 6100000000000000005}
   fanRenderer: {fileID: 6100000000000000006}
   animationFrames:
-  - {fileID: 1710981365271166214, guid: 432daa80c71080d478f67ebe17642072, type: 3}
-  - {fileID: -4047725483211045721, guid: 432daa80c71080d478f67ebe17642072, type: 3}
-  - {fileID: 6289942371165083462, guid: 432daa80c71080d478f67ebe17642072, type: 3}
-  - {fileID: -729441830162507903, guid: 432daa80c71080d478f67ebe17642072, type: 3}
+  - {fileID: 3106226412923230687, guid: be47fc23f2db1b94bbb9250c3b2091aa, type: 3}
+  - {fileID: -1614885031, guid: be47fc23f2db1b94bbb9250c3b2091aa, type: 3}
+  - {fileID: 2116362463, guid: be47fc23f2db1b94bbb9250c3b2091aa, type: 3}
+  - {fileID: 2068550125, guid: be47fc23f2db1b94bbb9250c3b2091aa, type: 3}
   animationFramesPerSecond: 8
 --- !u!1 &6100000000000000004
 GameObject:
@@ -192,7 +192,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1710981365271166214, guid: 432daa80c71080d478f67ebe17642072, type: 3}
+  m_Sprite: {fileID: 3106226412923230687, guid: be47fc23f2db1b94bbb9250c3b2091aa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
