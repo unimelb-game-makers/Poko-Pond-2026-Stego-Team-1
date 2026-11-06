@@ -99,6 +99,10 @@ MonoBehaviour:
   gasStrengthMultiplier: 1
   windRange: 4
   windWidth: 1.5
+  activation:
+    connectionId: 
+    mode: 0
+    initialActive: 1
   directionVisual: {fileID: 6100000000000000005}
   fanRenderer: {fileID: 6100000000000000006}
   animationFrames:

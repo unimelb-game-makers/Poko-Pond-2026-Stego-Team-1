@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 8662344507862011182}
   - component: {fileID: 7186230122114940486}
   - component: {fileID: 613720306691449309}
+  - component: {fileID: 3509909680394981724}
   m_Layer: 0
   m_Name: WaterBattery
   m_TagString: Untagged
@@ -391,8 +392,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 1.982441}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.6231885, y: 3.347826}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 1.4031007, y: 1.7906977}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
