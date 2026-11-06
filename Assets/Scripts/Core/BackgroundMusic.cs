@@ -18,4 +18,9 @@ public class BackgroundMusic : MonoBehaviour
     {
         AudioManager.StopAllSFX();
     }
+
+    private void OApplicationQuit()
+    {
+        AudioManager.StopAllSound();
+    }
 }

@@ -117,13 +117,19 @@ public static class AudioManager
         sfxInstance.release();
     }
 
-
-
     private static Bus sfxBus = GetBus("bus:/SFXUI/SFX");
+    
     
     // Called on unloading of scene to stop any extra sound effects
     public static void StopAllSFX()
     {
         sfxBus.stopAllEvents(STOP_MODE.IMMEDIATE);
+    }
+
+    private static Bus masterBus = GetBus("bus:/");
+    public static void StopAllSound()
+    {
+        masterBus.stopAllEvents(STOP_MODE.IMMEDIATE);
+        backgroundMusicInstance.release();
     }
 }
