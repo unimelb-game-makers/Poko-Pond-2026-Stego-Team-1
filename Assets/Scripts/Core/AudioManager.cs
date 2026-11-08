@@ -53,7 +53,7 @@ public static class AudioManager
     // This function handles backgroundMusic from level to level
     public static void SetBackgroundMusic(string track)
     {
-        if (currentBackgroundMusic != track) ChangeBackgroundMusic(track);
+        if ((currentBackgroundMusic != track) || !backgroundMusicInstance.isValid()) ChangeBackgroundMusic(track);
     }
 
     private static void ChangeBackgroundMusic(string track)
