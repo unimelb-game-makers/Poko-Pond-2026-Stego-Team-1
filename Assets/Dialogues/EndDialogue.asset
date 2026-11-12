@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a11a7201676c60e40b6fa2700d7ded0a, type: 3}
+  m_Name: EndDialogue
+  m_EditorClassIdentifier: 
+  lines:
+  - speakerName: Great Tree
+    text: You have done well, little droplet.
+    portrait: {fileID: -2987510084298818118, guid: d5acee93a47ff3543bb6d16f68242169, type: 3}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0
+  - speakerName: Great Tree
+    text: Through your courage and persistence, you have conquered the factory and
+      found your way to me, the Great Tree.
+    portrait: {fileID: -2987510084298818118, guid: d5acee93a47ff3543bb6d16f68242169, type: 3}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0
+  - speakerName: Great Tree
+    text: Now, enter the vent behind me and soar to freedom!
+    portrait: {fileID: -2987510084298818118, guid: d5acee93a47ff3543bb6d16f68242169, type: 3}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0
+  - speakerName: Great Tree
+    text: I shall remain to guide other droplets like yourself.
+    portrait: {fileID: -2987510084298818118, guid: d5acee93a47ff3543bb6d16f68242169, type: 3}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0

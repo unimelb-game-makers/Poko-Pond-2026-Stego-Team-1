@@ -302,8 +302,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PropLight
   onColor: {r: 0.4, g: 1, b: 0.5, a: 1}
-  onIntensity: 1.1
+  onIntensity: 5
   offColor: {r: 1, g: 0.25, b: 0.25, a: 1}
-  offIntensity: 1.1
+  offIntensity: 10
   fadeTime: 0.2
   powerUpFlash: 0.6

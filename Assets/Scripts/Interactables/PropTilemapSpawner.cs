@@ -62,6 +62,8 @@ public class PropTilemapSpawner : MonoBehaviour
         [Min(0f)] public float batteryLaunchSpeed;
         [Tooltip("Upward launch angle in degrees for this WaterBattery cell. 0 = flat; mirrored for left/right exits.")]
         [Range(0f, 85f)] public float batteryLaunchAngle;
+        public bool overrideBeltDirection;
+        public float beltDirection;
     }
 
     [Tooltip("Per-cell connection IDs. Right-click this component → Sync Cell List after painting to auto-populate.")]
@@ -104,6 +106,8 @@ public class PropTilemapSpawner : MonoBehaviour
                 blowerStrength = hadEntry && prev.blowerStrength > 0f ? prev.blowerStrength : 30f,
                 blowerRange = hadEntry && prev.blowerRange > 0f ? prev.blowerRange : 4f,
                 blowerWidth = hadEntry && prev.blowerWidth > 0f ? prev.blowerWidth : 1.5f,
+                overrideBeltDirection = hadEntry && prev.overrideBeltDirection,
+                beltDirection = hadEntry && prev.beltDirection > 0f ? prev.beltDirection : -2f,
                 overrideBatteryLaunch = hadEntry && prev.overrideBatteryLaunch,
                 batteryLaunchSpeed = hadEntry && prev.batteryLaunchSpeed > 0f ? prev.batteryLaunchSpeed : 9f,
                 batteryLaunchAngle = hadEntry && prev.overrideBatteryLaunch ? prev.batteryLaunchAngle : 30f,
@@ -184,6 +188,13 @@ public class PropTilemapSpawner : MonoBehaviour
                 && go.TryGetComponent(out IPropBatteryLaunchConfigurable launchConfigurable))
             {
                 launchConfigurable.SetLaunchConfig(ov.batteryLaunchSpeed, ov.batteryLaunchAngle);
+            }
+
+            //Conveyor belt test
+            if (hasOverride && ov.overrideBeltDirection
+                && go.TryGetComponent(out IPropBeltConfigurable BeltConfigurable))
+            {
+                BeltConfigurable.SetBeltConfig(ov.beltDirection);
             }
         }
     }
