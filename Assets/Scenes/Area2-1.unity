@@ -617,7 +617,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_TargetDisplay: 0
 --- !u!1 &653568219 stripped
 GameObject:
@@ -1033,7 +1033,7 @@ PrefabInstance:
       objectReference: {fileID: -3960158602293367991, guid: 91188f58c7d57b1629fd525e5ae1cac0, type: 3}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_WasSpriteAssigned
@@ -3123,7 +3123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingOrder
-      value: -1
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingLayerID
@@ -3251,7 +3251,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_SortingLayerID
