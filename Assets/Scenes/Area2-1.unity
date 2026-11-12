@@ -617,8 +617,13 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_TargetDisplay: 0
+--- !u!1 &653568219 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6527708192449720140, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+  m_PrefabInstance: {fileID: 2009092181765778615}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &662068598
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,7 +791,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5052670890782036429, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
   m_PrefabInstance: {fileID: 6605269915261517450}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1370179762}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
@@ -1028,7 +1033,7 @@ PrefabInstance:
       objectReference: {fileID: -3960158602293367991, guid: 91188f58c7d57b1629fd525e5ae1cac0, type: 3}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_WasSpriteAssigned
@@ -1452,11 +1457,6 @@ Animator:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8780505892969428990, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
   m_PrefabInstance: {fileID: 1837516808949673031}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1370179762 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6463405568118799880, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
-  m_PrefabInstance: {fileID: 6605269915261517450}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1380275886
 GameObject:
@@ -2985,7 +2985,6 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -2996,6 +2995,8 @@ MonoBehaviour:
     overrideBatteryLaunch: 0
     batteryLaunchSpeed: 0
     batteryLaunchAngle: 0
+    overrideBeltDirection: 0
+    beltDirection: 0
   - propName: PressurePlate
     cell: {x: 9, y: 1, z: 0}
     connectionId: intro_door
@@ -3004,7 +3005,6 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 0
     oneShot: 1
-    beltDirection: 0
     requirePlayerState: 1
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -3015,6 +3015,8 @@ MonoBehaviour:
     overrideBatteryLaunch: 0
     batteryLaunchSpeed: 0
     batteryLaunchAngle: 0
+    overrideBeltDirection: 0
+    beltDirection: 0
   - propName: Condenser
     cell: {x: 14, y: 1, z: 0}
     connectionId: 
@@ -3023,7 +3025,6 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -3034,6 +3035,8 @@ MonoBehaviour:
     overrideBatteryLaunch: 0
     batteryLaunchSpeed: 0
     batteryLaunchAngle: 0
+    overrideBeltDirection: 0
+    beltDirection: 0
   - propName: Evaporator
     cell: {x: 20, y: 1, z: 0}
     connectionId: 
@@ -3042,7 +3045,6 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -3053,6 +3055,8 @@ MonoBehaviour:
     overrideBatteryLaunch: 0
     batteryLaunchSpeed: 0
     batteryLaunchAngle: 0
+    overrideBeltDirection: 0
+    beltDirection: 0
   - propName: YellowDoor
     cell: {x: 29, y: 1, z: 0}
     connectionId: intro_door
@@ -3061,7 +3065,6 @@ MonoBehaviour:
     connectionMode: 1
     initialActive: 0
     oneShot: 0
-    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 0
     overrideBlowerSettings: 0
@@ -3072,6 +3075,8 @@ MonoBehaviour:
     overrideBatteryLaunch: 0
     batteryLaunchSpeed: 0
     batteryLaunchAngle: 0
+    overrideBeltDirection: 0
+    beltDirection: 0
   - propName: Humidifier
     cell: {x: 30, y: 1, z: 0}
     connectionId: 
@@ -3080,7 +3085,6 @@ MonoBehaviour:
     connectionMode: 0
     initialActive: 1
     oneShot: 0
-    beltDirection: 0
     requirePlayerState: 0
     requiredPlayerState: 1
     overrideBlowerSettings: 0
@@ -3091,6 +3095,8 @@ MonoBehaviour:
     overrideBatteryLaunch: 0
     batteryLaunchSpeed: 0
     batteryLaunchAngle: 0
+    overrideBeltDirection: 0
+    beltDirection: 0
 --- !u!1001 &1837516808949673031
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3117,7 +3123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingOrder
-      value: -1
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1987788114323219149, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
       propertyPath: m_SortingLayerID
@@ -3228,40 +3234,24 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: dialogueData
-      value: 
-      objectReference: {fileID: 11400000, guid: 9f295e817582c0542a13a8dc494c3118, type: 2}
-    - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: interactKeyAlt
-      value: 122
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: interactPrompt
       value: 
-      objectReference: {fileID: 1370179762}
-    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_FlipY
-      value: 0
+      objectReference: {fileID: 653568219}
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 2024207049606238952, guid: 0844e6c80533c9647b4dffa9adf30411, type: 3}
-    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_SortingLayer
-      value: 0
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_SortingOrder
-      value: 0
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_SortingLayerID
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_SpriteSortPoint
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.x
@@ -3318,6 +3308,10 @@ PrefabInstance:
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527708192449720140, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8786796530190681263, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_Name
@@ -35598,6 +35592,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -8118557757861841130, guid: 4e8c6671b24db98499db6bde5353da27, type: 3}
+    - target: {fileID: 6936326687280219280, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7398101066685405488, guid: 5a0f66503383db14dbae794b26f18aaa, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0

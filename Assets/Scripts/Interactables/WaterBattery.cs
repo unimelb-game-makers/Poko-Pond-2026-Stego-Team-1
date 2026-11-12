@@ -75,6 +75,8 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
     [Tooltip("Droplet entering the tank, light turning green. Played once on capture.")]
     [SerializeField] private Sprite[] animationFramesProcess;
     [Tooltip("First frame of Process that the running (green light) loop returns to.")]
+    [SerializeField] private GameObject indicator;
+    [Tooltip("The arrow indicators that show when player is in water battery")]
     [SerializeField, Min(0)] private int runningLoopStart = 7;
     [Tooltip("Frame of Process shown while a big battery holds only one half (red light, water in tank).")]
     [SerializeField, Min(0)] private int holdingFrame = 5;
@@ -143,6 +145,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         _playerMask      = LayerMask.GetMask("Player", "SoftBodyPoint");
         _splitController = FindFirstObjectByType<PlayerSplitController>();
         if (fanRenderer == null) fanRenderer = GetComponent<SpriteRenderer>();
+        SetIndicatorActive(false);
         PlayIdle();
     }
 
@@ -161,6 +164,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         DetectNewBodies();
         UpdateSuction();
         RefreshState();
+        UpdateIndicatorState();
     }
 
     // A battery riding a moving platform drags its parked occupants along.
@@ -214,6 +218,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
             entrySide = body.Center.x < IntakePoint.x ? -1f : 1f,
         });
         body.applyVaccum(true, IntakePoint);
+        UpdateIndicatorState();
 
         FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Suction");
     }
@@ -231,6 +236,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
             {
                 s.body.applyVaccum(false, Vector2.zero);
                 _sucking.RemoveAt(i);
+                UpdateIndicatorState();
                 continue;
             }
 
@@ -240,6 +246,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
             {
                 _sucking.RemoveAt(i);
                 Capture(s);
+                UpdateIndicatorState();
             }
         }
     }
@@ -281,6 +288,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
     {
         body.Park(IntakePoint);
         _occupants.Add(new Occupant { body = body, ejectArmed = false });
+        UpdateIndicatorState();
     }
 
     // ── Eject ────────────────────────────────────────────────────────────
@@ -321,6 +329,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         o.body.ReleaseFromPark(ExitPoint(direction), LaunchVelocity(direction));
         _cooldownTimer = cooldownDuration;
         PlayClip(animationFramesEject, -1);
+        UpdateIndicatorState();
         FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Jump");
 
     }
@@ -447,6 +456,18 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
 
     // ── Helpers ──────────────────────────────────────────────────────────
 
+    private void UpdateIndicatorState()
+    {
+        if (indicator == null) return;
+        bool active = _sucking.Count > 0 || _occupants.Count > 0;
+        SetIndicatorActive(active);
+    }
+
+    private void SetIndicatorActive(bool active)
+    {
+        if (indicator != null) indicator.SetActive(active);
+    }
+
     private Vector2 SuctionCenter => transform.TransformPoint(suctionOffset);
     private Vector2 SuctionSize   => Vector2.Scale(suctionSize, Abs(transform.lossyScale));
     private Vector2 IntakePoint   => transform.TransformPoint(intakeOffset);
@@ -497,6 +518,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
     {
         _sucking.RemoveAll(s => s.body == null);
         _occupants.RemoveAll(o => o.body == null);
+        UpdateIndicatorState();
     }
 
     private static bool TryResolveOwner(Collider2D collider, out SoftBodyPlayer owner)
