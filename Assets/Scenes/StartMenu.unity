@@ -178,8 +178,51 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 970758604}
+    - targetCorrespondingSourceObject: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 970758603}
   m_SourcePrefab: {fileID: 100100000, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+--- !u!1 &970758602 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+  m_PrefabInstance: {fileID: 970758601}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &970758603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970758602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
+  CollisionTag: 
+  Parameter: Menu
+  TriggerEvent: 2
+  Value: 0
+--- !u!114 &970758604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970758602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioGlobalParameterTrigger
+  CollisionTag: 
+  Parameter: Menu
+  TriggerEvent: 1
+  Value: 1
 --- !u!1001 &1714474945
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -531,8 +574,154 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3160651025675927220, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1714474949}
+    - targetCorrespondingSourceObject: {fileID: 3160651025675927220, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1714474956}
+    - targetCorrespondingSourceObject: {fileID: 887328064888293171, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1714474948}
+    - targetCorrespondingSourceObject: {fileID: 887328064888293171, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1714474953}
   m_SourcePrefab: {fileID: 100100000, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+--- !u!1 &1714474946 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 887328064888293171, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+  m_PrefabInstance: {fileID: 1714474945}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1714474947 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3160651025675927220, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+  m_PrefabInstance: {fileID: 1714474945}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1714474948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714474946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1221003488
+      Data2: 1081989341
+      Data3: 93699242
+      Data4: 613759565
+    Path: event:/SFX/UI_Button
+  Event: 
+  EventPlayTrigger: 11
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &1714474949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714474947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1221003488
+      Data2: 1081989341
+      Data3: 93699242
+      Data4: 613759565
+    Path: event:/SFX/UI_Button
+  Event: 
+  EventPlayTrigger: 11
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &1714474953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714474946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 261793517
+      Data2: 1298119069
+      Data3: 1814927520
+      Data4: -384133407
+    Path: event:/SFX/UI_Button_Simple
+  Event: 
+  EventPlayTrigger: 12
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &1714474956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714474947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 261793517
+      Data2: 1298119069
+      Data3: 1814927520
+      Data4: -384133407
+    Path: event:/SFX/UI_Button_Simple
+  Event: 
+  EventPlayTrigger: 12
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &1876370657
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,8 @@ public class BackgroundMusic : MonoBehaviour
 
     private void Awake()
     {
-        AudioManager.SetBackgroundMusic(backgroundMusic);
+        if (backgroundMusic == "Ending") AudioManager.TriggerEnding();
+        else AudioManager.SetBackgroundMusic(backgroundMusic);
     }
 
     private void OnDestroy()
@@ -19,7 +20,7 @@ public class BackgroundMusic : MonoBehaviour
         AudioManager.StopAllSFX();
     }
 
-    private void OApplicationQuit()
+    private void OnApplicationQuit()
     {
         AudioManager.StopAllSound();
     }
