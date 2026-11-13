@@ -53,7 +53,12 @@ public static class AudioManager
     // This function handles backgroundMusic from level to level
     public static void SetBackgroundMusic(string track)
     {
-        if ((currentBackgroundMusic != track) || !backgroundMusicInstance.isValid()) ChangeBackgroundMusic(track);
+        // special ending doesn't revert continues with ending track
+        if (track == "StartMenu" & currentBackgroundMusic == "Ending") {
+            currentBackgroundMusic = track;
+            SetParameter("Ending", 0);
+        }
+        else if ((currentBackgroundMusic != track) || !backgroundMusicInstance.isValid()) ChangeBackgroundMusic(track);
     }
 
     private static void ChangeBackgroundMusic(string track)
@@ -72,6 +77,13 @@ public static class AudioManager
         Debug.Log("Current Track: " + track);
 
         currentBackgroundMusic = track;
+    }
+
+    public static void TriggerEnding()
+    {
+        SetBackgroundMusic("Level");
+        SetParameter("Ending", 1);
+        currentBackgroundMusic = "Ending";
     }
 
     // Volume controls should be a value between 0-1, 0.8 is the default
