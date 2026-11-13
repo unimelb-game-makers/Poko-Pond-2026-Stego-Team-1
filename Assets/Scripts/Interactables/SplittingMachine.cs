@@ -35,6 +35,7 @@ public class SplittingMachine : MonoBehaviour, IPropPowered
         _splitController.UnlockSplitting();
         _activated = true;
         ApplyVisual();
+        AudioManager.SFXOneShot("Split_Machine");
     }
 
     private bool PlayerIsOnMachine()

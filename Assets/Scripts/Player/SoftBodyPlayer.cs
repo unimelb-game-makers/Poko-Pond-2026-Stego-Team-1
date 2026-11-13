@@ -1116,7 +1116,7 @@ public class SoftBodyPlayer : MonoBehaviour
         _jumpQueued          = false;
         _currentGravityScale = baseGravityScale;
 
-        if (bodystate != PlayerBodyState.Solid) FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Small Jump");
+        if (bodystate != PlayerBodyState.Solid) AudioManager.SFXOneShot("Small_Jump");
 
         // Uniform velocity delta across every point — identical Δvy means no
         // differential motion between points so no compression wave can form in the
@@ -1811,9 +1811,10 @@ public class SoftBodyPlayer : MonoBehaviour
                 jumpForce = solidJumpForce;
                 bodyInnerColor = solidbodyInnerColor;
                 bodyOuterColor = solidbodyOuterColor;
+
                 // Play Freeze sound and update FMOD
-                FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Freeze");
-                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("State", 1);
+                AudioManager.SFXOneShot("Freeze");
+                AudioManager.SetParameter("State", 1);
             }
             else
             {
@@ -1822,9 +1823,10 @@ public class SoftBodyPlayer : MonoBehaviour
                 jumpForce = _liquidJumpForce;
                 bodyInnerColor = liquidbodyInnerColor;
                 bodyOuterColor = liquidbodyOuterColor;
+
                 // Play Freeze sound and update FMOD
-                FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Sizzle");
-                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("State", 0);
+                AudioManager.SFXOneShot("Evaporator");
+                AudioManager.SetParameter("State", 0);
             }
 
             initBody();

@@ -170,6 +170,7 @@ namespace PokoPond.UI.MainMenu
         public void OnNewGame()
         {
             if (!isActiveAndEnabled || IsPanelOpen) return;
+            AudioManager.SFXOneShot("UI_Button");
             LoadSceneSafe(newGameScene, "New Game");
         }
 

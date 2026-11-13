@@ -215,7 +215,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         });
         body.applyVaccum(true, IntakePoint);
 
-        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Suction");
+        AudioManager.SFXOneShot("Water_Battery");
     }
 
     private void UpdateSuction()
@@ -321,7 +321,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         o.body.ReleaseFromPark(ExitPoint(direction), LaunchVelocity(direction));
         _cooldownTimer = cooldownDuration;
         PlayClip(animationFramesEject, -1);
-        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Jump");
+        AudioManager.SFXOneShot("Big_Jump");
 
     }
 

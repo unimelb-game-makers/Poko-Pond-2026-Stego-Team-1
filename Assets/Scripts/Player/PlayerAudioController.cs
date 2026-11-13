@@ -4,11 +4,6 @@ using UnityEngine;
 public class PlayerAudioController : MonoBehaviour
 {
 
-
-    [Header("Audio Clips")]
-    public FMODUnity.EventReference jumpClip;
-    public FMODUnity.EventReference landClip;
-
     [Header("Physics Triggers")]
     [Tooltip("Downward velocity required to trigger the falling sound")]
     public float fallSpeedThreshold = -5f;
@@ -28,6 +23,11 @@ public class PlayerAudioController : MonoBehaviour
         // Access rigidbody for velocity tracking
         rb = GetComponent<Rigidbody2D>();
         softBodyPlayer = GetComponent<SoftBodyPlayer>();
+
+        // Reset Fmod to liquid state
+        AudioManager.SetParameter("State", 0);
+        // Play blower sounds
+        AudioManager.SFXOneShot("Blower");
     }
 
     void FixedUpdate()
@@ -47,11 +47,6 @@ public class PlayerAudioController : MonoBehaviour
             {
                 TriggerLanding();   
             }
-            else
-            {
-                
-            }
-
         }
 
         previousVelocity = velocity;
@@ -75,14 +70,8 @@ public class PlayerAudioController : MonoBehaviour
         }
     }
 
-    // 3. JUMP TRIGGER: To be called when jumping
-    public void TriggerJump()
-    {
-        FMODUnity.RuntimeManager.PlayOneShot(jumpClip);
-    }
-
     private void TriggerLanding()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(landClip);
+        AudioManager.SFXOneShot("Land");
     }
 }

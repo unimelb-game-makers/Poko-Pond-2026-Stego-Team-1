@@ -175,7 +175,7 @@ public class DialogueManager : MonoBehaviour
 
     private void PlayBeep()
     {
-        FMODUnity.RuntimeManager.PlayOneShot(_currentBeepClip);
+        AudioManager.SFXOneShot("Dialogue_Beep");
     }
 
 
