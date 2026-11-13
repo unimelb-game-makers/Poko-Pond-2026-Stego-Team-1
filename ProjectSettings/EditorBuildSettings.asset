@@ -50,8 +50,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Area4-3.unity
     guid: baa5b22ccd39ae7aab4a8d8e569a1b44
-  - enabled: 1
-    path: Assets/Scenes/AreaEnding.unity
-    guid: 181303d229ca0784c9f27084d0f01d32
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
