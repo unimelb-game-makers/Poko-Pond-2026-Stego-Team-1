@@ -146,6 +146,11 @@ PolygonCollider2D:
   m_CorrespondingSourceObject: {fileID: 4031188047467641964, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
   m_PrefabInstance: {fileID: 1837516808949673031}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &127814851 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6527708192449720140, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+  m_PrefabInstance: {fileID: 2040274669}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &144318615
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +501,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -2
   m_TargetDisplay: 0
 --- !u!114 &695881115 stripped
 MonoBehaviour:
@@ -995,6 +1000,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
+  jumpClip:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  landClip:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   fallSpeedThreshold: 1
   groundLayer:
     serializedVersion: 2
@@ -1845,6 +1864,10 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2978560335679728461, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: dialogueData
       value: 
@@ -1856,7 +1879,7 @@ PrefabInstance:
     - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: interactPrompt
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 127814851}
     - target: {fileID: 3588999046134725103, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: interactRadius
       value: 2
@@ -1879,7 +1902,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3970281661641867154, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_SortingLayerID

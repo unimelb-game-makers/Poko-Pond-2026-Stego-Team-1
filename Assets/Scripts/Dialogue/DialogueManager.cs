@@ -40,6 +40,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private float defaultCharDelay = 0.04f;
     [Tooltip("Key to skip typewriter or advance to the next line.")]
     [SerializeField] private KeyCode advanceKey = KeyCode.Z;
+    [SerializeField] private KeyCode advanceKeyAlt = KeyCode.E;
 
     [Header("Beep")]
     [Tooltip("Short blip clip (~50 ms sine wave). Can be overridden per DialogueLine.")]
@@ -75,7 +76,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (!IsDialogueActive()) return;
 
-        if (Input.GetKeyDown(advanceKey))
+        if (Input.GetKeyDown(advanceKey) || Input.GetKeyDown(advanceKeyAlt))
         {
             if (_isTyping) _skipRequested = true; // skip to end of line
             else           ShowNextLine();         // advance
