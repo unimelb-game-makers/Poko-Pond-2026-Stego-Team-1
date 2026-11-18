@@ -240,7 +240,7 @@ public class MovingPlatform : MonoBehaviour, IPropConnectable, IPropActivatable
             // rider's feet rest, regardless of the sprite's pivot/scale.
             Bounds bounds = platformCollider.bounds;
             Vector2 zoneCenter = new Vector2(bounds.center.x, bounds.max.y);
-            PlayerLife.KillAllInBox(zoneCenter, new Vector2(bounds.size.x, electrifiedZoneHeight));
+            PlayerLife.KillAllInBox(zoneCenter, new Vector2(bounds.size.x, electrifiedZoneHeight), null, "Zap");
         }
     }
 

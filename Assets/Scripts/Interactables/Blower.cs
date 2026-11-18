@@ -148,7 +148,7 @@ public class Blower : MonoBehaviour, IPropWindConfigurable, IPropConnectable, IP
             {
                 float stateStrength = blowStrength * GetStrengthMultiplier(player.getBodyState());
                 player.AddExternalAcceleration(worldDirection * stateStrength);
-                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Wind Strength", stateStrength);
+                AudioManager.SetParameter("Wind_Strength", stateStrength);
             }
         }
     }

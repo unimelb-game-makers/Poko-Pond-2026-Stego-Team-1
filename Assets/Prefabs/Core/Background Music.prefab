@@ -10,13 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 5500533192634204385}
   - component: {fileID: 4783130281446183965}
-  - component: {fileID: 9095799963158241521}
   m_Layer: 0
   m_Name: Background Music
   m_TagString: Music
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5500533192634204385
 Transform:
@@ -45,34 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f181b900fd61404bb864db51b1a6ac2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
---- !u!114 &9095799963158241521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 229088452266862544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 1156726471
-      Data2: 1132486906
-      Data3: -1190967393
-      Data4: 477266752
-    Path: event:/Exploration Layers
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 2
-  AllowFadeout: 1
-  TriggerOnce: 1
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
+  backgroundMusic: Level

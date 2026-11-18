@@ -1144,6 +1144,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8780505892969428990, guid: 55d1c4b07650d455eae8b346cc459cec, type: 3}
   m_PrefabInstance: {fileID: 1128019719}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &729548359
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 229088452266862544, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_Name
+      value: Background Music
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.29035
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.46185
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500533192634204385, guid: 95424d393061d4597a8d6b520522234c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 95424d393061d4597a8d6b520522234c, type: 3}
 --- !u!1 &750372305
 GameObject:
   m_ObjectHideFlags: 0
@@ -1959,20 +2016,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
-  jumpClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  landClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
   fallSpeedThreshold: 1
   groundLayer:
     serializedVersion: 2
@@ -154299,6 +154342,7 @@ SceneRoots:
   - {fileID: 4670084964000279355}
   - {fileID: 2002443788}
   - {fileID: 1380275887}
+  - {fileID: 729548359}
   - {fileID: 1186219173}
   - {fileID: 1618472672}
   - {fileID: 199618162}

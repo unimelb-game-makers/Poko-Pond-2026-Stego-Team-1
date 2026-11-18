@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /*
@@ -30,13 +31,13 @@ public class PlayerLife : MonoBehaviour
     // generic, state-agnostic API intended for future hazards.
     public static void KillAllInBox(Vector2 center, Vector2 size)
     {
-        KillAllInBox(center, size, null);
+        KillAllInBox(center, size, null, null);
     }
 
     // State-filtered variant used by hazards whose damage only applies to one
     // body state.  The unfiltered overload above intentionally remains intact
     // so new hazards do not need to opt into state filtering.
-    public static void KillAllInBox(Vector2 center, Vector2 size, PlayerBodyState? requiredState)
+    public static void KillAllInBox(Vector2 center, Vector2 size, PlayerBodyState? requiredState, string deathSound)
     {
         int layer = LayerMask.NameToLayer("SoftBodyPoint");
         if (layer < 0)
@@ -54,7 +55,10 @@ public class PlayerLife : MonoBehaviour
 
             PlayerLife life = owner.GetComponent<PlayerLife>();
             if (life != null && seen.Add(life))
+            {
                 life.Kill();
+                if (deathSound != null) AudioManager.SFXOneShot(deathSound);
+            }
         }
     }
 
@@ -63,7 +67,7 @@ public class PlayerLife : MonoBehaviour
     // split-body filtering logic.
     public static void KillAllSolidInBox(Vector2 center, Vector2 size)
     {
-        KillAllInBox(center, size, PlayerBodyState.Solid);
+        KillAllInBox(center, size, PlayerBodyState.Solid, null);
     }
 
     private static bool TryResolveOwner(Collider2D collider, out SoftBodyPlayer owner)

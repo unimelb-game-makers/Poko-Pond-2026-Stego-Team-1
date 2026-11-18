@@ -43,6 +43,20 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
     private bool _initialActive = true;
     private ConnectionMode _connectionMode = ConnectionMode.Hold;
 
+    // position of the crusher used by sound
+    private Vector2 crusherPosition;
+
+    private void PlayCrusherSound()
+    {
+        Vector2 cameraPosition = Camera.main.transform.position;
+
+        float attenuationDistance = Vector2.Distance(crusherPosition, cameraPosition);
+
+        Debug.Log(attenuationDistance);
+
+        AudioManager.SFXOneShot("Crusher", "attenuation", attenuationDistance);
+    }
+
     // Called by PropTilemapSpawner — sets initial state and how the linked
     // pressure plate affects this crusher.  The defaults preserve the original
     // behaviour: the crusher starts cycling and a held plate pauses it.
@@ -55,6 +69,9 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
 
     private void Awake()
     {
+        // establish crusher position for sound
+        crusherPosition = transform.position;
+
         _sprite = GetComponent<SpriteRenderer>();
         if (_sprite != null && frames != null && frames.Length > 0)
             _sprite.sprite = frames[0];
@@ -122,6 +139,9 @@ public class AutoCrusherTrap : MonoBehaviour, IPropConnectable, IPropActivatable
             PlayerLife.KillAllSolidInBox(worldCenter, crushSize);
             if (impactParticles != null)
                 impactParticles.Play();
+
+            // Play sound
+            PlayCrusherSound();
 
             // Retract: frames 5→26
             int retractFrameCount = Mathf.Max(0, frames.Length - SlamFrameCount);

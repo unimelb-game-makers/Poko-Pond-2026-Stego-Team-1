@@ -207,7 +207,7 @@ public class PressurePlate : MonoBehaviour, IPropPowered, IPropConnectable, IPro
 
         SetPressedVisual(true);
         EventManager.PressurePlateActivated(plateId);
-        FMODUnity.RuntimeManager.PlayOneShot("event:/Player Sounds/SFX_Pressure Plate");
+        AudioManager.SFXOneShot("Pressure_Plate");
         onActivated?.Invoke();
         Debug.Log($"[PressurePlate] '{name}' ({plateId}) activated.");
     }
