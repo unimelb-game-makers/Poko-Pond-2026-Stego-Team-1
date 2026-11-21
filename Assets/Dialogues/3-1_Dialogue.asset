@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a11a7201676c60e40b6fa2700d7ded0a, type: 3}
+  m_Name: 3-1_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - speakerName: Area 3 Guide
+    text: Welcome to Area 3.
+    portrait: {fileID: 0}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0
+  - speakerName: Area 3 Guide
+    text: Here you can split into two droplets and switch between them, once passing
+      through the splitting machine.
+    portrait: {fileID: 0}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0
+  - speakerName: Area 3 Guide
+    text: 'SHIFT to split into two.
+
+      TAB to switch between.'
+    portrait: {fileID: 0}
+    voiceOverride: {fileID: 0}
+    charDelayOverride: 0

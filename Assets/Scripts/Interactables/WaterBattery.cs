@@ -145,7 +145,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         _playerMask      = LayerMask.GetMask("Player", "SoftBodyPoint");
         _splitController = FindFirstObjectByType<PlayerSplitController>();
         if (fanRenderer == null) fanRenderer = GetComponent<SpriteRenderer>();
-        SetIndicatorActive(false);
+        //SetIndicatorActive(false);
         PlayIdle();
     }
 

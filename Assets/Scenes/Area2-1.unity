@@ -423,7 +423,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &478390040
 Transform:
   m_ObjectHideFlags: 0
@@ -1438,20 +1438,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
-  jumpClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  landClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
   fallSpeedThreshold: 1
   groundLayer:
     serializedVersion: 2
@@ -3277,22 +3263,6 @@ PrefabInstance:
       propertyPath: interactPrompt
       value: 
       objectReference: {fileID: 653568219}
-    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.5
