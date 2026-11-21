@@ -145,7 +145,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         _playerMask      = LayerMask.GetMask("Player", "SoftBodyPoint");
         _splitController = FindFirstObjectByType<PlayerSplitController>();
         if (fanRenderer == null) fanRenderer = GetComponent<SpriteRenderer>();
-        SetIndicatorActive(false);
+        //SetIndicatorActive(false);
         PlayIdle();
     }
 
@@ -459,7 +459,12 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
     private void UpdateIndicatorState()
     {
         if (indicator == null) return;
-        bool active = _sucking.Count > 0 || _occupants.Count > 0;
+        bool active = false;
+        foreach (Occupant occupant in _occupants) {
+            if (occupant.body != null && occupant.body.InputEnabled) {
+                active = true;
+            }
+        }
         SetIndicatorActive(active);
     }
 

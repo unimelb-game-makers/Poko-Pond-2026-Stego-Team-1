@@ -1000,20 +1000,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5568cb28f68f55f8abee78819421839f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
-  jumpClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  landClip:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
   fallSpeedThreshold: 1
   groundLayer:
     serializedVersion: 2
@@ -1732,7 +1718,7 @@ Transform:
   m_GameObject: {fileID: 1807380257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.327218, y: 0.89994, z: -10}
+  m_LocalPosition: {x: 13.166125, y: 0.89993995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1912,6 +1898,18 @@ PrefabInstance:
       propertyPath: m_SpriteSortPoint
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5281647349494794093, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.79
+      objectReference: {fileID: 0}
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -1967,6 +1965,10 @@ PrefabInstance:
     - target: {fileID: 5837961272868505627, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527708192449720140, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8786796530190681263, guid: afd7b1c8758914f29a4a52b2030a416b, type: 3}
       propertyPath: m_Name
