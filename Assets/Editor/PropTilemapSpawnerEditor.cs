@@ -42,6 +42,9 @@ public class PropTilemapSpawnerEditor : Editor
                 var blowerStrengthProp = element.FindPropertyRelative("blowerStrength");
                 var blowerRangeProp = element.FindPropertyRelative("blowerRange");
                 var blowerWidthProp = element.FindPropertyRelative("blowerWidth");
+                var conveyorbeltOverride = element.FindPropertyRelative("overrideBeltDirection");
+                var conveyorSpeedProp = element.FindPropertyRelative("beltDirection");
+               
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
@@ -95,6 +98,17 @@ public class PropTilemapSpawnerEditor : Editor
                         EditorGUILayout.PropertyField(blowerRangeProp, new GUIContent("Range"));
                         EditorGUILayout.PropertyField(blowerWidthProp, new GUIContent("Width"));
                     }
+                }
+
+                if (propName == "ConveyorBelt")
+                {
+                    EditorGUILayout.PropertyField(conveyorbeltOverride, new GUIContent("Override Conveyor Belt Settings"));
+                    if (conveyorbeltOverride.boolValue)
+                    {
+                        EditorGUILayout.PropertyField(conveyorSpeedProp, new GUIContent("Belt Speed"));
+                    }
+
+                   
                 }
                 EditorGUI.indentLevel--;
 

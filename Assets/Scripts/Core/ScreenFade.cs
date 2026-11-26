@@ -16,6 +16,7 @@ public class ScreenFade : MonoBehaviour
     public void FadeToBlack(float duration)
     {
         StartCoroutine(FadeRoutine(1f, duration));
+        AudioManager.SFXOneShot("Death");
     }
 
     // Call this to clear the black screen

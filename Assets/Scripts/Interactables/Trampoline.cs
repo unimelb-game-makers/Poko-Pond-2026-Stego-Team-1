@@ -95,6 +95,7 @@ public class Trampoline : MonoBehaviour
             StopCoroutine(_bounceAnimation);
 
         _bounceAnimation = StartCoroutine(BounceAnimationRoutine());
+        AudioManager.SFXOneShot("Big_Jump");
     }
 
     private IEnumerator BounceAnimationRoutine()

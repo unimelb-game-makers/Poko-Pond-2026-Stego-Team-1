@@ -237,6 +237,8 @@ public class PlayerSplitController : MonoBehaviour
         kept     = _droplets[0];
         expelled = _droplets[1];
         EventManager.PlayerSplit();
+        AudioManager.SFXOneShot("Drop_Split");
+
         return true;
     }
 
@@ -312,6 +314,7 @@ public class PlayerSplitController : MonoBehaviour
         StartCoroutine(DriveWiggle(_droplets[1], 0.50f));
 
         EventManager.PlayerSplit();
+        AudioManager.SFXOneShot("Drop_Split");
         yield break;
     }
 
@@ -467,6 +470,8 @@ public class PlayerSplitController : MonoBehaviour
 
         _isMerging = false;
         EventManager.PlayerMerge();
+        AudioManager.SFXOneShot("Drop_Merge");
+
         yield break;
     }
 

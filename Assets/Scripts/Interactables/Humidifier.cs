@@ -22,7 +22,6 @@ public class Humidifier : MonoBehaviour
             SoftBodyPlayer player = hit.GetComponent<SoftBodyPointRef>()?.owner;
             if (player == null) player = hit.GetComponentInParent<SoftBodyPlayer>();
             if (player == null || !visitors.Add(player)) continue;
-            player.changeBodyStateInPlace(PlayerBodyState.Liquid);
         }
     }
 }

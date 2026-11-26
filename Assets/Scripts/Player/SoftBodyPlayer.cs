@@ -1116,6 +1116,8 @@ public class SoftBodyPlayer : MonoBehaviour
         _jumpQueued          = false;
         _currentGravityScale = baseGravityScale;
 
+        if (bodystate != PlayerBodyState.Solid) AudioManager.SFXOneShot("Small_Jump");
+
         // Uniform velocity delta across every point — identical Δvy means no
         // differential motion between points so no compression wave can form in the
         // spring network. Any per-point variation (top-only impulse, weighted impulse)
@@ -1809,6 +1811,10 @@ public class SoftBodyPlayer : MonoBehaviour
                 jumpForce = solidJumpForce;
                 bodyInnerColor = solidbodyInnerColor;
                 bodyOuterColor = solidbodyOuterColor;
+
+                // Play Freeze sound and update FMOD
+                AudioManager.SFXOneShot("Freeze");
+                AudioManager.SetParameter("State", 1);
             }
             else
             {
@@ -1817,6 +1823,10 @@ public class SoftBodyPlayer : MonoBehaviour
                 jumpForce = _liquidJumpForce;
                 bodyInnerColor = liquidbodyInnerColor;
                 bodyOuterColor = liquidbodyOuterColor;
+
+                // Play Freeze sound and update FMOD
+                AudioManager.SFXOneShot("Evaporator");
+                AudioManager.SetParameter("State", 0);
             }
 
             initBody();

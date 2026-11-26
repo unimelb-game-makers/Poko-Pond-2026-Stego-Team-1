@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Even water cannot flow upstream on it's own
+  m_text: Even Water Cannot Flow Upstream By Itself...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 552c14e5f601e4ece936fcc59e6d583b, type: 2}
   m_sharedMaterial: {fileID: -478053287693709187, guid: 552c14e5f601e4ece936fcc59e6d583b, type: 2}
@@ -812,7 +812,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Flow again
+  m_text: FLOW AGAIN
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 552c14e5f601e4ece936fcc59e6d583b, type: 2}
   m_sharedMaterial: {fileID: -478053287693709187, guid: 552c14e5f601e4ece936fcc59e6d583b, type: 2}
