@@ -48,8 +48,10 @@ public class PlayerLife : MonoBehaviour
 
         Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f, 1 << layer);
         var seen = new HashSet<PlayerLife>();
+        bool deathStart = false;
         foreach (Collider2D col in hits)
         {
+            if(deathStart) col.enabled = false;
             if (!TryResolveOwner(col, out SoftBodyPlayer owner)) continue;
             if (requiredState.HasValue && owner.getBodyState() != requiredState.Value) continue;
 
@@ -58,6 +60,8 @@ public class PlayerLife : MonoBehaviour
             {
                 life.Kill();
                 if (deathSound != null) AudioManager.SFXOneShot(deathSound);
+                deathStart = true;
+                col.enabled = false;
             }
         }
     }
