@@ -407,6 +407,10 @@ PrefabInstance:
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 4831069292688466685, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4945021894543115113, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_Name
       value: MainMenu
@@ -453,7 +457,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5552878085277195498, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5552878085277195498, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_AnchorMin.x
@@ -461,19 +465,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5552878085277195498, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5552878085277195498, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 900
       objectReference: {fileID: 0}
     - target: {fileID: 5552878085277195498, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 450
       objectReference: {fileID: 0}
     - target: {fileID: 5552878085277195498, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -28
       objectReference: {fileID: 0}
     - target: {fileID: 5575813799833512624, guid: fb2506c6322534f14929ba1c4815ff92, type: 3}
       propertyPath: m_fontColor32.rgba

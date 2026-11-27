@@ -96,10 +96,20 @@ namespace PokoPond.UI.MainMenu
 
         private void DisableContinue()
         {
-            // There is no save restoration yet, so never offer a fresh game as Continue.
+            // Only activate if we have a saved game pref
             if (continueButton == null) return;
-            continueButton.interactable = false;
-            continueButton.gameObject.SetActive(false);
+
+            if (PlayerPrefs.HasKey("GameSave"))
+            {
+                continueButton.interactable = true;
+                continueButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("No game save found");
+                continueButton.interactable = false;
+                continueButton.gameObject.SetActive(false);
+            }
         }
 
         private void RebuildOrder()
@@ -164,7 +174,8 @@ namespace PokoPond.UI.MainMenu
 
         public void OnContinue()
         {
-            // Retained for existing UnityEvent bindings until saves can be restored.
+            string savedSceneName = PlayerPrefs.GetString("GameSave");
+            LoadSceneSafe(savedSceneName, "Continue");
         }
 
         public void OnNewGame()

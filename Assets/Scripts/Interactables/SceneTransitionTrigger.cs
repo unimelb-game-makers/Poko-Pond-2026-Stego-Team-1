@@ -47,6 +47,11 @@ public class SceneTransitionTrigger : MonoBehaviour
             }
 
             loading = true;
+
+            // A very simple game save, single string value
+            PlayerPrefs.SetString("GameSave", targetScene);
+            PlayerPrefs.Save();
+
             SceneManager.LoadSceneAsync(targetScene, LoadSceneMode.Single);
             return;
         }
