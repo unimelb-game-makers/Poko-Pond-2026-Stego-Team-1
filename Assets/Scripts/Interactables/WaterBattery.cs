@@ -86,8 +86,18 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
     [Tooltip("Idle loop speed multiplier while actively sucking.")]
     [SerializeField, Min(1f)] private float suctionAnimationSpeedup = 2f;
 
+    [SerializeField] private ParticleSystem particles;
+
     // A whole droplet is two units of water, each half is one.
     private int Capacity => size == BatterySize.Big ? 2 : 1;
+
+    // Particle variables
+    public float minDistance = 0f;
+    public float maxDistance = 2f;
+
+    private ParticleSystem ps;
+    private ParticleSystem.MainModule mainModule;
+    private Color baseColor;
 
     private class Suction
     {
@@ -147,6 +157,10 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         if (fanRenderer == null) fanRenderer = GetComponent<SpriteRenderer>();
         SetIndicatorActive(false);
         PlayIdle();
+
+        ps = GetComponent<ParticleSystem>();
+        mainModule = ps.main;
+        baseColor = mainModule.startColor.color;
     }
 
     private void Update()
@@ -165,6 +179,7 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         UpdateSuction();
         RefreshState();
         UpdateIndicatorState();
+        setParticleState(_state);
     }
 
     // A battery riding a moving platform drags its parked occupants along.
@@ -452,6 +467,20 @@ public class WaterBattery : MonoBehaviour, IPropConnectable, IPropOneShotConfigu
         if (fanRenderer == null || _clip == null || _clip.Length == 0) return;
         Sprite sprite = _clip[Mathf.Clamp(_clipFrame, 0, _clip.Length - 1)];
         if (sprite != null) fanRenderer.sprite = sprite;
+    }
+
+    private void setParticleState(BatteryState state)
+    {
+        if (_occupants.Count > 0)
+        {
+            baseColor.a = 0.0f;
+            mainModule.startColor = baseColor;
+        }
+        else
+        {
+            baseColor.a = 0.15f;
+            mainModule.startColor = baseColor;
+        }
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────
